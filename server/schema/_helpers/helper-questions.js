@@ -94,7 +94,6 @@ const siegeGenreQuestions = async genre => {
         $match: {
           published: { $eq: true },
           partycategory: { $eq: false },
-          joustexclusive: { $eq: false },
           genres: { $eq: mongoose.Types.ObjectId(genre) }
         }
       },
@@ -107,7 +106,6 @@ const siegeGenreQuestions = async genre => {
           $match: {
             published: { $eq: true },
             partycategory: { $eq: false },
-            joustexclusive: { $eq: false },
             genres: { $eq: mongoose.Types.ObjectId(genre) }
           }
         },
@@ -276,7 +274,6 @@ const pressLuckQuestions = async genre => {
         $match: {
           published: { $eq: true },
           partycategory: { $eq: false },
-          joustexclusive: { $eq: false },
           genres: { $eq: mongoose.Types.ObjectId(genre) }
         }
       },
@@ -289,7 +286,6 @@ const pressLuckQuestions = async genre => {
           $match: {
             published: { $eq: true },
             partycategory: { $eq: false },
-            joustexclusive: { $eq: false },
             genres: { $eq: mongoose.Types.ObjectId(genre) }
           }
         },
