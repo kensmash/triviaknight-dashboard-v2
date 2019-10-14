@@ -2,7 +2,7 @@ import React from "react";
 import { graphql } from "react-apollo";
 import { Route, Redirect } from "react-router";
 //query
-import currentUserQuery from "../../queries/currentUser";
+import currentUserQuery from "../../apollo/queries/currentUser";
 
 class AuthRoute extends React.PureComponent {
   renderRoute = routeProps => {

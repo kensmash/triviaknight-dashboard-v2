@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
+import Routes from "./routes";
 //yo apollo
 import { ApolloProvider } from "@apollo/react-hooks";
 import { client, persistor } from "./apollo";
@@ -12,12 +13,14 @@ function App() {
   const [restored, setRestored] = useState(false);
 
   useEffect(() => {
-    persistor.restore().then(() => setRestored(true));
+    persistor.restore().then(() => {
+      setRestored(true);
+    });
   }, []);
 
   return (
     <>
-      {restored ? (
+      {!restored ? (
         <div>Loading!!!</div>
       ) : (
         <ApolloProvider client={client}>

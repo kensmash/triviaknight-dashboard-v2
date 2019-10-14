@@ -1,4 +1,4 @@
-import { ApolloClient, InMemoryCache } from "apollo-boost";
+import ApolloClient, { InMemoryCache } from "apollo-boost";
 import { CachePersistor } from "apollo-cache-persist";
 //queries
 import categorySearchQuery from "./apollo/queries/client-categorySearchCriteria";
@@ -49,11 +49,12 @@ const defaultState = {
 };
 
 const client = new ApolloClient({
+  cache,
   uri: "/graphql",
   credentials:
     process.env.NODE_ENV === "production" ? "same-origin" : "include",
   clientState: {
-    defaults: { defaultState },
+    defaults: defaultState,
     resolvers: {
       Mutation: {
         updateCategorySearch: (

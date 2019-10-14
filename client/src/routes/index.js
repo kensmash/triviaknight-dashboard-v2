@@ -7,7 +7,7 @@ import Logout from "./Logout/Logout";
 import AuthRoute from "./RouteComponents/AuthRoute";
 import AdminRoute from "./RouteComponents/AdminRoute";
 
-import Auth from "./Auth/Auth";
+import Auth from "./Auth";
 import Admin from "./Admin";
 
 export default () => (
