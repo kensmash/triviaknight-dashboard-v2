@@ -4,10 +4,12 @@ import { Form } from "semantic-ui-react";
 import CategoryForm from "../../../components/Admin/CategoryForm/CategoryForm";
 ////graphql
 import { useQuery } from "@apollo/react-hooks";
-import QUERY_CATEGORY from "../../../queries/category";
+import QUERY_CATEGORY from "../../../apollo/queries/category";
 
-const EditCategory = ({ history }) => {
-  const { loading, error, data: { category } = {} } = useQuery(QUERY_CATEGORY);
+const EditCategory = ({ match, history }) => {
+  const { loading, error, data: { category } = {} } = useQuery(QUERY_CATEGORY, {
+    variables: { id: match.params._id }
+  });
   if (loading) return "Loading...";
   if (error) return `Error! ${error.message}`;
   return (

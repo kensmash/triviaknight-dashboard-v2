@@ -5,8 +5,7 @@ import { Link } from "react-router-dom";
 import { Menu, Dropdown } from "semantic-ui-react";
 //graphql
 import { useQuery, useMutation, useApolloClient } from "@apollo/react-hooks";
-//queryhelpers
-import QUERY_CURRENTUSER from "../../queries/currentUser";
+import QUERY_CURRENTUSER from "../../apollo/queries/currentUser";
 
 const TopNav = props => {
   const [activeItem, setActiveItem] = useState("");
@@ -26,7 +25,7 @@ const TopNav = props => {
   };
 
   return (
-    <Fragment>
+    <>
       <Menu inverted>
         <Menu.Item
           as={Link}
@@ -38,7 +37,7 @@ const TopNav = props => {
 
         <Menu.Menu position="right">
           {props.currentUser && props.currentUser.isAdmin ? (
-            <Fragment>
+            <>
               <Menu.Item as={Link} to={"/admin"} name="dashboard" />
               <Dropdown item text="Questions">
                 <Dropdown.Menu>
@@ -88,7 +87,7 @@ const TopNav = props => {
               </Dropdown>
 
               <Menu.Item as={Link} to={"users"} name="Users" />
-            </Fragment>
+            </>
           ) : null}
           {currentUser ? (
             <Menu.Item name="logout" onClick={logoutHandler} />
@@ -97,7 +96,7 @@ const TopNav = props => {
           )}
         </Menu.Menu>
       </Menu>
-    </Fragment>
+    </>
   );
 };
 

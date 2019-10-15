@@ -13,10 +13,10 @@ import categoriesQuery from "../../../apollo/queries/categories";
 import categoriesPageQuery from "../../../apollo/queries/categoriesPage";
 import categorySearchCriteria from "../../../apollo/queries/client-categorySearchCriteria";
 
-const CategoryForm = () => {
+const CategoryForm = props => {
   const [submittedCategoryName, setSubmittedCategoryName] = useState("");
 
-  const [fields, setFields] = useState({
+  const initialState = {
     categoryname: "",
     categorytype: { label: "", hasgenres: false, value: "" },
     categorygenres: [],
@@ -27,7 +27,9 @@ const CategoryForm = () => {
     showasupdated: false,
     showaspopular: false,
     joustexclusive: false
-  });
+  };
+
+  const [fields, setFields] = useState(initialState);
 
   const [fieldErrors, setFieldErrors] = useState({
     categoryname: "",
@@ -60,7 +62,7 @@ const CategoryForm = () => {
         joustexclusive: category.joustexclusive || false
       });
     }
-  }, []);
+  }, [props]);
 
   const inputChangedHandler = event => {
     setFields({ ...fields, [event.target.id]: event.target.value });
@@ -128,19 +130,6 @@ const CategoryForm = () => {
       setFields({ ...fields, showasnew: true, showasupdated: false });
     } else {
       setFields({ ...fields, showasnew: false });
-    }
-  };
-
-  const updatedCheckBoxHandler = (_event, data) => {
-    if (data.checked) {
-      setFields({ ...fields, showasupdated: true, showasnew: false });
-    } else {
-      setFields({
-        ...fields,
-        showasupdated: props.category.showasupdated
-          ? props.category.showasupdated
-          : false
-      });
     }
   };
 
@@ -215,6 +204,10 @@ const CategoryForm = () => {
     setSubmittedCategoryName(graphqlResponse.data.addcategory.name);
   };
 
+  const clearFormHandler = () => {
+    setFields(initialState);
+  };
+
   return (
     <>
       {props.pageType === "edit" ? <h3>Edit Category</h3> : null}
@@ -234,10 +227,10 @@ const CategoryForm = () => {
       <Form.Field required>
         <label>Category Type</label>
         <CatTypeSelect
-          value={categorytypevalue}
+          value={props.categorytypevalue}
           placeholder="Select Category Type..."
-          catTypeSelectHandler={categorytype =>
-            catTypeSelectHandler(categorytype)
+          catTypeSelectHandler={(event, data) =>
+            catTypeSelectHandler(event, data)
           }
         />
         <FormErrorMessage
@@ -256,8 +249,8 @@ const CategoryForm = () => {
             value={fields.categorygenres}
             categorytype={fields.categorytype.value}
             placeholder="Select Category Genre(s)..."
-            catGenreSelectHandler={categorygenres =>
-              catGenreSelectHandler(categorygenres)
+            catGenreSelectHandler={(event, data) =>
+              catGenreSelectHandler(event, data)
             }
           />
         </Form.Field>
@@ -349,7 +342,7 @@ const CategoryForm = () => {
             Submit
           </Button>
           {props.pageType === "edit" && (
-            <Button color="grey" onClick={history.goBack}>
+            <Button color="grey" onClick={() => props.history.goBack()}>
               Cancel
             </Button>
           )}

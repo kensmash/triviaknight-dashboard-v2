@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { Dropdown } from "semantic-ui-react";
 //graphql
 import { useQuery } from "@apollo/react-hooks";
-import QUERY_CATEGORYTYPES from "../../../queries/categoryTypes";
+import QUERY_CATEGORYTYPES from "../../../apollo/queries/categoryTypes";
 
 const CatTypeSelect = props => {
   const { loading, error, data } = useQuery(QUERY_CATEGORYTYPES);
@@ -18,14 +18,16 @@ const CatTypeSelect = props => {
     <Dropdown
       placeholder={props.placeholder}
       value={props.value}
-      search
+      fluid
       selection
+      clearable
       multiple={props.type === "genre" ? true : false}
       onChange={props.catTypeSelectHandler}
       options={categorytypes.map(item => ({
+        key: item._id,
         value: item._id,
-        hasgenres: item.hasgenres,
-        label: item.name
+        hasgenres: item.hasgenres.toString(),
+        text: item.name
       }))}
     />
   );

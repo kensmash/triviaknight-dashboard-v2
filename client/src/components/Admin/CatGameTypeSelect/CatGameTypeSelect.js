@@ -6,11 +6,14 @@ const CatGameTypeSelect = props => (
   <Dropdown
     value={props.value}
     placeholder="Filter by Game Type"
+    fluid
+    selection
+    clearable
     onChange={props.gameTypeSelectHandler}
     options={[
-      { value: null, label: "All" },
-      { value: false, label: "Trivia Knight" },
-      { value: true, label: "Trivia Knight Party" }
+      { key: "All", value: null, text: "All" },
+      { key: "Trivia Knight", value: false, text: "Trivia Knight" },
+      { key: "Trivia Knight Party", value: true, text: "Trivia Knight Party" }
     ]}
   />
 );

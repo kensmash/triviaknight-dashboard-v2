@@ -16,8 +16,8 @@ import CatGenreSelect from "../CatGenreSelect/CatGenreSelect";
 //graphql
 import { gql } from "apollo-boost";
 import { useQuery, useMutation } from "@apollo/react-hooks";
-import QUERY_CATEGORIESPAGE from "../../../queries/categoriesPage";
-import QUERY_CLIENTCATEGORYSEARCH from "../../../queries/client-categorySearchCriteria";
+import QUERY_CATEGORIESPAGE from "../../../apollo/queries/categoriesPage";
+import QUERY_CLIENTCATEGORYSEARCH from "../../../apollo/queries/client-categorySearchCriteria";
 
 const CategoriesList = props => {
   const { data: { categorySearchCriteria } = {} } = useQuery(
@@ -34,14 +34,14 @@ const CategoriesList = props => {
       name: categorySearchCriteria.name,
       type: categorySearchCriteria.type,
       genres: categorySearchCriteria.genres.map(item => item.value),
-      partycategory: categorySearchCriteria.partycategory
+      partycategory: categorySearchCriteria.partycategory == "true"
     }
   };
 
   const { loading, error, data: { categoriespage } = {}, fetchMore } = useQuery(
     QUERY_CATEGORIESPAGE,
     {
-      variables: { variables },
+      variables,
       fetchPolicy: "cache-and-network",
       onCompleted: data => {
         //change currently selected page when no records for page greater than 1
@@ -94,6 +94,7 @@ const CategoriesList = props => {
 
   const { pages, totalrecords, categories } = categoriespage;
   const { match, history } = props;
+
   return (
     <>
       <Grid columns="equal" className="searchCriteria">
@@ -102,8 +103,8 @@ const CategoriesList = props => {
             <CatGameTypeSelect
               value={categorySearchCriteria.partycategory}
               placeholder="Filter By Game Type"
-              gameTypeSelectHandler={gametype =>
-                catGameTypeSelectHandler(gametype)
+              gameTypeSelectHandler={(event, data) =>
+                catGameTypeSelectHandler(event, data)
               }
             />
           </Grid.Column>
@@ -111,18 +112,18 @@ const CategoriesList = props => {
             <CatTypeSelect
               value={categorySearchCriteria.type}
               placeholder="Filter By Type"
-              catTypeSelectHandler={categorytype =>
-                catTypeSelectHandler(categorytype)
+              catTypeSelectHandler={(event, data) =>
+                catTypeSelectHandler(event, data)
               }
             />
           </Grid.Column>
           <Grid.Column className="tablePerPageColumn">
             <CatGenreSelect
               value={categorySearchCriteria.genres}
-              categorytype={categorySearchCriteria.type}
+              categorytype={categorySearchCriteria.genre}
               placeholder="Filter By Genres"
-              catGenreSelectHandler={categorygenres =>
-                catGenreSelectHandler(categorygenres)
+              catGenreSelectHandler={(event, data) =>
+                catGenreSelectHandler(event, data)
               }
             />
           </Grid.Column>
