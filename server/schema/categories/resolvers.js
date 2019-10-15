@@ -1,4 +1,5 @@
 const Category = require("../../models/Category");
+const mongoose = require("mongoose");
 //auth helpers
 const {
   requiresAuth,
@@ -105,6 +106,20 @@ const resolvers = {
         const category = await new Category(input);
         const newCategory = await category.save();
         return newCategory;
+      } catch (error) {
+        console.error(error);
+      }
+    }),
+
+    upsertcategory: requiresAdmin.createResolver(async (parent, { input }) => {
+      try {
+        await Category.findOneAndUpdate(
+          {
+            _id: mongoose.Types.ObjectId(input.id)
+          },
+          input,
+          { upsert: true, new: true }
+        );
       } catch (error) {
         console.error(error);
       }
