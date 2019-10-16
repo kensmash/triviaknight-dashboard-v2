@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Redirect } from "react-router-dom";
 import PropTypes from "prop-types";
 import { Grid, Card, Form, Button, Icon } from "semantic-ui-react";
 //components
@@ -18,214 +19,169 @@ import { useMutation } from "@apollo/react-hooks";
 const QuestionForm = props => {
   const [questionSubmitted, setQuestionSubmitted] = useState(false);
   const [redirect, setRedirect] = useState(false);
-  const initialState = {
-    questionSubmitted: false,
-    redirect: false,
-    fields: {
-      question: "",
-      answers: [],
-      category: {},
-      questiontype: "Multiple Choice",
-      questiondifficulty: "Normal",
-      imageurl: null,
-      videourl: null,
-      audiourl: null,
-      published: false
-    },
-    fieldErrors: {
-      question: "",
-      answerindexes: [],
-      answer: "",
-      answers: "",
-      correctanswer: "",
-      category: "",
-      questiontype: "",
-      questiondifficulty: ""
-    }
+  const initialFields = {
+    question: "",
+    answers: [],
+    category: {},
+    questiontype: "Multiple Choice",
+    questiondifficulty: "Normal",
+    imageurl: null,
+    videourl: null,
+    audiourl: null,
+    published: false
   };
 
-  const [fields, setFields] = useState(initialState);
+  const initialFieldErrors = {
+    question: "",
+    answerindexes: [],
+    answer: "",
+    answers: "",
+    correctanswer: "",
+    category: "",
+    questiontype: "",
+    questiondifficulty: ""
+  };
 
-  const [fieldErrors, setFieldErrors] = useState({
-    categoryname: "",
-    type: "",
-    categorydescription: ""
-  });
+  const [fields, setFields] = useState(initialFields);
+
+  const [fieldErrors, setFieldErrors] = useState(initialFieldErrors);
 
   const [upsertQuestion] = useMutation(MUTATION_UPSERTQUESTION);
 
   useEffect(() => {
     if (props.pageType === "edit") {
-      const { category } = props;
+      const { question } = props;
       setFields({
-        categoryname: category.name,
-        categorytype: category.type._id,
-        categorygenres: category.genres.map(genre => genre._id),
-        categorydescription: category.description,
-        published: category.published,
-        partycategory: category.partycategory || false,
-        showasnew: category.showasnew || false,
-        showasupdated: category.showasupdated || false,
-        showaspopular: category.showaspopular || false,
-        joustexclusive: category.joustexclusive || false
+        question: question.question,
+        answers: question.answers.map(question => ({
+          answer: question.answer,
+          correct: question.correct
+        })),
+        category: {
+          text: question.category.name,
+          value: question.category._id
+        },
+        questiontype: question.type,
+        questiondifficulty: question.difficulty,
+        imageurl: question.imageurl,
+        videourl: question.videourl,
+        audiourl: question.audiourl,
+        published: question.published
+      });
+    } else {
+      setFields({
+        ...fields,
+        answers: [
+          { answer: "", correct: false },
+          { answer: "", correct: false },
+          { answer: "", correct: false },
+          { answer: "", correct: false }
+        ]
       });
     }
   }, [props]);
 
-  gotoQuestionsPageHandler = () => {
-    this.clearFormHandler();
-    this.setState({ redirect: true });
+  const gotoQuestionsPageHandler = () => {
+    clearFormHandler();
+    setRedirect(true);
   };
 
-  questionChangedHandler = event => {
-    this.setState({
-      fields: {
-        ...this.state.fields,
-        question: event.target.value
-      },
-      fieldErrors: {
-        ...this.state.fieldErrors,
-        question: ""
-      }
+  const questionChangedHandler = event => {
+    setFields({ ...fields, question: event.target.value });
+    setFieldErrors({
+      ...fieldErrors,
+      question: ""
     });
   };
 
-  answerChangedHandler = (event, index) => {
-    const answers = [...this.state.fields.answers];
+  const answerChangedHandler = (event, index) => {
+    const answers = [...fields.answers];
     answers[index].answer = event.target.value;
-    this.setState({
-      fields: {
-        ...this.state.fields,
-        answers
-      },
-      fieldErrors: {
-        ...this.state.fieldErrors,
-        answers: "",
-        answer: "",
-        answerindexes: []
-      }
+    setFields({ ...fields, answers });
+    setFieldErrors({
+      ...fieldErrors,
+      answers: "",
+      answer: "",
+      answerindexes: []
     });
   };
 
-  correctAnswerHandler = (event, value, index) => {
-    const answers = [...this.state.fields.answers];
+  const correctAnswerHandler = (_event, value, index) => {
+    const answers = [...fields.answers];
     if (value.checked) {
       answers.forEach(answer => (answer.correct = false));
       answers[index].correct = true;
     } else {
       answers[index].correct = false;
     }
-    this.setState({
-      fields: {
-        ...this.state.fields,
-        answers
-      },
-      fieldErrors: {
-        ...this.state.fieldErrors,
-        answers: ""
-      }
+    setFields({ ...fields, answers });
+    setFieldErrors({
+      ...fieldErrors,
+      answers: ""
     });
   };
 
-  addAnswerHander = () => {
-    const answers = [...this.state.fields.answers];
+  const addAnswerHander = () => {
+    const answers = [...fields.answers];
     answers.push({ answer: "", correct: false });
-    this.setState({
-      fields: {
-        ...this.state.fields,
-        answers: answers
-      },
-      fieldErrors: {
-        ...this.state.fieldErrors,
-        answers: "",
-        answer: "",
-        answerindexes: []
-      }
+    setFields({ ...fields, answers: answers });
+    setFieldErrors({
+      ...fieldErrors,
+      answers: "",
+      answer: "",
+      answerindexes: []
     });
   };
 
-  removeAnswerHandler = index => {
-    const answers = [...this.state.fields.answers];
+  const removeAnswerHandler = index => {
+    const answers = [...fields.answers];
     answers.splice(index, 1);
-    this.setState({
-      fields: {
-        ...this.state.fields,
-        answers: answers
-      },
-      fieldErrors: {
-        ...this.state.fieldErrors,
-        answers: "",
-        answer: "",
-        answerindexes: []
-      }
+    setFields({ ...fields, answers: answers });
+    setFieldErrors({
+      ...fieldErrors,
+      answers: "",
+      answer: "",
+      answerindexes: []
     });
   };
 
-  questionPublishedChangedHandler = (event, value) => {
-    this.setState({
-      fields: {
-        ...this.state.fields,
-        published: value.value === "true" ? true : false
-      },
-      fieldErrors: {
-        ...this.state.fieldErrors,
-        correctanswer: ""
-      }
-    });
+  const questionPublishedChangedHandler = (_event, value) => {
+    setFields({ ...fields, published: value.value === "true" ? true : false });
+    setFieldErrors({ ...fieldErrors, correctanswer: "" });
   };
 
-  questionCategorySelectHandler = categoryvalue => {
-    this.props.updateAddQuestionCriteria({
+  const questionCategorySelectHandler = (_event, data) => {
+    updateAddQuestionCriteria({
       variables: {
-        category: categoryvalue === null ? "" : categoryvalue.value
+        category: data.value
       }
     });
-    this.setState({
-      fields: {
-        ...this.state.fields,
-        category: categoryvalue === null ? {} : categoryvalue
-      },
-      fieldErrors: {
-        ...this.state.fieldErrors,
-        category: ""
-      }
-    });
+    setFields({ ...fields, category: data.value });
+    setFieldErrors({ ...fieldErrors, category: "" });
   };
 
-  questionTypeSelectHandler = (event, value) => {
-    this.clearValidationHandler();
-    this.setState({
-      fields: {
-        ...this.state.fields,
-        questiontype: value.value
-      },
-      fieldErrors: {
-        ...this.state.fieldErrors,
-        questiontype: ""
-      }
-    });
+  const questionTypeSelectHandler = (_event, value) => {
+    clearValidationHandler();
+    setFields({ ...fields, questiontype: value.value });
+    setFieldErrors({ ...fieldErrors, questiontype: "" });
   };
 
-  questionDifficultySelectHandler = (event, value) => {
-    this.clearValidationHandler();
-    this.setState({
-      fields: {
-        ...this.state.fields,
-        questiondifficulty: value.value
-      },
-      fieldErrors: {
-        ...this.state.fieldErrors,
-        questiondifficulty: ""
-      }
-    });
+  const questionDifficultySelectHandler = (_event, value) => {
+    clearValidationHandler();
+    setFields({ ...fields, questiondifficulty: value.value });
+    setFieldErrors({ ...fieldErrors, questiondifficulty: "" });
   };
 
-  formValidateHandler = (question, answers, category, type, difficulty) => {
+  const formValidateHandler = (
+    question,
+    answers,
+    category,
+    type,
+    difficulty
+  ) => {
     const errors = {};
-    const emptyanswers = this.state.fields.answers.filter(
-      answer => answer.answer === ""
-    );
-    const allanswers = this.state.fields.answers.map(answer => answer.answer);
+    const emptyanswers = fields.answers.filter(answer => answer.answer === "");
+    const allanswers = fields.answers.map(answer => answer.answer);
     const duplicateanswers = allanswers.some((answer, index) => {
       return allanswers.indexOf(answer) !== index;
     });
@@ -234,8 +190,8 @@ const QuestionForm = props => {
       errors.question = "Please enter question at least 8 characters long.";
 
     if (
-      this.state.fields.published &&
-      !this.state.fields.answers.filter(answer => answer.correct).length
+      fields.published &&
+      !fields.answers.filter(answer => answer.correct).length
     )
       errors.answers = "Don't forget to select a correct answer!";
     if (duplicateanswers) {
@@ -283,49 +239,34 @@ const QuestionForm = props => {
     return errors;
   };
 
-  clearValidationHandler = () => {
-    this.setState({
-      fieldErrors: {
-        question: "",
-        answerindexes: [],
-        answer: "",
-        answers: "",
-        correctanswer: "",
-        category: "",
-        questiontype: "",
-        questiondifficulty: ""
-      }
+  const clearValidationHandler = () => {
+    setFieldErrors({
+      question: "",
+      answerindexes: [],
+      answer: "",
+      answers: "",
+      correctanswer: "",
+      category: "",
+      questiontype: "",
+      questiondifficulty: ""
     });
   };
 
-  formSubmitHandler = event => {
+  const formSubmitHandler = event => {
     event.preventDefault();
-    const { fields } = this.state;
-    const errors = this.formValidateHandler(
+    const errors = formValidateHandler(
       fields.question,
       fields.answers,
-      this.props.pageType === "edit"
-        ? fields.category
-        : this.props.addQuestionCriteria.category,
+      fields.category,
       fields.questiontype,
       fields.questiondifficulty
     );
     if (Object.keys(errors).length)
-      return this.setState({
-        fieldErrors: { ...this.state.fieldErrors, ...errors }
-      });
-    this.AddorEdit();
+      return setFieldErrors({ ...fieldErrors, ...errors });
+    UpsertQuestionHandler();
   };
 
-  AddorEdit = () => {
-    if (this.props.pageType === "edit") {
-      this.EditQuestionHandler();
-    } else {
-      this.AddQuestionHandler();
-    }
-  };
-
-  AddQuestionHandler = async () => {
+  const UpsertQuestionHandler = async () => {
     const {
       question,
       answers,
@@ -336,14 +277,14 @@ const QuestionForm = props => {
       videourl,
       audiourl,
       published
-    } = this.state.fields;
+    } = fields;
     //add question
-    const graphqlResponse = await this.props.addQuestion({
+    await upsertQuestion({
       variables: {
         input: {
           question,
           answers,
-          category: this.props.addQuestionCriteria.category,
+          category,
           type: questiontype,
           difficulty: questiondifficulty,
           imageurl,
@@ -353,73 +294,37 @@ const QuestionForm = props => {
         }
       }
     });
-    this.setState({
-      questionSubmitted: true
+    setQuestionSubmitted(true);
+  };
+
+  const clearFormHandler = () => {
+    setQuestionSubmitted(false);
+    setFields({
+      question: "",
+      answers: [
+        { answer: "", correct: false },
+        { answer: "", correct: false },
+        { answer: "", correct: false },
+        { answer: "", correct: false }
+      ],
+      category: {},
+      questiontype: "Multiple Choice",
+      questiondifficulty: "Normal",
+      imageurl: null,
+      videourl: null,
+      audiourl: null,
+      published: false
     });
   };
 
-  EditQuestionHandler = async () => {
-    const questionid = this.props.question._id;
-    const {
-      question,
-      answers,
-      category,
-      questiontype,
-      questiondifficulty,
-      imageurl,
-      videourl,
-      audiourl,
-      published
-    } = this.state.fields;
-    const graphqlResponse = await this.props.editQuestion({
-      variables: {
-        input: {
-          id: questionid,
-          question,
-          answers,
-          category: category.value,
-          type: questiontype,
-          difficulty: questiondifficulty,
-          imageurl,
-          videourl,
-          audiourl,
-          published
-        }
-      }
-    });
-    this.setState({
-      questionSubmitted: true
-    });
-  };
-
-  clearFormHandler = () => {
-    this.setState({
-      questionSubmitted: false,
-      fields: {
-        question: "",
-        answers: [
-          { answer: "", correct: false },
-          { answer: "", correct: false },
-          { answer: "", correct: false },
-          { answer: "", correct: false }
-        ],
-        category: {},
-        questiontype: "Multiple Choice",
-        questiondifficulty: "Normal",
-        imageurl: null,
-        videourl: null,
-        audiourl: null,
-        published: false
-      }
-    });
-  };
+  if (redirect) {
+    return <Redirect to="/admin/questions" />;
+  }
 
   return (
     <>
       <Form>
-        <h3>
-          {this.props.pageType === "edit" ? "Edit Question" : "New Question"}
-        </h3>
+        <h3>{props.pageType === "edit" ? "Edit Question" : "New Question"}</h3>
         <Card fluid>
           <Card.Content>Question</Card.Content>
           <Card.Content>
@@ -428,11 +333,11 @@ const QuestionForm = props => {
                 id="question"
                 placeholder="Enter question..."
                 value={fields.question}
-                onChange={event => this.questionChangedHandler(event)}
+                onChange={event => questionChangedHandler(event)}
               />
               <FormErrorMessage
-                reveal={this.state.fieldErrors.question !== ""}
-                errormessage={this.state.fieldErrors.question}
+                reveal={fieldErrors.question !== ""}
+                errormessage={fieldErrors.question}
               />
             </Form.Field>
           </Card.Content>
@@ -453,7 +358,7 @@ const QuestionForm = props => {
                         size="mini"
                         compact
                         labelPosition="left"
-                        onClick={this.addAnswerHander}
+                        onClick={addAnswerHander}
                       >
                         <Icon name="plus" />
                         Add Answer
@@ -471,15 +376,15 @@ const QuestionForm = props => {
                       answers={fields.answers}
                       answer={fields.answers[index].answer}
                       correct={fields.answers[index].correct}
-                      answerChangedHandler={this.answerChangedHandler}
-                      correctAnswerHandler={this.correctAnswerHandler}
-                      removeAnswerHandler={this.removeAnswerHandler}
-                      clearValidationHandler={this.clearValidationHandler}
+                      answerChangedHandler={answerChangedHandler}
+                      correctAnswerHandler={correctAnswerHandler}
+                      removeAnswerHandler={removeAnswerHandler}
+                      clearValidationHandler={clearValidationHandler}
                       error={
                         fieldErrors.answerindexes.length > 0 &&
                         fieldErrors.answerindexes.includes(index)
                       }
-                      errormessage={this.state.fieldErrors.answer}
+                      errormessage={fieldErrors.answer}
                     />
                   ))
                 ) : (
@@ -497,79 +402,65 @@ const QuestionForm = props => {
             <CategorySelect
               //selectedCategory={selectedCategory}
               selectedCategory={
-                this.props.pageType === "edit"
+                props.pageType === "edit"
                   ? fields.category.value
-                  : this.props.addQuestionCriteria.category
+                  : props.addQuestionCriteria.category
               }
-              questionCategorySelectHandler={this.questionCategorySelectHandler}
-              errormessage={this.state.fieldErrors.category}
+              questionCategorySelectHandler={questionCategorySelectHandler}
+              errormessage={fieldErrors.category}
             />
             <QuestionType
-              addQuestionType={this.props.addQuestionType}
+              addQuestionType={props.addQuestionType}
               selectedQuestionType={fields.questiontype}
-              questionTypeSelectHandler={this.questionTypeSelectHandler}
-              errormessage={this.state.fieldErrors.questiontype}
+              questionTypeSelectHandler={questionTypeSelectHandler}
+              errormessage={fieldErrors.questiontype}
             />
             <QuestionDifficulty
               selectedQuestionDifficulty={fields.questiondifficulty}
-              questionDifficultySelectHandler={
-                this.questionDifficultySelectHandler
-              }
-              errormessage={this.state.fieldErrors.questiondifficulty}
+              questionDifficultySelectHandler={questionDifficultySelectHandler}
+              errormessage={fieldErrors.questiondifficulty}
             />
             <QuestionPublishedStatus
-              publishedStatus={this.state.fields.published ? "true" : "false"}
-              questionPublishedChangedHandler={
-                this.questionPublishedChangedHandler
-              }
+              publishedStatus={fields.published ? "true" : "false"}
+              questionPublishedChangedHandler={questionPublishedChangedHandler}
             />
           </Grid.Column>
         </Grid>
 
         <div className="formButtonGroup">
-          {!this.state.questionSubmitted ? (
+          {!questionSubmitted ? (
             <Fragment>
-              <Button
-                color="green"
-                size="large"
-                onClick={this.formSubmitHandler}
-              >
+              <Button color="green" size="large" onClick={formSubmitHandler}>
                 Submit
               </Button>
-              <Button
-                color="grey"
-                size="large"
-                onClick={this.props.history.goBack}
-              >
+              <Button color="grey" size="large" onClick={props.history.goBack}>
                 Cancel
               </Button>
             </Fragment>
           ) : (
             <Fragment>
-              {this.props.pageType === "edit" ? (
-                <Button primary onClick={this.props.history.goBack}>
+              {props.pageType === "edit" ? (
+                <Button primary onClick={props.history.goBack}>
                   Go Back
                 </Button>
               ) : (
-                <Button primary onClick={this.gotoQuestionsPageHandler}>
+                <Button primary onClick={gotoQuestionsPageHandler}>
                   See All Questions
                 </Button>
               )}
-              <Button primary onClick={this.clearFormHandler}>
+              <Button primary onClick={clearFormHandler}>
                 Add New Question
               </Button>
             </Fragment>
           )}
         </div>
         <FormSuccessMessage
-          reveal={this.state.questionSubmitted}
+          reveal={questionSubmitted}
           header={
-            this.props.pageType === "edit"
-              ? "Question Updated"
-              : "Question Added"
+            props.pageType === "edit" ? "Question Updated" : "Question Added"
           }
           content={
-            this.props.pageType === "edit"
+            props.pageType === "edit"
               ? "You've successfully updated the question."
               : "You've successfully added the question."
           }
