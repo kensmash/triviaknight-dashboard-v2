@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const CategoryType = require("../../models/CategoryType");
 //auth helpers
 const {

@@ -1,5 +1,5 @@
-const Category = require("../../models/Category");
 const mongoose = require("mongoose");
+const Category = require("../../models/Category");
 //auth helpers
 const {
   requiresAuth,

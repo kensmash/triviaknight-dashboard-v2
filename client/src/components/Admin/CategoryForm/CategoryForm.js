@@ -45,7 +45,7 @@ const CategoryForm = props => {
       setFields({
         categoryname: category.name,
         categorytype: category.type._id,
-        categorygenres: category.genres,
+        categorygenres: category.genres.map(genre => genre._id),
         categorydescription: category.description,
         published: category.published,
         partycategory: category.partycategory || false,
@@ -182,7 +182,7 @@ const CategoryForm = props => {
         { query: categoriesQuery }
       ]
     });
-    setSubmittedCategoryName(graphqlResponse.data.addcategory.name);
+    setSubmittedCategoryName(graphqlResponse.data.upsertcategory.name);
   };
 
   const clearFormHandler = () => {
@@ -208,7 +208,7 @@ const CategoryForm = props => {
       <Form.Field required>
         <label>Category Type</label>
         <CatTypeSelect
-          value={props.categorytypevalue}
+          value={fields.categorytype}
           placeholder="Select Category Type..."
           catTypeSelectHandler={(event, data) =>
             catTypeSelectHandler(event, data)
@@ -220,17 +220,14 @@ const CategoryForm = props => {
         />
       </Form.Field>
 
-      <Form.Field>
-        <label>Category Genres</label>
-        <CatGenreSelect
-          value={fields.categorygenres}
-          categorytype={fields.categorytype}
-          placeholder="Select Category Genre(s)..."
-          catGenreSelectHandler={(event, data) =>
-            catGenreSelectHandler(event, data)
-          }
-        />
-      </Form.Field>
+      <CatGenreSelect
+        value={fields.categorygenres}
+        categorytype={fields.categorytype}
+        placeholder="Select Category Genre(s)..."
+        catGenreSelectHandler={(event, data) =>
+          catGenreSelectHandler(event, data)
+        }
+      />
 
       <Form.Field>
         <Form.TextArea

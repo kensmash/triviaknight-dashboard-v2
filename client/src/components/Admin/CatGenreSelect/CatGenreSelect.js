@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Dropdown } from "semantic-ui-react";
+import { Form, Transition, Dropdown } from "semantic-ui-react";
 //graphql
 import { useQuery } from "@apollo/react-hooks";
 import QUERY_CATEGORYGENRES from "../../../apollo/queries/categoryGenres";
@@ -23,17 +23,26 @@ const CatGenreSelect = props => {
   }));
 
   return (
-    <Dropdown
-      placeholder={props.placeholder}
-      value={props.value}
-      fluid
-      search
-      selection
-      multiple
-      clearable
-      onChange={props.catGenreSelectHandler}
-      options={genres}
-    />
+    <Transition
+      visible={genres.length > 0}
+      animation="slide down"
+      duration={300}
+    >
+      <Form.Field>
+        <label>Category Genres</label>
+        <Dropdown
+          placeholder={props.placeholder}
+          value={props.value}
+          fluid
+          search
+          selection
+          multiple
+          clearable
+          onChange={props.catGenreSelectHandler}
+          options={genres}
+        />
+      </Form.Field>
+    </Transition>
   );
 };
 
