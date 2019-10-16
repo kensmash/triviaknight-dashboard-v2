@@ -102,16 +102,6 @@ const resolvers = {
   },
 
   Mutation: {
-    addcategory: requiresAdmin.createResolver(async (parent, { input }) => {
-      try {
-        const category = await new Category(input);
-        const newCategory = await category.save();
-        return newCategory;
-      } catch (error) {
-        console.error(error);
-      }
-    }),
-
     upsertcategory: requiresAdmin.createResolver(async (parent, { input }) => {
       try {
         const upsertedCategory = await Category.findOneAndUpdate(
@@ -127,36 +117,6 @@ const resolvers = {
         console.error(error);
       }
     }),
-
-    editcategory: requiresAdmin.createResolver(
-      async (parent, { input }, context) => {
-        try {
-          const editedCategory = await Category.findOneAndUpdate(
-            { _id: input.id },
-            {
-              $set: {
-                name: input.name,
-                imageurl: input.imageurl,
-                description: input.description,
-                type: input.type,
-                genres: input.genres,
-                published: input.published,
-                partycategory: input.partycategory,
-                showasnew: input.showasnew,
-                showasupdated: input.showasupdated,
-                showaspopular: input.showaspopular,
-                joustexclusive: input.joustexclusive
-              }
-            },
-            { new: true }
-          );
-
-          return editedCategory;
-        } catch (error) {
-          console.error(error);
-        }
-      }
-    ),
 
     deletecategory: requiresAdmin.createResolver(async (parent, { id }) => {
       try {

@@ -58,40 +58,18 @@ const resolvers = {
   },
 
   Mutation: {
-    addcategorygenre: requiresAdmin.createResolver(
+    upsertcategorygenre: requiresAdmin.createResolver(
       async (parent, { input }) => {
         try {
-          const categorygenre = new CategoryGenre(input);
-          const newCategoryGenre = await categorygenre.save();
-          return newCategoryGenre;
-        } catch (error) {
-          console.error(error);
-        }
-      }
-    ),
-
-    editcategorygenre: requiresAdmin.createResolver(
-      async (parent, { input }) => {
-        try {
-          if (input.pressluckactive) {
-            //reset press luck active on other genres
-            await CategoryGenre.updateMany({
-              $set: { pressluckactive: false }
-            });
-          }
-          const editedCategoryGenre = await CategoryGenre.findOneAndUpdate(
-            { _id: id },
+          const upsertedCategoryGenre = await CategoryGenre.findOneAndUpdate(
             {
-              $set: {
-                name: input.name,
-                categorytypes: input.categorytypes,
-                playable: input.playable,
-                pressluckactive: input.pressluckactive
-              }
+              _id: mongoose.Types.ObjectId(input.id)
             },
-            { new: true }
+            input,
+            { upsert: true, new: true }
           );
-          return editedCategoryGenre;
+
+          return upsertedCategoryGenre;
         } catch (error) {
           console.error(error);
         }

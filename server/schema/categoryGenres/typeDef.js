@@ -45,8 +45,7 @@ const typeDef = gql`
   }
 
   extend type Mutation {
-    addcategorygenre(input: addCategoryGenreInput): CategoryGenre
-    editcategorygenre(input: editCategoryGenreInput): CategoryGenre
+    upsertcategorygenre(input: editCategoryGenreInput): CategoryGenre
     deletecategorygenre(id: ID!): CategoryGenre
   }
 `;

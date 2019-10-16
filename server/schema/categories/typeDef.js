@@ -79,9 +79,7 @@ const typeDef = gql`
   }
 
   extend type Mutation {
-    addcategory(input: addCategoryInput): Category
     upsertcategory(input: editCategoryInput): Category
-    editcategory(input: editCategoryInput): Category
     deletecategory(id: ID!): Category
   }
 `;
