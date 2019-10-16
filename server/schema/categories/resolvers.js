@@ -40,7 +40,8 @@ const resolvers = {
           .limit(input.limit)
           .populate("type")
           .populate("genres"),
-        Category.find(queryBuilder(input)).count()
+        //Category.find(queryBuilder(input)).count()
+        Category.countDocuments(queryBuilder(input))
       ]);
       const categoryResults = categories[0];
       const categoryCount = categories[1];
@@ -54,8 +55,8 @@ const resolvers = {
     categorieswidget: requiresAdmin.createResolver(async (parent, args) => {
       try {
         const widget = await Promise.all([
-          Category.find().count(),
-          Category.find({ published: { $eq: false } }).count()
+          Category.estimatedDocumentCount(),
+          Category.countDocuments({ published: { $eq: false } })
         ]);
 
         const totalcategories = widget[0];
@@ -113,13 +114,15 @@ const resolvers = {
 
     upsertcategory: requiresAdmin.createResolver(async (parent, { input }) => {
       try {
-        await Category.findOneAndUpdate(
+        const upsertedCategory = await Category.findOneAndUpdate(
           {
             _id: mongoose.Types.ObjectId(input.id)
           },
           input,
           { upsert: true, new: true }
         );
+
+        return upsertedCategory;
       } catch (error) {
         console.error(error);
       }

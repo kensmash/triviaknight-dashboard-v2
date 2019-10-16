@@ -18,6 +18,7 @@ const schema = require("./schema/schema");
 
 mongoose.connect(keys.mongoURI, {
   useUnifiedTopology: true,
+  useFindAndModify: false,
   useNewUrlParser: true,
   useCreateIndex: true
 });

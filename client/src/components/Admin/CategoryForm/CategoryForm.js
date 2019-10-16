@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { Form, Button, Transition, Checkbox } from "semantic-ui-react";
+import { Form, Button, Checkbox } from "semantic-ui-react";
 //components
 import CatTypeSelect from "../CatTypeSelect/CatTypeSelect";
 import CatGenreSelect from "../CatGenreSelect/CatGenreSelect";
@@ -150,6 +150,7 @@ const CategoryForm = props => {
     const graphqlResponse = await upsertCategory({
       variables: {
         input: {
+          id: props.pageType === "edit" ? props.category._id : null,
           name: fields.categoryname,
           type: fields.categorytype,
           genres: fields.categorygenres,
