@@ -1,16 +1,15 @@
 import React from "react";
 import PropTypes from "prop-types";
-import Select from "react-select";
+import { Dropdown } from "semantic-ui-react";
 
 const DifficultySelect = props => (
-  <Select
-    name="form-field-name"
+  <Dropdown
     value={props.value}
     placeholder="Filter by Difficulty"
     onChange={props.difficultySelectHandler}
     options={[
-      { value: "Normal", label: "Normal" },
-      { value: "Hard", label: "Hard" }
+      { value: "Normal", text: "Normal" },
+      { value: "Hard", text: "Hard" }
     ]}
   />
 );

@@ -1,16 +1,16 @@
 import React from "react";
 import PropTypes from "prop-types";
-import Select from "react-select";
+import { Dropdown } from "semantic-ui-react";
 
 const StatusSelect = props => (
-  <Select
+  <Dropdown
     name="form-field-name"
     value={props.value}
     placeholder="Filter by Status"
     onChange={props.publishedSelectHandler}
     options={[
-      { value: false, label: "Draft" },
-      { value: true, label: "Published" }
+      { value: false, text: "Draft" },
+      { value: true, text: "Published" }
     ]}
   />
 );

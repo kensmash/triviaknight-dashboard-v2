@@ -1,19 +1,15 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Query } from "react-apollo";
-import Select from "react-select";
-//css
-import "react-select/dist/react-select.css";
+import { Dropdown } from "semantic-ui-react";
 
 const TypeSelect = props => (
-  <Select
-    name="form-field-name"
+  <Dropdown
     value={props.value}
     placeholder="Filter by Type"
     onChange={props.typeSelectHandler}
     options={[
-      { value: "Multiple Choice", label: "Multiple Choice" },
-      { value: "True/False", label: "True/False" }
+      { value: "Multiple Choice", text: "Multiple Choice" },
+      { value: "True/False", text: "True/False" }
     ]}
   />
 );

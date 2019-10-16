@@ -1,34 +1,28 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Query } from "react-apollo";
-import Select from "react-select";
-//query
-import categoriesQuery from "../../../../queries/categories";
-//css
-import "react-select/dist/react-select.css";
+import { Dropdown } from "semantic-ui-react";
+//graphql
+import { useQuery } from "@apollo/react-hooks";
+import QUERY_CATEGORIES from "../../../../apollo/queries/categories";
 
-const CategorySelect = props => (
-  <Query query={categoriesQuery}>
-    {({ loading, error, data }) => {
-      if (loading) return <div>Loading...</div>;
-      if (error) return <div>Error :(</div>;
+const CategorySelect = props => {
+  const { loading, error, data } = useQuery(QUERY_CATEGORIES);
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error :(</div>;
 
-      return (
-        <Select
-          name="categoryselect"
-          value={props.value}
-          placeholder="Filter by Category"
-          onChange={props.categorySelectHandler}
-          inputProps={{ type: "react-type" }}
-          options={data.categories.map(item => ({
-            value: item._id,
-            label: item.name
-          }))}
-        />
-      );
-    }}
-  </Query>
-);
+  return (
+    <Dropdown
+      value={props.value}
+      placeholder="Filter by Category"
+      onChange={props.categorySelectHandler}
+      options={data.categories.map(item => ({
+        key: item._id,
+        value: item._id,
+        text: item.name
+      }))}
+    />
+  );
+};
 
 CategorySelect.propTypes = {
   value: PropTypes.string,
