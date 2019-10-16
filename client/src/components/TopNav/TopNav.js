@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import PropTypes from "prop-types";
 import { gql } from "apollo-boost";
 import { Link } from "react-router-dom";
 import { Menu, Dropdown } from "semantic-ui-react";
@@ -36,40 +35,40 @@ const TopNav = props => {
         />
 
         <Menu.Menu position="right">
-          {props.currentUser && props.currentUser.isAdmin ? (
+          {currentUser && currentUser.isAdmin ? (
             <>
               <Menu.Item as={Link} to={"/admin"} name="dashboard" />
               <Dropdown item text="Questions">
                 <Dropdown.Menu>
                   <Dropdown.Item
                     as={Link}
-                    to={"/questions"}
+                    to={"/admin/questions"}
                     active={activeItem === "questions"}
                   >
                     All Questions
                   </Dropdown.Item>
                   <Dropdown.Divider />
-                  <Dropdown.Item as={Link} to={"/questions/new"}>
+                  <Dropdown.Item as={Link} to={"/admin/questions/new"}>
                     New Question
                   </Dropdown.Item>
-                  <Dropdown.Item as={Link} to={"/questions/reports"}>
+                  <Dropdown.Item as={Link} to={"/admin/questions/reports"}>
                     Question Reports
                   </Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
               <Dropdown item text="Categories">
                 <Dropdown.Menu>
-                  <Dropdown.Item as={Link} to={"categories"}>
+                  <Dropdown.Item as={Link} to={"/admin/categories"}>
                     Categories
                   </Dropdown.Item>
                   <Dropdown.Divider />
-                  <Dropdown.Item as={Link} to={"categorytypes"}>
+                  <Dropdown.Item as={Link} to={"/admin/categorytypes"}>
                     Category Types
                   </Dropdown.Item>
-                  <Dropdown.Item as={Link} to={"categorygenres"}>
+                  <Dropdown.Item as={Link} to={"/admin/categorygenres"}>
                     Category Genres
                   </Dropdown.Item>
-                  <Dropdown.Item as={Link} to={"categorygroups"}>
+                  <Dropdown.Item as={Link} to={"/admin/categorygroups"}>
                     Category Groups
                   </Dropdown.Item>
                 </Dropdown.Menu>
@@ -77,16 +76,16 @@ const TopNav = props => {
 
               <Dropdown item text="Games">
                 <Dropdown.Menu>
-                  <Dropdown.Item as={Link} to={"joustgames"}>
+                  <Dropdown.Item as={Link} to={"/admin/joustgames"}>
                     Joust Games
                   </Dropdown.Item>
-                  <Dropdown.Item as={Link} to={"siegegames"}>
+                  <Dropdown.Item as={Link} to={"/admin/siegegames"}>
                     Siege Games
                   </Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
 
-              <Menu.Item as={Link} to={"users"} name="Users" />
+              <Menu.Item as={Link} to={"/admin/users"} name="Users" />
             </>
           ) : null}
           {currentUser ? (
@@ -98,10 +97,6 @@ const TopNav = props => {
       </Menu>
     </>
   );
-};
-
-TopNav.propTypes = {
-  currentUser: PropTypes.object
 };
 
 const LOGOUT_MUTATION = gql`

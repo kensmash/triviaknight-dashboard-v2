@@ -221,6 +221,7 @@ const CategoryForm = props => {
       </Form.Field>
 
       <CatGenreSelect
+        pagetype="catform"
         value={fields.categorygenres}
         categorytype={fields.categorytype}
         placeholder="Select Category Genre(s)..."

@@ -117,6 +117,7 @@ const CategoriesList = props => {
           </Grid.Column>
           <Grid.Column className="tablePerPageColumn">
             <CatGenreSelect
+              pagetype="catlist"
               value={categorySearchCriteria.genres}
               categorytype={categorySearchCriteria.type}
               placeholder="Filter By Genres"

@@ -15,6 +15,20 @@ const expo = new Expo();
 const keys = require("./config/keys");
 //schema
 const schema = require("./schema/schema");
+//scheduled jobs
+const { newCategories } = require("./jobs/jobs-categories");
+const { weeklyPressLuckGenre } = require("./jobs/jobs-pressluck");
+const {
+  deleteDeclinedJoustGames,
+  timeOutJoustGames,
+  deleteTimedOutJoustGames,
+  runningOutOfTime
+} = require("./jobs/jobs-joustgames");
+const {
+  checkPushReceipts,
+  deletePushTickets,
+  pushTicketErrorCheck
+} = require("./jobs/jobs-pushnotifications");
 
 mongoose.connect(keys.mongoURI, {
   useUnifiedTopology: true,

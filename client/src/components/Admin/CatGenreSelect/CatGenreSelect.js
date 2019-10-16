@@ -23,13 +23,8 @@ const CatGenreSelect = props => {
   }));
 
   return (
-    <Transition
-      visible={genres.length > 0}
-      animation="slide down"
-      duration={300}
-    >
-      <Form.Field>
-        <label>Category Genres</label>
+    <>
+      {props.pagetype !== "catform" ? (
         <Dropdown
           placeholder={props.placeholder}
           value={props.value}
@@ -41,14 +36,36 @@ const CatGenreSelect = props => {
           onChange={props.catGenreSelectHandler}
           options={genres}
         />
-      </Form.Field>
-    </Transition>
+      ) : (
+        <Transition
+          visible={genres.length > 0}
+          animation="slide down"
+          duration={300}
+        >
+          <Form.Field>
+            <label>Category Genres</label>
+            <Dropdown
+              placeholder={props.placeholder}
+              value={props.value}
+              fluid
+              search
+              selection
+              multiple
+              clearable
+              onChange={props.catGenreSelectHandler}
+              options={genres}
+            />
+          </Form.Field>
+        </Transition>
+      )}
+    </>
   );
 };
 
 CatGenreSelect.propTypes = {
   value: PropTypes.array,
   placeholder: PropTypes.string.isRequired,
+  pagetype: PropTypes.string,
   categorytype: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   catGenreSelectHandler: PropTypes.func
 };
