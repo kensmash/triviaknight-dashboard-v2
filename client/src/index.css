@@ -118,13 +118,6 @@ img {
   font-weight: 700;
 }
 
-/* match react-select styles to semantic ui react, a bit anyway */
-.Select-control {
-  height: 38px;
-  border: 1px solid rgba(34, 36, 38, 0.15);
-  color: rgba(0, 0, 0, 0.87);
-}
-
 .formButtonGroup {
   margin: 1em 0 1.5em;
 }
@@ -139,8 +132,8 @@ img {
   margin-bottom: 0.75em;
 }
 
-.ui.form .answerinput {
-  margin: 0.5em 0 1em;
+.answerinput {
+  margin: 0.5em 0 1em !important;
 }
 
 .pushactionbuttonscontainer {
@@ -206,4 +199,20 @@ img {
   .mobileColumn {
     padding-top: 0;
   }
+}
+
+/*adjust input font size */
+
+.form h3 {
+  font-size: 1.5em;
+}
+
+.card,
+.field label {
+  font-size: 1.2em !important;
+}
+
+#question,
+#answer {
+  font-size: 1.2em !important;
 }

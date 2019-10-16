@@ -12,7 +12,7 @@ const QuestionType = props => (
           label="Multiple Choice"
           name="type"
           value="Multiple Choice"
-          checked={props.selectedQuestionType == "Multiple Choice"}
+          checked={props.selectedQuestionType === "Multiple Choice"}
           onChange={(event, value) =>
             props.questionTypeSelectHandler(event, value)
           }
@@ -23,7 +23,7 @@ const QuestionType = props => (
           label="True/False"
           name="type"
           value="True/False"
-          checked={props.selectedQuestionType == "True/False"}
+          checked={props.selectedQuestionType === "True/False"}
           onChange={(event, value) =>
             props.questionTypeSelectHandler(event, value)
           }

@@ -12,7 +12,7 @@ const QuestionDifficulty = props => (
           label="Normal"
           name="difficulty"
           value="Normal"
-          checked={props.selectedQuestionDifficulty == "Normal"}
+          checked={props.selectedQuestionDifficulty === "Normal"}
           onChange={(event, value) =>
             props.questionDifficultySelectHandler(event, value)
           }
@@ -23,7 +23,7 @@ const QuestionDifficulty = props => (
           label="Hard"
           name="difficulty"
           value="Hard"
-          checked={props.selectedQuestionDifficulty == "Hard"}
+          checked={props.selectedQuestionDifficulty === "Hard"}
           onChange={(event, value) =>
             props.questionDifficultySelectHandler(event, value)
           }

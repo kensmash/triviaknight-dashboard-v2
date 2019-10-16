@@ -8,20 +8,24 @@ import QuestionPublishedStatus from "./helpers/QuestionPublishedStatus";
 import CategorySelect from "./helpers/CategorySelect";
 import QuestionType from "./helpers/QuestionType";
 import QuestionDifficulty from "./helpers/QuestionDifficulty";
-import FormErrorMessage from "../../../components/FormMessage/FormErrorMessage";
-import FormSuccessMessage from "../../../components/FormMessage/FormSuccessMessage";
 import FormErrorMessage from "../../FormMessage/FormErrorMessage";
 import FormSuccessMessage from "../../FormMessage/FormSuccessMessage";
 //graphql
 import { gql } from "apollo-boost";
-import { useMutation } from "@apollo/react-hooks";
+import { useQuery, useMutation } from "@apollo/react-hooks";
+import QUERY_ADDQUESTIONCRITERIA from "../../../apollo/queries/client-addQuestionCriteria";
 
 const QuestionForm = props => {
   const [questionSubmitted, setQuestionSubmitted] = useState(false);
   const [redirect, setRedirect] = useState(false);
   const initialFields = {
     question: "",
-    answers: [],
+    answers: [
+      { answer: "", correct: false },
+      { answer: "", correct: false },
+      { answer: "", correct: false },
+      { answer: "", correct: false }
+    ],
     category: {},
     questiontype: "Multiple Choice",
     questiondifficulty: "Normal",
@@ -43,10 +47,16 @@ const QuestionForm = props => {
   };
 
   const [fields, setFields] = useState(initialFields);
-
   const [fieldErrors, setFieldErrors] = useState(initialFieldErrors);
 
+  const { data: { addQuestionCriteria } = {} } = useQuery(
+    QUERY_ADDQUESTIONCRITERIA
+  );
+
   const [upsertQuestion] = useMutation(MUTATION_UPSERTQUESTION);
+  const [updateAddQuestionCriteria] = useMutation(
+    MUTATION_UPDATEADDQUESTIONCRITERIA
+  );
 
   useEffect(() => {
     if (props.pageType === "edit") {
@@ -67,16 +77,6 @@ const QuestionForm = props => {
         videourl: question.videourl,
         audiourl: question.audiourl,
         published: question.published
-      });
-    } else {
-      setFields({
-        ...fields,
-        answers: [
-          { answer: "", correct: false },
-          { answer: "", correct: false },
-          { answer: "", correct: false },
-          { answer: "", correct: false }
-        ]
       });
     }
   }, [props]);
@@ -404,7 +404,7 @@ const QuestionForm = props => {
               selectedCategory={
                 props.pageType === "edit"
                   ? fields.category.value
-                  : props.addQuestionCriteria.category
+                  : addQuestionCriteria.category
               }
               questionCategorySelectHandler={questionCategorySelectHandler}
               errormessage={fieldErrors.category}
@@ -429,16 +429,16 @@ const QuestionForm = props => {
 
         <div className="formButtonGroup">
           {!questionSubmitted ? (
-            <Fragment>
+            <>
               <Button color="green" size="large" onClick={formSubmitHandler}>
                 Submit
               </Button>
               <Button color="grey" size="large" onClick={props.history.goBack}>
                 Cancel
               </Button>
-            </Fragment>
+            </>
           ) : (
-            <Fragment>
+            <>
               {props.pageType === "edit" ? (
                 <Button primary onClick={props.history.goBack}>
                   Go Back
@@ -451,7 +451,7 @@ const QuestionForm = props => {
               <Button primary onClick={clearFormHandler}>
                 Add New Question
               </Button>
-            </Fragment>
+            </>
           )}
         </div>
         <FormSuccessMessage
@@ -475,6 +475,14 @@ const MUTATION_UPSERTQUESTION = gql`
     upsertquestion(input: $input) {
       _id
       question
+    }
+  }
+`;
+
+const MUTATION_UPDATEADDQUESTIONCRITERIA = gql`
+  mutation updateAddQuestionCriteria($category: ID) {
+    updateAddQuestionCriteria(category: $category) @client {
+      category
     }
   }
 `;
