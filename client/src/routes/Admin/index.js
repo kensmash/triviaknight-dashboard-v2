@@ -7,6 +7,8 @@ import Dashboard from "./Dashboard/Dashboard";
 //categories
 import Categories from "./Categories/Categories";
 import EditCategory from "./EditCategory/EditCategory";
+//questions
+import Questions from "./Questions/Questions";
 
 // when the url matches `/admin` this component renders
 class Admin extends React.PureComponent {
@@ -37,6 +39,11 @@ class Admin extends React.PureComponent {
               path={match.url + "/categories/:_id"}
               name="Edit Category"
               component={EditCategory}
+            />
+            <Route
+              exact
+              path={match.url + "/questions"}
+              component={Questions}
             />
           </Switch>
         </Layout>

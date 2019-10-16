@@ -5,7 +5,7 @@ const ExpoPushReceipt = require("../models/ExpoPushReceipt");
 const {
   sendPushTicketEmail,
   sendPushReceiptEmail
-} = require("../schema/resolverhelpers/helper-sendgrid");
+} = require("../schema/_helpers/helper-sendgrid");
 
 //check push receipts
 const checkPushReceipts = schedule.scheduleJob(

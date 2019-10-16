@@ -19,6 +19,7 @@ const CatTypeSelect = props => {
       placeholder={props.placeholder}
       value={props.value}
       fluid
+      search
       selection
       clearable
       multiple={props.type === "genre" ? true : false}
