@@ -33,12 +33,12 @@ const CategoriesList = props => {
       limit: categorySearchCriteria.limit,
       name: categorySearchCriteria.name,
       type: categorySearchCriteria.type,
-      genres: categorySearchCriteria.genres.map(item => item.value),
-      partycategory: categorySearchCriteria.partycategory == "true"
+      genres: categorySearchCriteria.genres,
+      partycategory: categorySearchCriteria.partycategory === "true"
     }
   };
 
-  const { loading, error, data: { categoriespage } = {}, fetchMore } = useQuery(
+  const { loading, data: { categoriespage } = {}, fetchMore } = useQuery(
     QUERY_CATEGORIESPAGE,
     {
       variables,
@@ -66,7 +66,7 @@ const CategoriesList = props => {
     updateCategorySearch({
       variables: {
         ...categorySearchCriteria,
-        type: data === null ? null : data.value
+        type: data.value === "" ? null : data.value
       }
     });
   };
@@ -75,22 +75,20 @@ const CategoriesList = props => {
     updateCategorySearch({
       variables: {
         ...categorySearchCriteria,
-        partycategory: data === null ? null : data.value
+        partycategory: data.value === "" ? null : data.value
       }
     });
   };
 
   const catGenreSelectHandler = (_e, data) => {
+    console.log(data.value);
     updateCategorySearch({
       variables: {
         ...categorySearchCriteria,
-        genres: data === null ? [] : data.value
+        genres: data.value
       }
     });
   };
-
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error :(</div>;
 
   const { pages, totalrecords, categories } = categoriespage;
   const { match, history } = props;
@@ -120,7 +118,7 @@ const CategoriesList = props => {
           <Grid.Column className="tablePerPageColumn">
             <CatGenreSelect
               value={categorySearchCriteria.genres}
-              categorytype={categorySearchCriteria.genre}
+              categorytype={categorySearchCriteria.type}
               placeholder="Filter By Genres"
               catGenreSelectHandler={(event, data) =>
                 catGenreSelectHandler(event, data)
@@ -141,59 +139,67 @@ const CategoriesList = props => {
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          {categories.length ? (
-            categories.map(cat => (
-              <Table.Row key={cat._id}>
-                <Table.Cell>
-                  {cat.partycategory && (
-                    <Label as="a" color="orange" horizontal>
-                      Party
-                    </Label>
-                  )}
-                  {cat.showasnew && (
-                    <Label as="a" color="teal" horizontal>
-                      New
-                    </Label>
-                  )}
-                  {cat.showaspopular && (
-                    <Label as="a" color="blue" horizontal>
-                      Popular
-                    </Label>
-                  )}
-                  <Link to={`${match.url}/${cat._id}`}>{cat.name}</Link>
-                </Table.Cell>
-                <Table.Cell className="publishedstatuscell">
-                  {cat.published ? "Published" : "Draft"}
-                </Table.Cell>
-
-                <Table.Cell className="publishedstatuscell">
-                  {cat.joustexclusive ? "Yes" : "No"}
-                </Table.Cell>
-
-                <Table.Cell>{cat.type && cat.type.name}</Table.Cell>
-
-                <Table.Cell>
-                  {cat.genres.length
-                    ? cat.genres.map(genre => genre.name).join(", ")
-                    : null}
-                </Table.Cell>
-                <Table.Cell collapsing>
-                  <Button
-                    icon
-                    size="mini"
-                    onClick={() => history.push(`${match.url}/${cat._id}`)}
-                  >
-                    <Icon name="edit" />
-                  </Button>
-                </Table.Cell>
-              </Table.Row>
-            ))
-          ) : (
+          {loading ? (
             <Table.Row>
-              <Table.Cell>
-                <p>Sorry, no records matched your search.</p>
-              </Table.Cell>
+              <Table.Cell>Loading...</Table.Cell>
             </Table.Row>
+          ) : (
+            <>
+              {categories.length ? (
+                categories.map(cat => (
+                  <Table.Row key={cat._id}>
+                    <Table.Cell>
+                      {cat.partycategory && (
+                        <Label as="a" color="orange" horizontal>
+                          Party
+                        </Label>
+                      )}
+                      {cat.showasnew && (
+                        <Label as="a" color="teal" horizontal>
+                          New
+                        </Label>
+                      )}
+                      {cat.showaspopular && (
+                        <Label as="a" color="blue" horizontal>
+                          Popular
+                        </Label>
+                      )}
+                      <Link to={`${match.url}/${cat._id}`}>{cat.name}</Link>
+                    </Table.Cell>
+                    <Table.Cell className="publishedstatuscell">
+                      {cat.published ? "Published" : "Draft"}
+                    </Table.Cell>
+
+                    <Table.Cell className="publishedstatuscell">
+                      {cat.joustexclusive ? "Yes" : "No"}
+                    </Table.Cell>
+
+                    <Table.Cell>{cat.type && cat.type.name}</Table.Cell>
+
+                    <Table.Cell>
+                      {cat.genres.length
+                        ? cat.genres.map(genre => genre.name).join(", ")
+                        : null}
+                    </Table.Cell>
+                    <Table.Cell collapsing>
+                      <Button
+                        icon
+                        size="mini"
+                        onClick={() => history.push(`${match.url}/${cat._id}`)}
+                      >
+                        <Icon name="edit" />
+                      </Button>
+                    </Table.Cell>
+                  </Table.Row>
+                ))
+              ) : (
+                <Table.Row>
+                  <Table.Cell>
+                    <p>Sorry, no records matched your search.</p>
+                  </Table.Cell>
+                </Table.Row>
+              )}
+            </>
           )}
         </Table.Body>
         <Table.Footer>

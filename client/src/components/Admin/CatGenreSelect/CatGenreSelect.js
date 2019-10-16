@@ -10,6 +10,7 @@ const CatGenreSelect = props => {
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error :(</div>;
   let categoryGenres = data.categoryGenres.slice();
+
   if (props.categorytype !== null) {
     categoryGenres = categoryGenres.filter(genre =>
       genre.categorytypes.some(type => type._id === props.categorytype)

@@ -18,7 +18,7 @@ const CategoryForm = props => {
 
   const initialState = {
     categoryname: "",
-    categorytype: { label: "", hasgenres: false, value: "" },
+    categorytype: "",
     categorygenres: [],
     categorydescription: "",
     published: false,
@@ -44,15 +44,8 @@ const CategoryForm = props => {
       const { category } = props;
       setFields({
         categoryname: category.name,
-        categorytype: {
-          label: category.type.name,
-          hasgenres: category.type.hasgenres,
-          value: category.type._id
-        },
-        categorygenres: category.genres.map(genre => ({
-          label: genre.name,
-          value: genre._id
-        })),
+        categorytype: category.type._id,
+        categorygenres: category.genres,
         categorydescription: category.description,
         published: category.published,
         partycategory: category.partycategory || false,
@@ -70,27 +63,16 @@ const CategoryForm = props => {
   };
 
   const catTypeSelectHandler = (_e, data) => {
-    if (data === null) {
-      setFields({
-        ...fields,
-        categorytype: { label: "", hasgenres: false, value: "" },
-        categorygenres: []
-      });
-    } else {
-      setFields({
-        ...fields,
-        categorytype: data.value
-      });
-      setFieldErrors({ ...fieldErrors, type: "" });
-    }
+    setFields({
+      ...fields,
+      categorytype: data.value
+    });
+
+    setFieldErrors({ ...fieldErrors, type: "" });
   };
 
   const catGenreSelectHandler = (_e, data) => {
-    if (data === null) {
-      setFields({ ...fields, categorygenres: [] });
-    } else {
-      setFields({ ...fields, categorygenres: [data.value] });
-    }
+    setFields({ ...fields, categorygenres: data.value });
   };
 
   const publishedCheckboxHandler = (_event, data) => {
@@ -169,10 +151,8 @@ const CategoryForm = props => {
       variables: {
         input: {
           name: fields.categoryname,
-          type: fields.categorytype.value,
-          genres: fields.categorygenres.length
-            ? fields.categorygenres.map(item => item.value)
-            : fields.categorygenres,
+          type: fields.categorytype,
+          genres: fields.categorygenres,
           description: fields.categorydescription,
           published: fields.published,
           partycategory: fields.partycategory,
@@ -193,7 +173,7 @@ const CategoryForm = props => {
               limit: categorySearchCriteria.limit,
               name: categorySearchCriteria.name,
               type: categorySearchCriteria.type,
-              genres: categorySearchCriteria.genres.map(item => item.value),
+              genres: categorySearchCriteria.genres,
               partycategory: categorySearchCriteria.partycategory
             }
           }
@@ -238,23 +218,19 @@ const CategoryForm = props => {
           errormessage={fieldErrors.type}
         />
       </Form.Field>
-      <Transition
-        visible={fields.categorytype.hasgenres}
-        animation="slide down"
-        duration={300}
-      >
-        <Form.Field>
-          <label>Category Genres</label>
-          <CatGenreSelect
-            value={fields.categorygenres}
-            categorytype={fields.categorytype.value}
-            placeholder="Select Category Genre(s)..."
-            catGenreSelectHandler={(event, data) =>
-              catGenreSelectHandler(event, data)
-            }
-          />
-        </Form.Field>
-      </Transition>
+
+      <Form.Field>
+        <label>Category Genres</label>
+        <CatGenreSelect
+          value={fields.categorygenres}
+          categorytype={fields.categorytype}
+          placeholder="Select Category Genre(s)..."
+          catGenreSelectHandler={(event, data) =>
+            catGenreSelectHandler(event, data)
+          }
+        />
+      </Form.Field>
+
       <Form.Field>
         <Form.TextArea
           required
