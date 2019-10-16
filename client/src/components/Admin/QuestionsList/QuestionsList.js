@@ -24,11 +24,11 @@ import QUERY_QUESTIONSPAGE from "../../../apollo/queries/questionsPage";
 import QUERY_QUESTIONSEARCHCRITERIA from "../../../apollo/queries/client-questionSearchCriteria";
 
 const QuestionsList = props => {
-  const [perPageOptions] = useState(
+  const [perPageOptions] = useState([
     { value: 10, text: "10" },
     { value: 15, text: "15" },
     { value: 20, text: "20" }
-  );
+  ]);
 
   const { data: { questionSearchCriteria } = {} } = useQuery(
     QUERY_QUESTIONSEARCHCRITERIA
@@ -53,12 +53,12 @@ const QuestionsList = props => {
       variables,
       fetchPolicy: "cache-and-network",
       onCompleted: data => {
-        //change currently selected page when no records for page greater than 1
+        //change currently selected page when no records for page greated than 1
         if (
-          !data.questionspage.categories.length &&
+          !data.questionspage.questions.length &&
           questionSearchCriteria.activePage > 1
         ) {
-          props.updateQuestionSearch({
+          this.props.updateQuestionSearch({
             variables: {
               ...questionSearchCriteria,
               activePage: 1
@@ -116,7 +116,6 @@ const QuestionsList = props => {
     });
   };
 
-  const { pages, totalrecords, questions } = questionspage;
   const { match, history } = props;
 
   return (
@@ -149,7 +148,9 @@ const QuestionsList = props => {
           >
             <TypeSelect
               value={questionSearchCriteria.type}
-              typeSelectHandler={type => typeSelectHandler(type)}
+              typeSelectHandler={(event, data) =>
+                typeSelectHandler(event, data)
+              }
             />
           </Grid.Column>
           <Grid.Column
@@ -160,7 +161,9 @@ const QuestionsList = props => {
           >
             <CategorySelect
               value={questionSearchCriteria.category}
-              categorySelectHandler={cat => categorySelectHandler(cat)}
+              categorySelectHandler={(event, data) =>
+                categorySelectHandler(event, data)
+              }
             />
           </Grid.Column>
           <Grid.Column
@@ -171,7 +174,9 @@ const QuestionsList = props => {
           >
             <DifficultySelect
               value={questionSearchCriteria.difficulty}
-              difficultySelectHandler={diff => difficultySelectHandler(diff)}
+              difficultySelectHandler={(event, data) =>
+                difficultySelectHandler(event, data)
+              }
             />
           </Grid.Column>
           <Grid.Column
@@ -182,7 +187,9 @@ const QuestionsList = props => {
           >
             <StatusSelect
               value={questionSearchCriteria.publishedstatus}
-              publishedSelectHandler={status => publishedSelectHandler(status)}
+              publishedSelectHandler={(event, data) =>
+                publishedSelectHandler(event, data)
+              }
             />
           </Grid.Column>
         </Grid.Row>
@@ -205,8 +212,8 @@ const QuestionsList = props => {
             </Table.Row>
           ) : (
             <>
-              {questions.length ? (
-                questions.map(ques => (
+              {questionspage.questions.length ? (
+                questionspage.questions.map(ques => (
                   <Table.Row key={ques._id}>
                     <Table.Cell>
                       <Link to={`${match.url}/${ques._id}`}>
@@ -257,38 +264,37 @@ const QuestionsList = props => {
                 <Grid.Column width={2}>
                   <div className="tableItemNumbers">
                     <p>
-                      {totalrecords} item{totalrecords !== 1 ? "s" : ""}
+                      {questionspage.totalrecords} item
+                      {questionspage.totalrecords !== 1 ? "s" : ""}
                     </p>
                   </div>
                 </Grid.Column>
 
                 <Grid.Column className="tablePaginationColumn">
-                  {pages >= 2 ? (
+                  {questionspage.pages >= 2 ? (
                     <Pagination
                       activePage={questionSearchCriteria.activePage}
-                      totalPages={pages}
+                      totalPages={questionspage.pages}
                       onPageChange={(e, { activePage }) =>
-                        this.props
-                          .updateQuestionSearch({
+                        updateQuestionSearch({
+                          variables: {
+                            ...questionSearchCriteria,
+                            activePage
+                          }
+                        }).then(() =>
+                          fetchMore({
                             variables: {
-                              ...questionSearchCriteria,
-                              activePage
+                              offset:
+                                questionSearchCriteria.limit *
+                                  parseInt(activePage, 10) -
+                                questionSearchCriteria.limit
+                            },
+                            updateQuery: (prev, { fetchMoreResult }) => {
+                              if (!fetchMoreResult) return prev;
+                              return fetchMoreResult;
                             }
                           })
-                          .then(({ variables }) =>
-                            fetchMore({
-                              variables: {
-                                offset:
-                                  questionSearchCriteria.limit *
-                                    parseInt(activePage, 10) -
-                                  questionSearchCriteria.limit
-                              },
-                              updateQuery: (prev, { fetchMoreResult }) => {
-                                if (!fetchMoreResult) return prev;
-                                return fetchMoreResult;
-                              }
-                            })
-                          )
+                        )
                       }
                     />
                   ) : null}

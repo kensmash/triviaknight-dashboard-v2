@@ -6,11 +6,14 @@ const StatusSelect = props => (
   <Dropdown
     name="form-field-name"
     value={props.value}
+    fluid
+    selection
+    clearable
     placeholder="Filter by Status"
     onChange={props.publishedSelectHandler}
     options={[
-      { value: false, text: "Draft" },
-      { value: true, text: "Published" }
+      { key: "Draft", value: false, text: "Draft" },
+      { key: "Published", value: true, text: "Published" }
     ]}
   />
 );

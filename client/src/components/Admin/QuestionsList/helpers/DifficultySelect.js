@@ -6,10 +6,13 @@ const DifficultySelect = props => (
   <Dropdown
     value={props.value}
     placeholder="Filter by Difficulty"
+    fluid
+    selection
+    clearable
     onChange={props.difficultySelectHandler}
     options={[
-      { value: "Normal", text: "Normal" },
-      { value: "Hard", text: "Hard" }
+      { key: "Normal", value: "Normal", text: "Normal" },
+      { key: "Hard", value: "Hard", text: "Hard" }
     ]}
   />
 );

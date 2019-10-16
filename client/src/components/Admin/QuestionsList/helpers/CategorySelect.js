@@ -10,16 +10,21 @@ const CategorySelect = props => {
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error :(</div>;
 
+  const cats = data.categories.map(item => ({
+    key: item._id,
+    value: item._id,
+    text: item.name
+  }));
+
   return (
     <Dropdown
       value={props.value}
+      fluid
+      selection
+      clearable
       placeholder="Filter by Category"
       onChange={props.categorySelectHandler}
-      options={data.categories.map(item => ({
-        key: item._id,
-        value: item._id,
-        text: item.name
-      }))}
+      options={cats}
     />
   );
 };

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { Button, Icon, Modal } from "semantic-ui-react";
 //graphql
-import gql from "apollo-boost";
+import { gql } from "apollo-boost";
 import { useMutation } from "@apollo/react-hooks";
 import questionsPageQuery from "../../../apollo/queries/questionsPage";
 

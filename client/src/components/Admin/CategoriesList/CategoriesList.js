@@ -90,7 +90,6 @@ const CategoriesList = props => {
     });
   };
 
-  const { pages, totalrecords, categories } = categoriespage;
   const { match, history } = props;
 
   return (
@@ -146,8 +145,8 @@ const CategoriesList = props => {
             </Table.Row>
           ) : (
             <>
-              {categories.length ? (
-                categories.map(cat => (
+              {categoriespage.categories.length ? (
+                categoriespage.categories.map(cat => (
                   <Table.Row key={cat._id}>
                     <Table.Cell>
                       {cat.partycategory && (
@@ -210,41 +209,40 @@ const CategoriesList = props => {
                 <Grid.Column width={2}>
                   <div className="tableItemNumbers">
                     <p>
-                      {totalrecords} item{totalrecords !== 1 ? "s" : ""}
+                      {categoriespage.totalrecords} item
+                      {categoriespage.totalrecords !== 1 ? "s" : ""}
                     </p>
                   </div>
                 </Grid.Column>
 
                 <Grid.Column className="tablePaginationColumn">
-                  {pages >= 2 ? (
+                  {categoriespage.pages >= 2 ? (
                     <Pagination
                       activePage={categorySearchCriteria.activePage}
-                      totalPages={pages}
+                      totalPages={categoriespage.pages}
                       onPageChange={(e, { activePage }) =>
-                        props
-                          .updateCategorySearch({
+                        updateCategorySearch({
+                          variables: {
+                            ...categorySearchCriteria,
+                            activePage
+                          }
+                        }).then(() =>
+                          fetchMore({
                             variables: {
-                              ...categorySearchCriteria,
-                              activePage
+                              input: {
+                                ...variables.input,
+                                offset:
+                                  categorySearchCriteria.limit *
+                                    parseInt(activePage, 10) -
+                                  categorySearchCriteria.limit
+                              }
+                            },
+                            updateQuery: (prev, { fetchMoreResult }) => {
+                              if (!fetchMoreResult) return prev;
+                              return fetchMoreResult;
                             }
                           })
-                          .then(() =>
-                            fetchMore({
-                              variables: {
-                                input: {
-                                  ...variables.input,
-                                  offset:
-                                    categorySearchCriteria.limit *
-                                      parseInt(activePage, 10) -
-                                    categorySearchCriteria.limit
-                                }
-                              },
-                              updateQuery: (prev, { fetchMoreResult }) => {
-                                if (!fetchMoreResult) return prev;
-                                return fetchMoreResult;
-                              }
-                            })
-                          )
+                        )
                       }
                     />
                   ) : null}

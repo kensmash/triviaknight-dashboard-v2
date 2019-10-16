@@ -6,10 +6,17 @@ const TypeSelect = props => (
   <Dropdown
     value={props.value}
     placeholder="Filter by Type"
+    fluid
+    selection
+    clearable
     onChange={props.typeSelectHandler}
     options={[
-      { value: "Multiple Choice", text: "Multiple Choice" },
-      { value: "True/False", text: "True/False" }
+      {
+        key: "Multiple Choice",
+        value: "Multiple Choice",
+        text: "Multiple Choice"
+      },
+      { key: "True/False", value: "True/False", text: "True/False" }
     ]}
   />
 );
