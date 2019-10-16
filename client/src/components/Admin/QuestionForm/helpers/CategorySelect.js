@@ -1,92 +1,91 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
-import { Query } from "react-apollo";
-import { Card, Form, Transition, Button, Icon } from "semantic-ui-react";
-import Select from "react-select";
+import {
+  Dropdown,
+  Card,
+  Form,
+  Transition,
+  Button,
+  Icon
+} from "semantic-ui-react";
 import CategoryForm from "../../../../components/Admin/CategoryForm/CategoryForm";
 import FormErrorMessage from "../../../../components/FormMessage/FormErrorMessage";
-//query
-import categoriesQuery from "../../../../queries/categories";
-//css
-import "react-select/dist/react-select.css";
+//graphql
+import { useQuery } from "@apollo/react-hooks";
+import QUERY_CATEGORIES from "../../../../apollo/queries/categories";
 
-class CategorySelect extends Component {
-  state = {
-    showCategoryForm: false
+const CategorySelect = props => {
+  const [showCategoryForm, setShowCategoryForm] = useState(false);
+
+  const { loading, error, data } = useQuery(QUERY_CATEGORIES);
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error :(</div>;
+
+  const cats = data.categories.map(item => ({
+    key: item._id,
+    value: item._id,
+    text: item.name
+  }));
+
+  const toggleCollapse = () => {
+    setShowCategoryForm(!showCategoryForm);
   };
 
-  toggleCollapse = () => {
-    this.setState({ showCategoryForm: !this.state.showCategoryForm });
-  };
-
-  questionCategorySelectHandler = category => {
-    if (this.state.showCategoryForm) {
-      this.setState({ showCategoryForm: !this.state.showCategoryForm });
+  const questionCategorySelectHandler = category => {
+    if (showCategoryForm) {
+      setShowCategoryForm(false);
     }
-    this.props.questionCategorySelectHandler(category);
+    props.questionCategorySelectHandler(category);
   };
 
-  render() {
-    return (
-      <Query query={categoriesQuery}>
-        {({ loading, error, data }) => {
-          if (loading) return <div>Loading...</div>;
-          if (error) return <div>Error :(</div>;
+  return (
+    <Card fluid>
+      <Card.Content>Category</Card.Content>
+      <Card.Content>
+        <Form.Field>
+          <Dropdown
+            value={props.value}
+            fluid
+            selection
+            clearable
+            placeholder="Filter by Category"
+            onChange={props.categorySelectHandler}
+            options={cats}
+          />
+        </Form.Field>
 
-          return (
-            <Card fluid>
-              <Card.Content>Category</Card.Content>
-              <Card.Content>
-                <Form.Field>
-                  <Select
-                    name="categoryselect"
-                    value={this.props.selectedCategory}
-                    placeholder="Select Category"
-                    onChange={this.questionCategorySelectHandler}
-                    inputProps={{ type: "react-type" }}
-                    options={data.categories.map(item => ({
-                      value: item._id,
-                      label: item.name
-                    }))}
-                  />
-                </Form.Field>
+        <Button
+          className="button-addnewcat"
+          icon
+          size="mini"
+          compact
+          labelPosition="left"
+          onClick={toggleCollapse}
+        >
+          <Icon name={showCategoryForm ? "minus" : "plus"} />
+          Add New
+        </Button>
 
-                <Button
-                  className="button-addnewcat"
-                  icon
-                  size="mini"
-                  compact
-                  labelPosition="left"
-                  onClick={this.toggleCollapse}
-                >
-                  <Icon name={this.state.showCategoryForm ? "minus" : "plus"} />
-                  Add New
-                </Button>
-
-                <Transition
-                  visible={this.state.showCategoryForm}
-                  animation="slide down"
-                  duration={400}
-                >
-                  <div className="categoryform">
-                    <CategoryForm
-                      pageType="question"
-                      catCreateHandler={this.questionCategorySelectHandler}
-                    />
-                  </div>
-                </Transition>
-                <FormErrorMessage
-                  reveal={this.props.errormessage !== ""}
-                  errormessage={this.props.errormessage}
-                />
-              </Card.Content>
-            </Card>
-          );
-        }}
-      </Query>
-    );
-  }
-}
+        <Transition
+          visible={showCategoryForm}
+          animation="slide down"
+          duration={400}
+        >
+          <div className="categoryform">
+            <CategoryForm
+              pageType="question"
+              catCreateHandler={questionCategorySelectHandler}
+            />
+          </div>
+        </Transition>
+        <FormErrorMessage
+          reveal={props.errormessage !== ""}
+          errormessage={props.errormessage}
+        />
+      </Card.Content>
+    </Card>
+  );
+};
 
 CategorySelect.propTypes = {
   type: PropTypes.string,
