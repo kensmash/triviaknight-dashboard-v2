@@ -132,36 +132,17 @@ const resolvers = {
   },
 
   Mutation: {
-    addquestion: requiresAdmin.createResolver(async (parent, { input }) => {
+    upsertquestion: requiresAdmin.createResolver(async (parent, { input }) => {
       try {
-        const questiontoadd = new Question(input);
-        const newQuestion = await questiontoadd.save();
-        return newQuestion;
-      } catch (error) {
-        console.error(error);
-      }
-    }),
-
-    editquestion: requiresAdmin.createResolver(async (parent, { input }) => {
-      try {
-        const editedQuestion = await Question.findOneAndUpdate(
-          { _id: input.id },
+        const upsertedQuestion = await Question.findOneAndUpdate(
           {
-            $set: {
-              question: input.question,
-              answers: input.answers,
-              category: input.category,
-              type: input.type,
-              difficulty: input.difficulty,
-              imageurl: input.imageurl,
-              videourl: input.videourl,
-              audiourl: input.audiourl,
-              published: input.published
-            }
+            _id: mongoose.Types.ObjectId(input.id)
           },
-          { new: true }
+          input,
+          { upsert: true, new: true }
         );
-        return editedQuestion;
+
+        return upsertedQuestion;
       } catch (error) {
         console.error(error);
       }

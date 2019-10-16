@@ -77,8 +77,7 @@ const typeDef = gql`
   }
 
   extend type Mutation {
-    addquestion(input: addQuestionInput): Question
-    editquestion(input: editQuestionInput): Question
+    upsertquestion(input: editQuestionInput): Question
     deletequestion(id: ID!): Question
   }
 `;
