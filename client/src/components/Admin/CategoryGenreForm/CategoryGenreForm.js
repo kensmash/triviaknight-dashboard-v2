@@ -3,20 +3,25 @@ import PropTypes from "prop-types";
 import { Form, Button, Checkbox } from "semantic-ui-react";
 //components
 import CatTypeSelect from "../CatTypeSelect/CatTypeSelect";
-import CatGenreSelect from "../CatGenreSelect/CatGenreSelect";
 import FormErrorMessage from "../../FormMessage/FormErrorMessage";
 import FormSuccessMessage from "../../FormMessage/FormSuccessMessage";
 //graphql
 import { gql } from "apollo-boost";
-import { useMutation } from "@apollo/react-hooks";
-import categoriesQuery from "../../../apollo/queries/categories";
-import categoriesPageQuery from "../../../apollo/queries/categoriesPage";
-import categorySearchCriteria from "../../../apollo/queries/client-categorySearchCriteria";
+import { useQuery, useMutation } from "@apollo/react-hooks";
+import QUERY_CATEGORYGENRES from "../../../apollo/queries/categoryGenres";
+import QUERY_CATEGORYGENRESPAGE from "../../../apollo/queries/categoryGenresPage";
+import QUERY_CLIENTCATEGORYGENRESSEARCH from "../../../queries/client-categoryGenreSearchCriteria";
 
 const CategoryForm = props => {
   const [submittedCategoryGenreName, setSubmittedCategoryGenreName] = useState(
     ""
   );
+
+  const { data: { categoryGenreSearchCriteria } = {} } = useQuery(
+    QUERY_CLIENTCATEGORYGENRESSEARCH
+  );
+
+  const { data: { categoryGenres } = {} } = useQuery(QUERY_CATEGORYGENRES);
 
   const initialState = {
     name: "",
@@ -32,7 +37,7 @@ const CategoryForm = props => {
     categorytypes: ""
   });
 
-  const [upsertCategory] = useMutation(MUTATION_UPSERTCATEGORY);
+  const [upsertCategoryGenre] = useMutation(MUTATION_UPSERTCATEGORYGENRE);
 
   useEffect(() => {
     if (props.pageType === "edit") {
@@ -51,34 +56,28 @@ const CategoryForm = props => {
     }
   }, [props]);
 
-  catTypeSelectHandler = categorytypes => {
-    this.setState({
-      fields: { ...this.state.fields, categorytypes },
-      fieldErrors: { ...this.state.fieldErrors, categorytypes: "" }
-    });
+  const catTypeSelectHandler = (_event, data) => {
+    setFields({ ...fields, categorytypes: data.value });
+    setFieldErrors({ ...fieldErrors, categorytypes: "" });
   };
 
-  playableCheckboxHandler = (event, data) => {
+  const playableCheckboxHandler = (_event, data) => {
     if (data.checked) {
-      this.setState({ fields: { ...this.state.fields, playable: true } });
+      setFields({ ...fields, playable: true });
     } else {
-      this.setState({ fields: { ...this.state.fields, playable: false } });
+      setFields({ ...fields, playable: false });
     }
   };
 
-  pressLuckCheckboxHandler = (event, data) => {
+  const pressLuckCheckboxHandler = (_event, data) => {
     if (data.checked) {
-      this.setState({
-        fields: { ...this.state.fields, pressluckactive: true }
-      });
+      setFields({ ...fields, pressluckactive: true });
     } else {
-      this.setState({
-        fields: { ...this.state.fields, pressluckactive: false }
-      });
+      setFields({ ...fields, pressluckactive: false });
     }
   };
 
-  formValidateHandler = (name, categorytypes) => {
+  const formValidateHandler = (name, categorytypes) => {
     const errors = {};
     if (!categorytypes.length)
       errors.categorytypes = "Please select at least one Category type.";
@@ -86,41 +85,34 @@ const CategoryForm = props => {
       errors.name = "Please enter a name of at least three characters.";
     //check if genre already exists
     if (
-      this.props.pageType !== "edit" &&
-      this.props.allCategoryGenres.categoryGenres.some(
-        genre => genre.name === name
-      )
+      props.pageType !== "edit" &&
+      categoryGenres.some(genre => genre.name === name)
     )
       errors.name = "That genre already exists!";
     return errors;
   };
 
-  formSubmitHandler = async event => {
+  const formSubmitHandler = async event => {
     event.preventDefault();
-    const errors = this.formValidateHandler(
-      this.state.fields.name,
-      this.state.fields.categorytypes
-    );
+    const errors = formValidateHandler(fields.name, fields.categorytypes);
     if (Object.keys(errors).length)
-      return this.setState({
-        fieldErrors: { ...this.state.fieldErrors, ...errors }
-      });
-    this.AddorEdit();
+      return setFieldErrors(...fieldErrors, ...errors);
+    UpsertCategoryGenreHandler();
   };
 
-  AddCategoryGenreHandler = async () => {
-    const { categoryGenreSearchCriteria } = this.props;
+  const UpsertCategoryGenreHandler = async () => {
     //add category
-    const graphqlResponse = await this.props.addCategoryGenre({
+    const graphqlResponse = await upsertCategoryGenre({
       variables: {
-        name: this.state.fields.name,
-        categorytypes: this.state.fields.categorytypes.map(type => type.value),
-        playable: this.state.fields.playable,
-        pressluckactive: this.state.fields.pressluckactive
+        id: props.pageType === "edit" ? props.categorygenre._id : null,
+        name: fields.name,
+        categorytypes: fields.categorytypes.map(type => type.value),
+        playable: fields.playable,
+        pressluckactive: fields.pressluckactive
       },
       refetchQueries: [
         {
-          query: categoryGenresPageQuery,
+          query: QUERY_CATEGORYGENRESPAGE,
           variables: {
             offset:
               categoryGenreSearchCriteria.limit *
@@ -133,12 +125,10 @@ const CategoryForm = props => {
               : []
           }
         },
-        { query: catGenresQuery }
+        { query: QUERY_CATEGORYGENRES }
       ]
     });
-    this.setState({
-      submittedCategoryGenreName: graphqlResponse.data.addcategorygenre.name
-    });
+    setSubmittedCategoryGenreName(graphqlResponse.data.addcategorygenre.name);
   };
 
   const clearFormHandler = () => {
@@ -147,14 +137,14 @@ const CategoryForm = props => {
 
   return (
     <Form>
-      {this.props.pageType === "edit" ? <h3>Edit Category Type</h3> : null}
+      {props.pageType === "edit" ? <h3>Edit Category Type</h3> : null}
       <Form.Field required>
         <label>Category Genre Name</label>
         <input
           placeholder="Enter Category Genre name..."
           id="name"
-          value={this.state.fields.name}
-          onChange={event => this.inputChangedHandler(event)}
+          value={fields.name}
+          onChange={event => inputChangedHandler(event)}
         />
         <FormErrorMessage
           reveal={fieldErrors.name !== ""}
@@ -165,10 +155,10 @@ const CategoryForm = props => {
         <label>Category Types</label>
         <CatTypeSelect
           type="genre"
-          value={this.state.fields.categorytypes}
+          value={fields.categorytypes}
           placeholder="Select Category Type(s)"
-          catTypeSelectHandler={categorytypes =>
-            this.catTypeSelectHandler(categorytypes)
+          catTypeSelectHandler={(event, data) =>
+            catTypeSelectHandler(event, data)
           }
         />
         <FormErrorMessage
@@ -180,53 +170,53 @@ const CategoryForm = props => {
       <Form.Field>
         <Checkbox
           label="Playable"
-          checked={this.state.fields.playable}
-          onChange={(event, data) => this.playableCheckboxHandler(event, data)}
+          checked={fields.playable}
+          onChange={(event, data) => playableCheckboxHandler(event, data)}
         />
       </Form.Field>
 
       <Form.Field>
         <Checkbox
           label="Active Press Your Luck Genre"
-          checked={this.state.fields.pressluckactive}
-          onChange={(event, data) => this.pressLuckCheckboxHandler(event, data)}
+          checked={fields.pressluckactive}
+          onChange={(event, data) => pressLuckCheckboxHandler(event, data)}
         />
       </Form.Field>
 
       <FormSuccessMessage
-        reveal={this.state.submittedCategoryGenreName !== ""}
+        reveal={submittedCategoryGenreName !== ""}
         header={
-          this.props.pageType === "edit"
+          props.pageType === "edit"
             ? "Category Genre Updated"
             : "Category Genre Added"
         }
         content={
-          (this.props.pageType === "edit"
+          (props.pageType === "edit"
             ? "You've successfully updated"
             : "You've successfully added") +
           " the category genre " +
-          this.state.submittedCategoryGenreName +
+          submittedCategoryGenreName +
           "."
         }
       />
 
-      {this.state.submittedCategoryGenreName !== "" ? (
-        this.props.pageType === "edit" ? (
-          <Button primary onClick={this.props.history.goBack}>
+      {submittedCategoryGenreName !== "" ? (
+        props.pageType === "edit" ? (
+          <Button primary onClick={props.history.goBack}>
             Go Back
           </Button>
         ) : (
-          <Button color="blue" onClick={this.clearFormHandler}>
+          <Button color="blue" onClick={clearFormHandler}>
             Add Another
           </Button>
         )
       ) : (
         <div className="formButtonGroup">
-          <Button color="green" onClick={this.formSubmitHandler}>
+          <Button color="green" onClick={formSubmitHandler}>
             Submit
           </Button>
-          {this.props.pageType === "edit" && (
-            <Button color="grey" onClick={this.props.history.goBack}>
+          {props.pageType === "edit" && (
+            <Button color="grey" onClick={props.history.goBack}>
               Cancel
             </Button>
           )}

@@ -7,6 +7,8 @@ import Dashboard from "./Dashboard/Dashboard";
 //categories
 import Categories from "./Categories/Categories";
 import EditCategory from "./EditCategory/EditCategory";
+import CategoryGenres from "./CategoryGenres/CategoryGenres";
+import EditCategoryGenre from "./EditCategoryGenre/EditCategoryGenre";
 //questions
 import Questions from "./Questions/Questions";
 import NewQuestion from "./NewQuestion/NewQuestion";
@@ -40,6 +42,17 @@ class Admin extends React.PureComponent {
               path={match.url + "/categories/:_id"}
               name="Edit Category"
               component={EditCategory}
+            />
+            <Route
+              exact
+              path={match.url + "/categorygenres"}
+              component={CategoryGenres}
+            />
+            <Route
+              exact
+              path={match.url + "/categorygenres/:_id"}
+              name="Edit Category Genre"
+              component={EditCategoryGenre}
             />
             <Route
               exact

@@ -2,7 +2,7 @@ import React from "react";
 import { Form } from "semantic-ui-react";
 //components
 import CategoryForm from "../../../components/Admin/CategoryForm/CategoryForm";
-////graphql
+//graphql
 import { useQuery } from "@apollo/react-hooks";
 import QUERY_CATEGORY from "../../../apollo/queries/category";
 
