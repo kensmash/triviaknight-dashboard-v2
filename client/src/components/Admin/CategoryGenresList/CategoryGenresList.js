@@ -127,13 +127,15 @@ const CategoryGenresList = props => {
             <Table.HeaderCell>Actions</Table.HeaderCell>
           </Table.Row>
         </Table.Header>
-        <Table.Body>
-          {loading ? (
+        {loading ? (
+          <Table.Body>
             <Table.Row>
               <Table.Cell>Loading...</Table.Cell>
             </Table.Row>
-          ) : (
-            <>
+          </Table.Body>
+        ) : (
+          <>
+            <Table.Body>
               {categoryGenresPage.categorygenres.length ? (
                 categoryGenresPage.categorygenres.map(genre => (
                   <Table.Row key={genre._id}>
@@ -174,57 +176,57 @@ const CategoryGenresList = props => {
                   </Table.Cell>
                 </Table.Row>
               )}
-            </>
-          )}
-        </Table.Body>
-        <Table.Footer>
-          <Table.Row>
-            <Table.HeaderCell colSpan="6">
-              <Grid columns="equal">
-                <Grid.Column width={2}>
-                  <div className="tableItemNumbers">
-                    <p>
-                      {categoryGenresPage.totalrecords} item
-                      {categoryGenresPage.totalrecords !== 1 ? "s" : ""}
-                    </p>
-                  </div>
-                </Grid.Column>
+            </Table.Body>
+            <Table.Footer>
+              <Table.Row>
+                <Table.HeaderCell colSpan="6">
+                  <Grid columns="equal">
+                    <Grid.Column width={2}>
+                      <div className="tableItemNumbers">
+                        <p>
+                          {categoryGenresPage.totalrecords} item
+                          {categoryGenresPage.totalrecords !== 1 ? "s" : ""}
+                        </p>
+                      </div>
+                    </Grid.Column>
 
-                <Grid.Column className="tablePaginationColumn">
-                  {categoryGenresPage.pages >= 2 ? (
-                    <Pagination
-                      activePage={categoryGenreSearchCriteria.activePage}
-                      totalPages={categoryGenresPage.pages}
-                      onPageChange={(e, { activePage }) =>
-                        props
-                          .updateCategoryGenreSearch({
-                            variables: {
-                              ...categoryGenreSearchCriteria,
-                              activePage
-                            }
-                          })
-                          .then(() =>
-                            fetchMore({
-                              variables: {
-                                offset:
-                                  categoryGenreSearchCriteria.limit *
-                                    parseInt(activePage, 10) -
-                                  categoryGenreSearchCriteria.limit
-                              },
-                              updateQuery: (prev, { fetchMoreResult }) => {
-                                if (!fetchMoreResult) return prev;
-                                return fetchMoreResult;
-                              }
-                            })
-                          )
-                      }
-                    />
-                  ) : null}
-                </Grid.Column>
-              </Grid>
-            </Table.HeaderCell>
-          </Table.Row>
-        </Table.Footer>
+                    <Grid.Column className="tablePaginationColumn">
+                      {categoryGenresPage.pages >= 2 ? (
+                        <Pagination
+                          activePage={categoryGenreSearchCriteria.activePage}
+                          totalPages={categoryGenresPage.pages}
+                          onPageChange={(e, { activePage }) =>
+                            props
+                              .updateCategoryGenreSearch({
+                                variables: {
+                                  ...categoryGenreSearchCriteria,
+                                  activePage
+                                }
+                              })
+                              .then(() =>
+                                fetchMore({
+                                  variables: {
+                                    offset:
+                                      categoryGenreSearchCriteria.limit *
+                                        parseInt(activePage, 10) -
+                                      categoryGenreSearchCriteria.limit
+                                  },
+                                  updateQuery: (prev, { fetchMoreResult }) => {
+                                    if (!fetchMoreResult) return prev;
+                                    return fetchMoreResult;
+                                  }
+                                })
+                              )
+                          }
+                        />
+                      ) : null}
+                    </Grid.Column>
+                  </Grid>
+                </Table.HeaderCell>
+              </Table.Row>
+            </Table.Footer>
+          </>
+        )}
       </Table>
     </>
   );

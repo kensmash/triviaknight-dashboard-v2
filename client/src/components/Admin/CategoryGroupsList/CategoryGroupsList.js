@@ -1,24 +1,22 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { Table, Button, Icon, Grid, Pagination } from "semantic-ui-react";
-import DeleteCategoryTypeModal from "./DeleteCategoryTypeModal";
+import DeleteCategoryGroupModal from "./DeleteCategoryGroupModal";
 //graphql
 import { useQuery } from "@apollo/react-hooks";
-import QUERY_CATEGORYTYPESPAGE from "../../../apollo/queries/categoryTypesPage";
+import QUERY_CATEGORYGROUPSPAGE from "../../../queries/categoryGroupsPage";
 
-const CategoryTypesList = props => {
+const CategoryGroupsList = props => {
   const [activePage, setActivePage] = useState(1);
   const [limit] = useState(15);
 
   const variables = {
     offset: limit * parseInt(activePage, 10) - limit,
-    limit,
-    name: "",
-    hasgenres: ""
+    limit
   };
 
-  const { loading, data: { categoryTypesPage } = {}, fetchMore } = useQuery(
-    QUERY_CATEGORYTYPESPAGE,
+  const { loading, data: { categoryGroupsPage } = {}, fetchMore } = useQuery(
+    QUERY_CATEGORYGROUPSPAGE,
     {
       variables,
       fetchPolicy: "cache-and-network"
@@ -48,8 +46,9 @@ const CategoryTypesList = props => {
         <Table.Header>
           <Table.Row>
             <Table.HeaderCell>Name</Table.HeaderCell>
-            <Table.HeaderCell>Playable</Table.HeaderCell>
-            <Table.HeaderCell>Has Genres</Table.HeaderCell>
+            <Table.HeaderCell>Display Text</Table.HeaderCell>
+            <Table.HeaderCell>Active</Table.HeaderCell>
+            <Table.HeaderCell>Categories</Table.HeaderCell>
             <Table.HeaderCell>Actions</Table.HeaderCell>
           </Table.Row>
         </Table.Header>
@@ -62,26 +61,31 @@ const CategoryTypesList = props => {
         ) : (
           <>
             <Table.Body>
-              {categoryTypesPage.categorytypes.length ? (
-                categoryTypesPage.categorytypes.map(type => (
-                  <Table.Row key={type._id}>
-                    <Table.Cell>{type.name}</Table.Cell>
-                    <Table.Cell>{type.playable ? "Yes" : "No"}</Table.Cell>
-                    <Table.Cell>{type.hasgenres ? "Yes" : "No"}</Table.Cell>
+              {categoryGroupsPage.categorygroups.length ? (
+                categoryGroupsPage.categorygroups.map(group => (
+                  <Table.Row key={group._id}>
+                    <Table.Cell>{group.name}</Table.Cell>
+                    <Table.Cell>{group.displaytext}</Table.Cell>
+                    <Table.Cell>{group.active ? "Yes" : "No"}</Table.Cell>
+                    <Table.Cell>
+                      {group.categories.length
+                        ? group.categories.map(cat => cat.name).join(", ")
+                        : null}
+                    </Table.Cell>
                     <Table.Cell collapsing>
                       <div>
                         <Button
                           icon
                           size="mini"
                           onClick={() =>
-                            history.push(`${match.url}/${type._id}`)
+                            history.push(`${match.url}/${group._id}`)
                           }
                         >
                           <Icon name="edit" />
                         </Button>
-                        <DeleteCategoryTypeModal
-                          categorytypename={type.name}
-                          categorytypeid={type._id}
+                        <DeleteCategoryGroupModal
+                          categorygroupname={group.name}
+                          categorygroupid={group._id}
                           variables={variables}
                         />
                       </div>
@@ -98,22 +102,22 @@ const CategoryTypesList = props => {
             </Table.Body>
             <Table.Footer>
               <Table.Row>
-                <Table.HeaderCell colSpan="6">
+                <Table.HeaderCell colSpan="5">
                   <Grid columns="equal">
                     <Grid.Column width={2}>
                       <div className="tableItemNumbers">
                         <p>
-                          {categoryTypesPage.totalrecords} item
-                          {categoryTypesPage.totalrecords !== 1 ? "s" : ""}
+                          {categoryGroupsPage.totalrecords} item
+                          {categoryGroupsPage.totalrecords !== 1 ? "s" : ""}
                         </p>
                       </div>
                     </Grid.Column>
 
                     <Grid.Column className="tablePaginationColumn">
-                      {categoryTypesPage.pages >= 2 ? (
+                      {categoryGroupsPage.pages >= 2 ? (
                         <Pagination
                           activePage={activePage}
-                          totalPages={categoryTypesPage.pages}
+                          totalPages={categoryGroupsPage.pages}
                           onPageChange={(e, { activePage }) =>
                             fetchMoreHandler({ activePage })
                           }
@@ -131,9 +135,9 @@ const CategoryTypesList = props => {
   );
 };
 
-CategoryTypesList.propTypes = {
+CategoryGroupsList.propTypes = {
   history: PropTypes.object.isRequired,
   match: PropTypes.object.isRequired
 };
 
-export default CategoryTypesList;
+export default CategoryGroupsList;
