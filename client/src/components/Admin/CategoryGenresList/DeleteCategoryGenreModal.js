@@ -4,16 +4,20 @@ import { Button, Icon, Modal } from "semantic-ui-react";
 //graphql
 import { gql } from "apollo-boost";
 import { useMutation } from "@apollo/react-hooks";
-import questionsPageQuery from "../../../apollo/queries/questionsPage";
+import QUERY_CATEGORYGENRES from "../../../queries/categoryGenres";
+import QUERY_CATEGORYGENRESPAGE from "../../../queries/categoryGenresPage";
 
-const DeleteQuestionModal = props => {
+const DeleteCategoryGenreModal = props => {
   const [modalOpen, setModalOpen] = useState(false);
 
-  const [deleteQuestion] = useMutation(MUTATION_DELETEQUESTION, {
+  const [deleteCategoryGenre] = useMutation(MUTATION_DELETECATEGORYGENRE, {
     variables: {
-      id: props.questionid
+      id: props.categorygenreid
     },
-    refetchQueries: [{ query: questionsPageQuery, variables: props.variables }]
+    refetchQueries: [
+      { query: QUERY_CATEGORYGENRESPAGE, variables: props.variables },
+      { query: QUERY_CATEGORYGENRES }
+    ]
   });
 
   const handleOpen = () => setModalOpen(true);
@@ -30,15 +34,18 @@ const DeleteQuestionModal = props => {
       onClose={handleClose}
       size="mini"
     >
-      <Modal.Header>Are you sure you want to delete the question?</Modal.Header>
+      <Modal.Header>
+        Are you sure you want to delete the category genre{" "}
+        {props.categorygenrename}?
+      </Modal.Header>
       <Modal.Content>
         <Modal.Description>
           <p>This action can’t be undone.</p>
         </Modal.Description>
       </Modal.Content>
       <Modal.Actions>
-        <Button negative onClick={deleteQuestion}>
-          Delete Question
+        <Button negative onClick={deleteCategoryGenre}>
+          Delete Category Genre
         </Button>
         <Button onClick={handleClose}>Cancel</Button>
       </Modal.Actions>
@@ -46,18 +53,19 @@ const DeleteQuestionModal = props => {
   );
 };
 
-const MUTATION_DELETEQUESTION = gql`
-  mutation deleteQuestion($id: ID!) {
-    deletequestion(id: $id) {
+const MUTATION_DELETECATEGORYGENRE = gql`
+  mutation deleteCategoryGenre($id: ID!) {
+    deletecategorygenre(id: $id) {
       _id
-      question
+      name
     }
   }
 `;
 
-DeleteQuestionModal.propTypes = {
-  questionid: PropTypes.string,
+DeleteCategoryGenreModal.propTypes = {
+  categorygenrename: PropTypes.string,
+  categorygenreid: PropTypes.string,
   variables: PropTypes.object
 };
 
-export default DeleteQuestionModal;
+export default DeleteCategoryGenreModal;

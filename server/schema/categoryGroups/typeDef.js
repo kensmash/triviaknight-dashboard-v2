@@ -16,15 +16,8 @@ const typeDef = gql`
     categorygroups: [CategoryGroup]
   }
 
-  input addCategoryGroupInput {
-    name: String!
-    displaytext: String!
-    categories: [ID]
-    active: Boolean
-  }
-
-  input editCategoryGroupInput {
-    id: ID!
+  input upsertCategoryGroupInput {
+    id: ID
     name: String!
     displaytext: String!
     categories: [ID]
@@ -38,8 +31,7 @@ const typeDef = gql`
   }
 
   extend type Mutation {
-    addcategorygroup(input: addCategoryGroupInput): CategoryGroup
-    editcategorygroup(input: editCategoryGroupInput): CategoryGroup
+    upsertcategorygroup(input: upsertCategoryGroupInput): CategoryGroup
     deletecategorygroup(id: ID!): CategoryGroup
   }
 `;

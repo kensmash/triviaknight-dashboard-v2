@@ -29,16 +29,8 @@ const typeDef = gql`
     ): CategoryTypePageResponse
   }
 
-  input addCategoryTypeInput {
-    name: String!
-    iconname: String
-    iconset: String
-    hasgenres: Boolean!
-    playable: Boolean
-  }
-
-  input editCategoryTypeInput {
-    id: ID!
+  input upsertCategoryTypeInput {
+    id: ID
     name: String!
     iconname: String
     iconset: String
@@ -47,8 +39,7 @@ const typeDef = gql`
   }
 
   extend type Mutation {
-    addcategorytype(input: addCategoryTypeInput): CategoryType
-    editcategorytype(input: editCategoryTypeInput): CategoryType
+    upsertcategorytype(input: upsertCategoryTypeInput): CategoryType
     deletecategorytype(id: ID!): CategoryType
   }
 `;

@@ -49,33 +49,18 @@ const resolvers = {
   },
 
   Mutation: {
-    addcategorytype: requiresAdmin.createResolver(async (parent, { input }) => {
-      try {
-        const categorytype = new CategoryType(input);
-        const newCategoryType = await categorytype.save();
-        return newCategoryType;
-      } catch (error) {
-        console.error(error);
-      }
-    }),
-
-    editcategorytype: requiresAdmin.createResolver(
+    upsertcategorytype: requiresAdmin.createResolver(
       async (parent, { input }) => {
         try {
-          const editCategoryType = await CategoryType.findOneAndUpdate(
-            { _id: input.id },
+          const upsertedCategoryType = await CategoryType.findOneAndUpdate(
             {
-              $set: {
-                name: input.name,
-                iconname: input.iconname,
-                iconset: input.iconset,
-                hasgenres: input.hasgenres,
-                playable: input.playable
-              }
+              _id: mongoose.Types.ObjectId(input.id)
             },
-            { new: true }
+            input,
+            { upsert: true, new: true }
           );
-          return editCategoryType;
+
+          return upsertedCategoryType;
         } catch (error) {
           console.error(error);
         }

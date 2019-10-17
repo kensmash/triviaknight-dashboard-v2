@@ -50,36 +50,18 @@ const resolvers = {
   },
 
   Mutation: {
-    addcategorygroup: requiresAdmin.createResolver(
+    upsertcategorygroup: requiresAdmin.createResolver(
       async (parent, { input }) => {
         try {
-          const categorygroup = await new CategoryGroup(input);
-
-          const newCategoryGroup = await categorygroup.save();
-          return newCategoryGroup;
-        } catch (error) {
-          console.error(error);
-        }
-      }
-    ),
-
-    editcategorygroup: requiresAdmin.createResolver(
-      async (parent, { input }, context) => {
-        try {
-          const editedCategoryGroup = await CategoryGroup.findOneAndUpdate(
-            { _id: input.id },
+          const upsertedCategoryGroup = await CategoryGroup.findOneAndUpdate(
             {
-              $set: {
-                name: input.name,
-                displaytext: input.displaytext,
-                categories: input.categories,
-                active: input.active
-              }
+              _id: mongoose.Types.ObjectId(input.id)
             },
-            { new: true }
+            input,
+            { upsert: true, new: true }
           );
 
-          return editedCategoryGroup;
+          return upsertedCategoryGroup;
         } catch (error) {
           console.error(error);
         }

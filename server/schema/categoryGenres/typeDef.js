@@ -29,15 +29,8 @@ const typeDef = gql`
     genresintype(type: ID!): [CategoryGenre]
   }
 
-  input addCategoryGenreInput {
-    name: String
-    categorytypes: [ID]
-    playable: Boolean
-    pressluckactive: Boolean
-  }
-
-  input editCategoryGenreInput {
-    id: ID!
+  input upsertCategoryGenreInput {
+    id: ID
     name: String!
     categorytypes: [ID!]
     playable: Boolean
@@ -45,7 +38,7 @@ const typeDef = gql`
   }
 
   extend type Mutation {
-    upsertcategorygenre(input: editCategoryGenreInput): CategoryGenre
+    upsertcategorygenre(input: upsertCategoryGenreInput): CategoryGenre
     deletecategorygenre(id: ID!): CategoryGenre
   }
 `;
