@@ -177,7 +177,9 @@ const CategoryTypeForm = props => {
         <IconSetSelect
           value={fields.iconset}
           placeholder="Select Icon Set"
-          IconSetSelectHandler={iconsource => IconSetSelectHandler(iconsource)}
+          IconSetSelectHandler={(event, data) =>
+            IconSetSelectHandler(event, data)
+          }
         />
         <Label pointing>
           Be sure to select the Icon Set if the icon is NOT from Ionicons.
@@ -217,7 +219,7 @@ const CategoryTypeForm = props => {
       />
 
       {submittedCategoryTypeName !== "" ? (
-        pageType === "edit" ? (
+        props.pageType === "edit" ? (
           <Button primary onClick={props.history.goBack}>
             Go Back
           </Button>

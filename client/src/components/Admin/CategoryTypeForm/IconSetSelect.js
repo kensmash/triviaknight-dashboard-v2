@@ -7,20 +7,27 @@ const IconSetSelect = props => (
     value={props.value}
     fluid
     selection
-    clearable
     onChange={props.IconSetSelectHandler}
     options={[
-      { value: "Ionicons", label: "Ionicons" },
-      { value: "Entypo", label: "Entypo" },
-      { value: "EvilIcons", label: "EvilIcons" },
-      { value: "Feather", label: "Feather" },
-      { value: "FontAwesome", label: "FontAwesome" },
-      { value: "Foundation", label: "Foundation" },
-      { value: "MaterialIcons", label: "MaterialIcons" },
-      { value: "MaterialCommunityIcons", label: "MaterialCommunityIcons" },
-      { value: "Octicons", label: "Octicons" },
-      { value: "Zocial", label: "Zocial" },
-      { value: "SimpleLineIcons", label: "SimpleLineIcons" }
+      { key: "Ionicons", value: "Ionicons", text: "Ionicons" },
+      { key: "Entypo", value: "Entypo", text: "Entypo" },
+      { key: "EvilIcons", value: "EvilIcons", text: "EvilIcons" },
+      { key: "Feather", value: "Feather", text: "Feather" },
+      { key: "FontAwesome", value: "FontAwesome", text: "FontAwesome" },
+      { key: "Foundation", value: "Foundation", text: "Foundation" },
+      { key: "MaterialIcons", value: "MaterialIcons", text: "MaterialIcons" },
+      {
+        key: "MaterialCommunityIcons",
+        value: "MaterialCommunityIcons",
+        text: "MaterialCommunityIcons"
+      },
+      { key: "Octicons", value: "Octicons", text: "Octicons" },
+      { key: "Zocial", value: "Zocial", text: "Zocial" },
+      {
+        key: "SimpleLineIcons",
+        value: "SimpleLineIcons",
+        text: "SimpleLineIcons"
+      }
     ]}
   />
 );
