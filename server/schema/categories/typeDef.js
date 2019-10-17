@@ -41,20 +41,7 @@ const typeDef = gql`
     partycategory: Boolean
   }
 
-  input addCategoryInput {
-    name: String!
-    imageurl: String
-    description: String
-    type: ID!
-    genres: [ID]
-    published: Boolean
-    partycategory: Boolean
-    showasnew: Boolean
-    showaspopular: Boolean
-    joustexclusive: Boolean
-  }
-
-  input editCategoryInput {
+  input upsertCategoryInput {
     id: ID
     name: String!
     imageurl: String
@@ -79,7 +66,7 @@ const typeDef = gql`
   }
 
   extend type Mutation {
-    upsertcategory(input: editCategoryInput): Category
+    upsertcategory(input: upsertCategoryInput): Category
     deletecategory(id: ID!): Category
   }
 `;

@@ -36,20 +36,8 @@ const typeDef = gql`
     unpublishedquestions: Int!
   }
 
-  input addQuestionInput {
-    question: String!
-    answers: [AnswersInput]!
-    category: ID!
-    type: String!
-    difficulty: String!
-    imageurl: String
-    videourl: String
-    audiourl: String
-    published: Boolean!
-  }
-
-  input editQuestionInput {
-    id: ID!
+  input upsertQuestionInput {
+    id: ID
     question: String!
     answers: [AnswersInput]!
     category: ID!
@@ -77,7 +65,7 @@ const typeDef = gql`
   }
 
   extend type Mutation {
-    upsertquestion(input: editQuestionInput): Question
+    upsertquestion(input: upsertQuestionInput): Question
     deletequestion(id: ID!): Question
   }
 `;

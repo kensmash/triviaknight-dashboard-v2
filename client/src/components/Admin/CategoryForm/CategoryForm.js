@@ -328,7 +328,7 @@ const CategoryForm = props => {
 };
 
 const MUTATION_UPSERTCATEGORY = gql`
-  mutation upsertCategory($input: editCategoryInput) {
+  mutation upsertCategory($input: upsertCategoryInput) {
     upsertcategory(input: $input) {
       _id
       name

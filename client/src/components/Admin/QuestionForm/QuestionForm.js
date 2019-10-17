@@ -12,8 +12,7 @@ import FormErrorMessage from "../../FormMessage/FormErrorMessage";
 import FormSuccessMessage from "../../FormMessage/FormSuccessMessage";
 //graphql
 import { gql } from "apollo-boost";
-import { useQuery, useMutation } from "@apollo/react-hooks";
-import QUERY_ADDQUESTIONCRITERIA from "../../../apollo/queries/client-addQuestionCriteria";
+import { useMutation } from "@apollo/react-hooks";
 
 const QuestionForm = props => {
   const [questionSubmitted, setQuestionSubmitted] = useState(false);
@@ -26,7 +25,7 @@ const QuestionForm = props => {
       { answer: "", correct: false },
       { answer: "", correct: false }
     ],
-    category: {},
+    category: "",
     questiontype: "Multiple Choice",
     questiondifficulty: "Normal",
     imageurl: null,
@@ -49,14 +48,7 @@ const QuestionForm = props => {
   const [fields, setFields] = useState(initialFields);
   const [fieldErrors, setFieldErrors] = useState(initialFieldErrors);
 
-  const { data: { addQuestionCriteria } = {} } = useQuery(
-    QUERY_ADDQUESTIONCRITERIA
-  );
-
   const [upsertQuestion] = useMutation(MUTATION_UPSERTQUESTION);
-  const [updateAddQuestionCriteria] = useMutation(
-    MUTATION_UPDATEADDQUESTIONCRITERIA
-  );
 
   useEffect(() => {
     if (props.pageType === "edit") {
@@ -67,10 +59,7 @@ const QuestionForm = props => {
           answer: question.answer,
           correct: question.correct
         })),
-        category: {
-          text: question.category.name,
-          value: question.category._id
-        },
+        category: question.category._id,
         questiontype: question.type,
         questiondifficulty: question.difficulty,
         imageurl: question.imageurl,
@@ -150,12 +139,7 @@ const QuestionForm = props => {
     setFieldErrors({ ...fieldErrors, correctanswer: "" });
   };
 
-  const questionCategorySelectHandler = (_event, data) => {
-    updateAddQuestionCriteria({
-      variables: {
-        category: data.value
-      }
-    });
+  const categorySelectHandler = (_event, data) => {
     setFields({ ...fields, category: data.value });
     setFieldErrors({ ...fieldErrors, category: "" });
   };
@@ -231,8 +215,7 @@ const QuestionForm = props => {
     if (answers.length < 2)
       errors.answers = "Please enter at least two answers.";
 
-    if (!Object.keys(category).length)
-      errors.category = "Please select a category.";
+    if (!category.length) errors.category = "Please select a category.";
     if (!type.length) errors.questiontype = "Please select a question type.";
     if (!difficulty.length)
       errors.questiondifficulty = "Please select a question difficulty.";
@@ -282,6 +265,7 @@ const QuestionForm = props => {
     await upsertQuestion({
       variables: {
         input: {
+          id: props.pageType === "edit" ? props.question._id : null,
           question,
           answers,
           category,
@@ -400,13 +384,8 @@ const QuestionForm = props => {
 
           <Grid.Column mobile={16} computer={6}>
             <CategorySelect
-              //selectedCategory={selectedCategory}
-              selectedCategory={
-                props.pageType === "edit"
-                  ? fields.category.value
-                  : addQuestionCriteria.category
-              }
-              questionCategorySelectHandler={questionCategorySelectHandler}
+              selectedCategory={fields.category}
+              categorySelectHandler={categorySelectHandler}
               errormessage={fieldErrors.category}
             />
             <QuestionType
@@ -471,18 +450,10 @@ const QuestionForm = props => {
 };
 
 const MUTATION_UPSERTQUESTION = gql`
-  mutation upsertQuestion($input: editQuestionInput) {
+  mutation upsertQuestion($input: upsertQuestionInput) {
     upsertquestion(input: $input) {
       _id
       question
-    }
-  }
-`;
-
-const MUTATION_UPDATEADDQUESTIONCRITERIA = gql`
-  mutation updateAddQuestionCriteria($category: ID) {
-    updateAddQuestionCriteria(category: $category) @client {
-      category
     }
   }
 `;

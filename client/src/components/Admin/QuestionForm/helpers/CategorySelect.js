@@ -35,7 +35,7 @@ const CategorySelect = props => {
     if (showCategoryForm) {
       setShowCategoryForm(false);
     }
-    props.questionCategorySelectHandler(category);
+    props.categorySelectHandler(category);
   };
 
   return (
@@ -44,7 +44,7 @@ const CategorySelect = props => {
       <Card.Content>
         <Form.Field>
           <Dropdown
-            value={props.value}
+            value={props.selectedCategory}
             fluid
             selection
             clearable
@@ -90,7 +90,7 @@ const CategorySelect = props => {
 CategorySelect.propTypes = {
   type: PropTypes.string,
   selectedCategory: PropTypes.string,
-  questionCategorySelectHandler: PropTypes.func
+  categorySelectHandler: PropTypes.func
 };
 
 export default CategorySelect;
