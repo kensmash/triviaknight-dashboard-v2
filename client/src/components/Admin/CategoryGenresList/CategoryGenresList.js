@@ -1,14 +1,22 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import { Table, Button, Icon, Grid, Pagination } from "semantic-ui-react";
+import {
+  Form,
+  Input,
+  Table,
+  Button,
+  Icon,
+  Grid,
+  Pagination
+} from "semantic-ui-react";
 //components
 import CatTypeSelect from "../CatTypeSelect/CatTypeSelect";
 import DeleteCategoryGenreModal from "./DeleteCategoryGenreModal";
 //graphql
 import { gql } from "apollo-boost";
 import { useQuery, useMutation } from "@apollo/react-hooks";
-import QUERY_CATEGORYGENRESPAGE from "../../../queries/categoryGenresPage";
-import QUERY_CLIENTCATEGORYGENRESSEARCH from "../../../queries/client-categoryGenreSearchCriteria";
+import QUERY_CATEGORYGENRESPAGE from "../../../apollo/queries/categoryGenresPage";
+import QUERY_CLIENTCATEGORYGENRESSEARCH from "../../../apollo/queries/client-categoryGenreSearchCriteria";
 
 const CategoryGenresList = props => {
   const [name, setName] = useState("");
@@ -54,7 +62,7 @@ const CategoryGenresList = props => {
     });
   };
 
-  clearNameSearchHandler = () => {
+  const clearNameSearchHandler = () => {
     updateCategoryGenreSearch({
       variables: {
         ...categoryGenreSearchCriteria,
@@ -64,8 +72,8 @@ const CategoryGenresList = props => {
     setName("");
   };
 
-  catTypesSelectHandler = (_event, data) => {
-    this.props.updateCategoryGenreSearch({
+  const catTypesSelectHandler = (_event, data) => {
+    updateCategoryGenreSearch({
       variables: {
         ...categoryGenreSearchCriteria,
         types: data.value
@@ -183,12 +191,12 @@ const CategoryGenresList = props => {
                 </Grid.Column>
 
                 <Grid.Column className="tablePaginationColumn">
-                  {pages >= 2 ? (
+                  {categoryGenresPage.pages >= 2 ? (
                     <Pagination
                       activePage={categoryGenreSearchCriteria.activePage}
                       totalPages={categoryGenresPage.pages}
                       onPageChange={(e, { activePage }) =>
-                        this.props
+                        props
                           .updateCategoryGenreSearch({
                             variables: {
                               ...categoryGenreSearchCriteria,

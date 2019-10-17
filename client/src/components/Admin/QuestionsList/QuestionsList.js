@@ -111,7 +111,7 @@ const QuestionsList = props => {
     updateQuestionSearch({
       variables: {
         ...questionSearchCriteria,
-        publishedstatus: data.value
+        publishedstatus: data.value === "" ? null : data.value
       }
     });
   };
@@ -205,13 +205,16 @@ const QuestionsList = props => {
             <Table.HeaderCell>Actions</Table.HeaderCell>
           </Table.Row>
         </Table.Header>
-        <Table.Body>
-          {loading ? (
+
+        {loading ? (
+          <Table.Body>
             <Table.Row>
               <Table.Cell>Loading...</Table.Cell>
             </Table.Row>
-          ) : (
-            <>
+          </Table.Body>
+        ) : (
+          <>
+            <Table.Body>
               {questionspage.questions.length ? (
                 questionspage.questions.map(ques => (
                   <Table.Row key={ques._id}>
@@ -254,55 +257,55 @@ const QuestionsList = props => {
                   </Table.Cell>
                 </Table.Row>
               )}
-            </>
-          )}
-        </Table.Body>
-        <Table.Footer>
-          <Table.Row>
-            <Table.HeaderCell colSpan="6">
-              <Grid columns="equal">
-                <Grid.Column width={2}>
-                  <div className="tableItemNumbers">
-                    <p>
-                      {questionspage.totalrecords} item
-                      {questionspage.totalrecords !== 1 ? "s" : ""}
-                    </p>
-                  </div>
-                </Grid.Column>
+            </Table.Body>
+            <Table.Footer>
+              <Table.Row>
+                <Table.HeaderCell colSpan="6">
+                  <Grid columns="equal">
+                    <Grid.Column width={2}>
+                      <div className="tableItemNumbers">
+                        <p>
+                          {questionspage.totalrecords} item
+                          {questionspage.totalrecords !== 1 ? "s" : ""}
+                        </p>
+                      </div>
+                    </Grid.Column>
 
-                <Grid.Column className="tablePaginationColumn">
-                  {questionspage.pages >= 2 ? (
-                    <Pagination
-                      activePage={questionSearchCriteria.activePage}
-                      totalPages={questionspage.pages}
-                      onPageChange={(e, { activePage }) =>
-                        updateQuestionSearch({
-                          variables: {
-                            ...questionSearchCriteria,
-                            activePage
+                    <Grid.Column className="tablePaginationColumn">
+                      {questionspage.pages >= 2 ? (
+                        <Pagination
+                          activePage={questionSearchCriteria.activePage}
+                          totalPages={questionspage.pages}
+                          onPageChange={(e, { activePage }) =>
+                            updateQuestionSearch({
+                              variables: {
+                                ...questionSearchCriteria,
+                                activePage
+                              }
+                            }).then(() =>
+                              fetchMore({
+                                variables: {
+                                  offset:
+                                    questionSearchCriteria.limit *
+                                      parseInt(activePage, 10) -
+                                    questionSearchCriteria.limit
+                                },
+                                updateQuery: (prev, { fetchMoreResult }) => {
+                                  if (!fetchMoreResult) return prev;
+                                  return fetchMoreResult;
+                                }
+                              })
+                            )
                           }
-                        }).then(() =>
-                          fetchMore({
-                            variables: {
-                              offset:
-                                questionSearchCriteria.limit *
-                                  parseInt(activePage, 10) -
-                                questionSearchCriteria.limit
-                            },
-                            updateQuery: (prev, { fetchMoreResult }) => {
-                              if (!fetchMoreResult) return prev;
-                              return fetchMoreResult;
-                            }
-                          })
-                        )
-                      }
-                    />
-                  ) : null}
-                </Grid.Column>
-              </Grid>
-            </Table.HeaderCell>
-          </Table.Row>
-        </Table.Footer>
+                        />
+                      ) : null}
+                    </Grid.Column>
+                  </Grid>
+                </Table.HeaderCell>
+              </Table.Row>
+            </Table.Footer>
+          </>
+        )}
       </Table>
     </>
   );

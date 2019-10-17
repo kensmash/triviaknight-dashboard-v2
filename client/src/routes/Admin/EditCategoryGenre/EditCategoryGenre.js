@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import CatGenreForm from "../../../components/Admin/CatGenreForm/CatGenreForm";
+import CategoryGenreForm from "../../../components/Admin/CategoryGenreForm/CategoryGenreForm";
 //graphql
 import { useQuery } from "@apollo/react-hooks";
 import QUERY_CATEGORYGENRE from "../../../apollo/queries/categoryGenre";
@@ -15,7 +15,7 @@ const EditCategoryGenre = ({ match, history }) => {
   if (loading) return "Loading...";
   if (error) return `Error! ${error.message}`;
   return (
-    <CatGenreForm
+    <CategoryGenreForm
       pageType="edit"
       categorygenre={categoryGenre}
       match={match}

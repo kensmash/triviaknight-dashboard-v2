@@ -10,9 +10,9 @@ import { gql } from "apollo-boost";
 import { useQuery, useMutation } from "@apollo/react-hooks";
 import QUERY_CATEGORYGENRES from "../../../apollo/queries/categoryGenres";
 import QUERY_CATEGORYGENRESPAGE from "../../../apollo/queries/categoryGenresPage";
-import QUERY_CLIENTCATEGORYGENRESSEARCH from "../../../queries/client-categoryGenreSearchCriteria";
+import QUERY_CLIENTCATEGORYGENRESSEARCH from "../../../apollo/queries/client-categoryGenreSearchCriteria";
 
-const CategoryForm = props => {
+const CategoryGenreForm = props => {
   const [submittedCategoryGenreName, setSubmittedCategoryGenreName] = useState(
     ""
   );
@@ -55,6 +55,11 @@ const CategoryForm = props => {
       });
     }
   }, [props]);
+
+  const inputChangedHandler = event => {
+    setFields({ ...fields, [event.target.id]: event.target.value });
+    setFieldErrors({ ...fieldErrors, [event.target.id]: "" });
+  };
 
   const catTypeSelectHandler = (_event, data) => {
     setFields({ ...fields, categorytypes: data.value });
@@ -104,11 +109,13 @@ const CategoryForm = props => {
     //add category
     const graphqlResponse = await upsertCategoryGenre({
       variables: {
-        id: props.pageType === "edit" ? props.categorygenre._id : null,
-        name: fields.name,
-        categorytypes: fields.categorytypes.map(type => type.value),
-        playable: fields.playable,
-        pressluckactive: fields.pressluckactive
+        input: {
+          id: props.pageType === "edit" ? props.categorygenre._id : null,
+          name: fields.name,
+          categorytypes: fields.categorytypes,
+          playable: fields.playable,
+          pressluckactive: fields.pressluckactive
+        }
       },
       refetchQueries: [
         {
@@ -128,7 +135,9 @@ const CategoryForm = props => {
         { query: QUERY_CATEGORYGENRES }
       ]
     });
-    setSubmittedCategoryGenreName(graphqlResponse.data.addcategorygenre.name);
+    setSubmittedCategoryGenreName(
+      graphqlResponse.data.upsertcategorygenre.name
+    );
   };
 
   const clearFormHandler = () => {
@@ -235,10 +244,10 @@ const MUTATION_UPSERTCATEGORYGENRE = gql`
   }
 `;
 
-CatGenreForm.propTypes = {
+CategoryGenreForm.propTypes = {
   pageType: PropTypes.string,
   categorygenre: PropTypes.object,
   history: PropTypes.object
 };
 
-export default CatCatGenreFormegoryForm;
+export default CategoryGenreForm;

@@ -4,8 +4,8 @@ import { Button, Icon, Modal } from "semantic-ui-react";
 //graphql
 import { gql } from "apollo-boost";
 import { useMutation } from "@apollo/react-hooks";
-import QUERY_CATEGORYGENRES from "../../../queries/categoryGenres";
-import QUERY_CATEGORYGENRESPAGE from "../../../queries/categoryGenresPage";
+import QUERY_CATEGORYGENRES from "../../../apollo/queries/categoryGenres";
+import QUERY_CATEGORYGENRESPAGE from "../../../apollo/queries/categoryGenresPage";
 
 const DeleteCategoryGenreModal = props => {
   const [modalOpen, setModalOpen] = useState(false);

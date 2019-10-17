@@ -138,13 +138,15 @@ const CategoriesList = props => {
             <Table.HeaderCell />
           </Table.Row>
         </Table.Header>
-        <Table.Body>
-          {loading ? (
+        {loading ? (
+          <Table.Body>
             <Table.Row>
               <Table.Cell>Loading...</Table.Cell>
             </Table.Row>
-          ) : (
-            <>
+          </Table.Body>
+        ) : (
+          <>
+            <Table.Body>
               {categoriespage.categories.length ? (
                 categoriespage.categories.map(cat => (
                   <Table.Row key={cat._id}>
@@ -199,58 +201,58 @@ const CategoriesList = props => {
                   </Table.Cell>
                 </Table.Row>
               )}
-            </>
-          )}
-        </Table.Body>
-        <Table.Footer>
-          <Table.Row>
-            <Table.HeaderCell colSpan="6">
-              <Grid columns="equal">
-                <Grid.Column width={2}>
-                  <div className="tableItemNumbers">
-                    <p>
-                      {categoriespage.totalrecords} item
-                      {categoriespage.totalrecords !== 1 ? "s" : ""}
-                    </p>
-                  </div>
-                </Grid.Column>
+            </Table.Body>
+            <Table.Footer>
+              <Table.Row>
+                <Table.HeaderCell colSpan="6">
+                  <Grid columns="equal">
+                    <Grid.Column width={2}>
+                      <div className="tableItemNumbers">
+                        <p>
+                          {categoriespage.totalrecords} item
+                          {categoriespage.totalrecords !== 1 ? "s" : ""}
+                        </p>
+                      </div>
+                    </Grid.Column>
 
-                <Grid.Column className="tablePaginationColumn">
-                  {categoriespage.pages >= 2 ? (
-                    <Pagination
-                      activePage={categorySearchCriteria.activePage}
-                      totalPages={categoriespage.pages}
-                      onPageChange={(e, { activePage }) =>
-                        updateCategorySearch({
-                          variables: {
-                            ...categorySearchCriteria,
-                            activePage
-                          }
-                        }).then(() =>
-                          fetchMore({
-                            variables: {
-                              input: {
-                                ...variables.input,
-                                offset:
-                                  categorySearchCriteria.limit *
-                                    parseInt(activePage, 10) -
-                                  categorySearchCriteria.limit
+                    <Grid.Column className="tablePaginationColumn">
+                      {categoriespage.pages >= 2 ? (
+                        <Pagination
+                          activePage={categorySearchCriteria.activePage}
+                          totalPages={categoriespage.pages}
+                          onPageChange={(e, { activePage }) =>
+                            updateCategorySearch({
+                              variables: {
+                                ...categorySearchCriteria,
+                                activePage
                               }
-                            },
-                            updateQuery: (prev, { fetchMoreResult }) => {
-                              if (!fetchMoreResult) return prev;
-                              return fetchMoreResult;
-                            }
-                          })
-                        )
-                      }
-                    />
-                  ) : null}
-                </Grid.Column>
-              </Grid>
-            </Table.HeaderCell>
-          </Table.Row>
-        </Table.Footer>
+                            }).then(() =>
+                              fetchMore({
+                                variables: {
+                                  input: {
+                                    ...variables.input,
+                                    offset:
+                                      categorySearchCriteria.limit *
+                                        parseInt(activePage, 10) -
+                                      categorySearchCriteria.limit
+                                  }
+                                },
+                                updateQuery: (prev, { fetchMoreResult }) => {
+                                  if (!fetchMoreResult) return prev;
+                                  return fetchMoreResult;
+                                }
+                              })
+                            )
+                          }
+                        />
+                      ) : null}
+                    </Grid.Column>
+                  </Grid>
+                </Table.HeaderCell>
+              </Table.Row>
+            </Table.Footer>
+          </>
+        )}
       </Table>
     </>
   );

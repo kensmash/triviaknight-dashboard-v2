@@ -19,7 +19,7 @@ const StatusSelect = props => (
 );
 
 StatusSelect.propTypes = {
-  value: PropTypes.string,
+  value: PropTypes.bool,
   publishedSelectHandler: PropTypes.func
 };
 

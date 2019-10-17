@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 import { Grid, Card, Header } from "semantic-ui-react";
-import CatGenreForm from "../../../components/Admin/CatGenreForm/CatGenreForm";
+import CategoryGenreForm from "../../../components/Admin/CategoryGenreForm/CategoryGenreForm";
 import CategoryGenresList from "../../../components/Admin/CategoryGenresList/CategoryGenresList";
 
 const CategoryGenres = ({ history, match }) => (
@@ -13,7 +13,7 @@ const CategoryGenres = ({ history, match }) => (
             <Card.Header>New Category Genre</Card.Header>
           </Card.Content>
           <Card.Content>
-            <CatGenreForm />
+            <CategoryGenreForm />
           </Card.Content>
           <Card.Content extra>
             Genres are associated with Category Types. For instance, Rock,
