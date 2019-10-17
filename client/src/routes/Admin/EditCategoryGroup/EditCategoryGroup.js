@@ -5,7 +5,7 @@ import CategoryGroupForm from "../../../components/Admin/CategoryGroupForm/Categ
 import { useQuery } from "@apollo/react-hooks";
 import QUERY_CATEGORYGROUP from "../../../apollo/queries/categoryGroup";
 
-const EditCategoryType = ({ match, history }) => {
+const EditCategoryGroup = ({ match, history }) => {
   const { loading, error, data: { categoryGroup } = {} } = useQuery(
     QUERY_CATEGORYGROUP,
     {

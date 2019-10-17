@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Dropdown } from "semantic-ui-react";
 //query
+import { useQuery } from "@apollo/react-hooks";
 import QUERY_CATEGORIES from "../../../apollo/queries/categories";
 
 const CategoriesSelect = props => {
@@ -16,9 +17,11 @@ const CategoriesSelect = props => {
   return (
     <Dropdown
       value={props.value}
-      multiple
       fluid
       search
+      selection
+      multiple
+      clearable
       placeholder={props.placeholder}
       onChange={props.catSelectHandler}
       options={categories.map(item => ({

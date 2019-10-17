@@ -12,7 +12,7 @@ const DeleteCategoryGroupModal = props => {
 
   const [deleteCategoryGroup] = useMutation(MUTATION_DELETECATEGORYGROUP, {
     variables: {
-      id: props.categorygenreid
+      id: props.categorygroupid
     },
     refetchQueries: [
       { query: QUERY_CATEGORYGROUPSPAGE, variables: props.variables },

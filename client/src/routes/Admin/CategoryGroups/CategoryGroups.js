@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 import { Grid, Card, Header } from "semantic-ui-react";
-import CatGroupForm from "../../../components/Admin/CatGroupForm/CatGroupForm";
+import CategoryGroupForm from "../../../components/Admin/CategoryGroupForm/CategoryGroupForm";
 import CategoryGroupsList from "../../../components/Admin/CategoryGroupsList/CategoryGroupsList";
 
 const CategoryGroups = ({ history, match }) => (
@@ -13,7 +13,7 @@ const CategoryGroups = ({ history, match }) => (
             <Card.Header>New Category Group</Card.Header>
           </Card.Content>
           <Card.Content>
-            <CatGroupForm />
+            <CategoryGroupForm />
           </Card.Content>
           <Card.Content extra>
             Category Groups are used to display and promote related categories,

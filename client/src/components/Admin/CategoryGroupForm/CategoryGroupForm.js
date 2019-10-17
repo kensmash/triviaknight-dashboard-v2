@@ -7,7 +7,7 @@ import FormErrorMessage from "../../FormMessage/FormErrorMessage";
 import FormSuccessMessage from "../../FormMessage/FormSuccessMessage";
 //graphql
 import { gql } from "apollo-boost";
-import { useMutation } from "@apollo/react-hooks";
+import { useQuery, useMutation } from "@apollo/react-hooks";
 //queries
 import QUERY_CATEGORYGROUPS from "../../../apollo/queries/categoryGroups";
 import QUERY_CATEGORYGROUPSPAGE from "../../../apollo/queries/categoryGroupsPage";
@@ -16,6 +16,8 @@ const CategoryGroupForm = props => {
   const [submittedCategoryGroupName, setSubmittedCategoryGroupName] = useState(
     ""
   );
+
+  const { data: { categoryGroups } = {} } = useQuery(QUERY_CATEGORYGROUPS);
 
   const initialState = {
     name: "",
@@ -60,10 +62,8 @@ const CategoryGroupForm = props => {
   };
 
   const catSelectHandler = (_event, data) => {
-    this.setState({
-      fields: { ...this.state.fields, categories: data.value },
-      fieldErrors: { ...this.state.fieldErrors, categories: "" }
-    });
+    setFields({ ...fields, categories: data.value });
+    setFieldErrors({ ...fieldErrors, categories: "" });
   };
 
   const activeCheckboxHandler = (_event, data) => {
@@ -84,10 +84,8 @@ const CategoryGroupForm = props => {
       errors.name = "Please enter display text of at least three characters.";
     //check if genre already exists
     if (
-      this.props.pageType !== "edit" &&
-      this.props.allCategoryGroups.categoryGroups.some(
-        group => group.name === name
-      )
+      props.pageType !== "edit" &&
+      categoryGroups.some(group => group.name === name)
     )
       errors.name = "That group already exists!";
     return errors;
@@ -170,7 +168,6 @@ const CategoryGroupForm = props => {
       <Form.Field required>
         <label>Categories</label>
         <CategoriesSelect
-          type="genre"
           value={fields.categories}
           placeholder="Select Categories"
           catSelectHandler={(event, data) => catSelectHandler(event, data)}
@@ -207,7 +204,7 @@ const CategoryGroupForm = props => {
       />
 
       {submittedCategoryGroupName !== "" ? (
-        pageType === "edit" ? (
+        props.pageType === "edit" ? (
           <Button primary onClick={props.history.goBack}>
             Go Back
           </Button>
@@ -222,7 +219,7 @@ const CategoryGroupForm = props => {
             Submit
           </Button>
           {props.pageType === "edit" && (
-            <Button color="grey" onClick={history.goBack}>
+            <Button color="grey" onClick={props.history.goBack}>
               Cancel
             </Button>
           )}
