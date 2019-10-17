@@ -1,0 +1,250 @@
+import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
+import { Form, Button, Checkbox } from "semantic-ui-react";
+//components
+import CategoriesSelect from "../CategoriesSelect/CategoriesSelect";
+import FormErrorMessage from "../../FormMessage/FormErrorMessage";
+import FormSuccessMessage from "../../FormMessage/FormSuccessMessage";
+//graphql
+import { gql } from "apollo-boost";
+import { useMutation } from "@apollo/react-hooks";
+//queries
+import QUERY_CATEGORYGROUPS from "../../../apollo/queries/categoryGroups";
+import QUERY_CATEGORYGROUPSPAGE from "../../../apollo/queries/categoryGroupsPage";
+
+const CategoryGroupForm = props => {
+  const [submittedCategoryGroupName, setSubmittedCategoryGroupName] = useState(
+    ""
+  );
+
+  const initialState = {
+    name: "",
+    displaytext: "",
+    categories: [],
+    active: false
+  };
+
+  const [fields, setFields] = useState(initialState);
+
+  const [fieldErrors, setFieldErrors] = useState({
+    name: "",
+    displaytext: "",
+    categories: ""
+  });
+
+  const [upsertCategoryGroup] = useMutation(MUTATION_UPSERTCATEGORYGROUP);
+
+  useEffect(() => {
+    if (props.pageType === "edit") {
+      const { categorygroup } = props;
+      setFields({
+        fields: {
+          name: categorygroup.name,
+          displaytext: categorygroup.displaytext,
+          categories: categorygroup.categories
+            ? categorygroup.categories.map(cat => ({
+                key: cat._id,
+                text: cat.name,
+                value: cat._id
+              }))
+            : [],
+          active: categorygroup.active
+        }
+      });
+    }
+  }, [props]);
+
+  const inputChangedHandler = event => {
+    setFields({ ...fields, [event.target.id]: event.target.value });
+    setFieldErrors({ ...fieldErrors, [event.target.id]: "" });
+  };
+
+  const catSelectHandler = (_event, data) => {
+    this.setState({
+      fields: { ...this.state.fields, categories: data.value },
+      fieldErrors: { ...this.state.fieldErrors, categories: "" }
+    });
+  };
+
+  const activeCheckboxHandler = (_event, data) => {
+    if (data.checked) {
+      setFields({ ...fields, active: true });
+    } else {
+      setFields({ ...fields, active: false });
+    }
+  };
+
+  const formValidateHandler = (name, displaytext, categories, active) => {
+    const errors = {};
+    if (active && !categories.length)
+      errors.categories = "Please select at least one Category.";
+    if (name.length < 3)
+      errors.name = "Please enter a name of at least three characters.";
+    if (displaytext.length < 3)
+      errors.name = "Please enter display text of at least three characters.";
+    //check if genre already exists
+    if (
+      this.props.pageType !== "edit" &&
+      this.props.allCategoryGroups.categoryGroups.some(
+        group => group.name === name
+      )
+    )
+      errors.name = "That group already exists!";
+    return errors;
+  };
+
+  const formSubmitHandler = async event => {
+    event.preventDefault();
+    const errors = formValidateHandler(
+      fields.name,
+      fields.displaytext,
+      fields.categories,
+      fields.active
+    );
+    if (Object.keys(errors).length)
+      return setFieldErrors(...fieldErrors, ...errors);
+    UpsertCategoryGroupHandler();
+  };
+
+  const UpsertCategoryGroupHandler = async () => {
+    const { name, displaytext, categories, active } = fields;
+    //add category
+    const graphqlResponse = await upsertCategoryGroup({
+      variables: {
+        input: {
+          name,
+          displaytext,
+          categories,
+          active
+        }
+      },
+      refetchQueries: [
+        {
+          query: QUERY_CATEGORYGROUPSPAGE,
+          variables: {
+            offset: 15 * parseInt(1, 10) - 15,
+            limit: 15
+          }
+        },
+        { query: QUERY_CATEGORYGROUPS }
+      ]
+    });
+    setSubmittedCategoryGroupName(
+      graphqlResponse.data.upsertcategorygroup.name
+    );
+  };
+
+  const clearFormHandler = () => {
+    setFields(initialState);
+  };
+
+  return (
+    <Form>
+      {props.pageType === "edit" ? <h3>Edit Category Type</h3> : null}
+      <Form.Field required>
+        <label>Category Group Name</label>
+        <input
+          placeholder="Enter Category Group name..."
+          id="name"
+          value={fields.name}
+          onChange={event => inputChangedHandler(event)}
+        />
+        <FormErrorMessage
+          reveal={fieldErrors.name !== ""}
+          errormessage={fieldErrors.name}
+        />
+      </Form.Field>
+      <Form.Field required>
+        <label>Category Group Display Text</label>
+        <input
+          placeholder="App Home Screen Text"
+          id="displaytext"
+          value={fields.displaytext}
+          onChange={event => inputChangedHandler(event)}
+        />
+        <FormErrorMessage
+          reveal={fieldErrors.name !== ""}
+          errormessage={fieldErrors.name}
+        />
+      </Form.Field>
+      <Form.Field required>
+        <label>Categories</label>
+        <CategoriesSelect
+          type="genre"
+          value={fields.categories}
+          placeholder="Select Categories"
+          catSelectHandler={(event, data) => catSelectHandler(event, data)}
+        />
+        <FormErrorMessage
+          reveal={fieldErrors.categories !== ""}
+          errormessage={fieldErrors.categories}
+        />
+      </Form.Field>
+
+      <Form.Field>
+        <Checkbox
+          label="Active"
+          checked={fields.active}
+          onChange={(event, data) => activeCheckboxHandler(event, data)}
+        />
+      </Form.Field>
+
+      <FormSuccessMessage
+        reveal={submittedCategoryGroupName !== ""}
+        header={
+          props.pageType === "edit"
+            ? "Category Group Updated"
+            : "Category Group Added"
+        }
+        content={
+          (props.pageType === "edit"
+            ? "You've successfully updated"
+            : "You've successfully added") +
+          " the category group " +
+          submittedCategoryGroupName +
+          "."
+        }
+      />
+
+      {submittedCategoryGroupName !== "" ? (
+        pageType === "edit" ? (
+          <Button primary onClick={props.history.goBack}>
+            Go Back
+          </Button>
+        ) : (
+          <Button color="blue" onClick={clearFormHandler}>
+            Add Another
+          </Button>
+        )
+      ) : (
+        <div className="formButtonGroup">
+          <Button color="green" onClick={formSubmitHandler}>
+            Submit
+          </Button>
+          {props.pageType === "edit" && (
+            <Button color="grey" onClick={history.goBack}>
+              Cancel
+            </Button>
+          )}
+        </div>
+      )}
+    </Form>
+  );
+};
+
+const MUTATION_UPSERTCATEGORYGROUP = gql`
+  mutation upsertCategoryGroup($input: upsertCategoryGroupInput) {
+    upsertcategorygroup(input: $input) {
+      _id
+      name
+    }
+  }
+`;
+
+CategoryGroupForm.propTypes = {
+  pageType: PropTypes.string,
+  categorygenre: PropTypes.object,
+  history: PropTypes.object
+};
+
+export default CategoryGroupForm;
