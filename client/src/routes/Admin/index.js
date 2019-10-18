@@ -21,6 +21,11 @@ import QuestionReports from "./QuestionReports/QuestionReports";
 //games
 import GamesJoust from "./GamesJoust/GamesJoust";
 import GamesSiege from "./GamesSiege/GamesSiege";
+//support
+import SupportRequests from "./SupportRequests/SupportRequests";
+//push notifications
+import PushTickets from "./PushTickets/PushTickets";
+import PushReceipts from "./PushReceipts/PushReceipts";
 //users
 import Users from "./Users/Users";
 
@@ -126,6 +131,22 @@ class Admin extends React.PureComponent {
               path={match.url + "/users"}
               name="Users"
               component={Users}
+            />
+            <Route
+              exact
+              path={match.url + "/supportrequests"}
+              name="Support Requests"
+              component={SupportRequests}
+            />
+            <Route
+              exact
+              path={match.url + "/pushtickets"}
+              component={PushTickets}
+            />
+            <Route
+              exact
+              path={match.url + "/pushreceipts"}
+              component={PushReceipts}
             />
           </Switch>
         </Layout>
