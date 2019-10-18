@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
 import { Table, Grid, Pagination } from "semantic-ui-react";
 import DeleteQuestionReportModal from "./DeleteQuestionReportModal";
 //graphql
@@ -67,7 +68,10 @@ const QuestionReportsList = () => {
                       </Link>
                     </Table.Cell>
                     <Table.Cell collapsing>
-                      {moment(report.createdAt).format("dddd, MMMM Do, YYYY")}
+                      {format(
+                        new Date(report.createdAt),
+                        "dddd, MMMM Do, YYYY"
+                      )}
                     </Table.Cell>
                     <Table.Cell>{report.message}</Table.Cell>
                     <Table.Cell collapsing>
