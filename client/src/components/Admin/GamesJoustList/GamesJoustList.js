@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
-import format from "date-fns/format";
 import { Table, Grid, Pagination } from "semantic-ui-react";
-import DeleteQuestionReportModal from "./DeleteQuestionReportModal";
+import DeleteSiegeGameModal from "./DeleteSiegeGameModal";
+import format from "date-fns/format";
 //graphql
 import { useQuery } from "@apollo/react-hooks";
-import QUERY_QUESTIONREPORTSPAGE from "../../../apollo/queries/questionReportsPage";
+import QUERY_SIEGEGAMEPAGE from "../../../apollo/queries/siegeGamePage";
 
-const QuestionReportsList = () => {
+const GamesSiegeList = () => {
   const [activePage, setActivePage] = useState(1);
   const [limit] = useState(15);
 
@@ -17,11 +16,11 @@ const QuestionReportsList = () => {
     limit
   };
 
-  const { loading, data: { questionReportsPage } = {}, fetchMore } = useQuery(
-    QUERY_QUESTIONREPORTSPAGE,
+  const { loading, data: { siegegamepage } = {}, fetchMore } = useQuery(
+    QUERY_SIEGEGAMEPAGE,
     {
       variables,
-      fetchPolicy: "network-only"
+      fetchPolicy: "cache-and-network"
     }
   );
 
@@ -45,9 +44,12 @@ const QuestionReportsList = () => {
       <Table celled>
         <Table.Header>
           <Table.Row>
-            <Table.HeaderCell>Question</Table.HeaderCell>
-            <Table.HeaderCell>Date Reported</Table.HeaderCell>
-            <Table.HeaderCell>Message</Table.HeaderCell>
+            <Table.HeaderCell>Created On</Table.HeaderCell>
+            <Table.HeaderCell>Players</Table.HeaderCell>
+            <Table.HeaderCell>Topic</Table.HeaderCell>
+            <Table.HeaderCell>Last Played</Table.HeaderCell>
+            <Table.HeaderCell>Status</Table.HeaderCell>
+            <Table.HeaderCell>Game ID</Table.HeaderCell>
             <Table.HeaderCell />
           </Table.Row>
         </Table.Header>
@@ -60,26 +62,40 @@ const QuestionReportsList = () => {
         ) : (
           <>
             <Table.Body>
-              {questionReportsPage.reports.length ? (
-                questionReportsPage.reports.map(report => (
-                  <Table.Row key={report._id}>
-                    <Table.Cell collapsing>
-                      <Link to={`${report.question._id}`}>
-                        {report.question.question}
-                      </Link>
-                    </Table.Cell>
+              {siegegamepage.siegegames.length ? (
+                siegegamepage.siegegames.map(game => (
+                  <Table.Row key={game._id}>
                     <Table.Cell collapsing>
                       {format(
-                        new Date(Number(report.createdAt)),
-                        "EEEE, LLLL do, yyyy"
+                        new Date(report.createdAt),
+                        "dddd, MMMM Do, YYYY"
                       )}
                     </Table.Cell>
-                    <Table.Cell>{report.message}</Table.Cell>
+                    <Table.Cell>
+                      {game.players
+                        .map(player => player.player.name)
+                        .join(", ")}
+                    </Table.Cell>
+                    <Table.Cell>{game.topic}</Table.Cell>
+                    <Table.Cell>
+                      {format(
+                        new Date(report.updatedAt),
+                        "dddd, MMMM Do, YYYY"
+                      )}
+                    </Table.Cell>
+                    <Table.Cell>
+                      {game.gameover ? "Game Over" : "Playing"}
+                    </Table.Cell>
+
+                    <Table.Cell collapsing>{game._id}</Table.Cell>
+
                     <Table.Cell collapsing>
-                      <DeleteQuestionReportModal
-                        questionreportid={report._id}
-                        variables={variables}
-                      />
+                      <div>
+                        <DeleteSiegeGameModal
+                          siegegameid={game._id}
+                          variables={variables}
+                        />
+                      </div>
                     </Table.Cell>
                   </Table.Row>
                 ))
@@ -98,17 +114,17 @@ const QuestionReportsList = () => {
                     <Grid.Column width={2}>
                       <div className="tableItemNumbers">
                         <p>
-                          {questionReportsPage.totalrecords} item
-                          {questionReportsPage.totalrecords !== 1 ? "s" : ""}
+                          {siegegamepage.totalrecords} item
+                          {siegegamepage.totalrecords !== 1 ? "s" : ""}
                         </p>
                       </div>
                     </Grid.Column>
 
                     <Grid.Column className="tablePaginationColumn">
-                      {questionReportsPage.pages >= 2 ? (
+                      {siegegamepage.pages >= 2 ? (
                         <Pagination
                           activePage={activePage}
-                          totalPages={questionReportsPage.pages}
+                          totalPages={siegegamepage.pages}
                           onPageChange={(e, { activePage }) =>
                             fetchMoreHandler({ activePage })
                           }
@@ -126,9 +142,9 @@ const QuestionReportsList = () => {
   );
 };
 
-QuestionReportsList.propTypes = {
+GamesSiegeList.propTypes = {
   history: PropTypes.object.isRequired,
   match: PropTypes.object.isRequired
 };
 
-export default QuestionReportsList;
+export default GamesSiegeList;
