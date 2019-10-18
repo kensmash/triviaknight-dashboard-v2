@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import { Query } from "react-apollo";
 import gql from "graphql-tag";
@@ -18,9 +18,8 @@ const PushTicketsWidget = props => (
                 {data.pushticketswidget.ticketswitherrors}
               </Statistic.Value>
               <Statistic.Label>
-                Push Ticket Error{data.pushticketswidget.ticketswitherrors !== 1
-                  ? "s"
-                  : ""}
+                Push Ticket Error
+                {data.pushticketswidget.ticketswitherrors !== 1 ? "s" : ""}
               </Statistic.Label>
             </Statistic>
           </Card.Content>

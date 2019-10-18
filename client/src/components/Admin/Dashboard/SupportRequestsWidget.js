@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import { Query } from "react-apollo";
 import gql from "graphql-tag";
@@ -9,7 +9,7 @@ const SupportRequestsWidget = props => (
     {({ loading, error, data }) => {
       if (loading) return <div>Loading...</div>;
       if (error) return <div>Error :(</div>;
-      console.log("support request widget data", data);
+
       return (
         <Card>
           <Card.Content>
@@ -18,10 +18,8 @@ const SupportRequestsWidget = props => (
                 {data.supportrequestswidget.openrequests}
               </Statistic.Value>
               <Statistic.Label>
-                Open Support Request{data.supportrequestswidget.openrequests !==
-                1
-                  ? "s"
-                  : ""}
+                Open Support Request
+                {data.supportrequestswidget.openrequests !== 1 ? "s" : ""}
               </Statistic.Label>
             </Statistic>
           </Card.Content>

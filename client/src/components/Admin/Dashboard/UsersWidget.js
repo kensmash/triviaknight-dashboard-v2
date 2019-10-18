@@ -1,5 +1,4 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
+import React from "react";
 import { Query } from "react-apollo";
 import gql from "graphql-tag";
 import { Button, Card, Statistic } from "semantic-ui-react";

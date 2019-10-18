@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import { Query } from "react-apollo";
 import gql from "graphql-tag";
@@ -18,10 +18,8 @@ const PushReceiptsWidget = props => (
                 {data.pushreceiptswidget.receiptswitherrors}
               </Statistic.Value>
               <Statistic.Label>
-                Push Receipt Error{data.pushreceiptswidget
-                  .receiptswitherrors !== 1
-                  ? "s"
-                  : ""}
+                Push Receipt Error
+                {data.pushreceiptswidget.receiptswitherrors !== 1 ? "s" : ""}
               </Statistic.Label>
             </Statistic>
           </Card.Content>
