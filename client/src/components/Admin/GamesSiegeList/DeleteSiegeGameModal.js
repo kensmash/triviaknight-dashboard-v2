@@ -11,7 +11,7 @@ const DeleteSiegeGameModal = props => {
 
   const [deleteSiegeGame] = useMutation(MUTATION_DELETESIEGEGAME, {
     variables: {
-      id: props.siegegameid
+      gameid: props.siegegameid
     },
     refetchQueries: [{ query: QUERY_SIEGEGAMEPAGE, variables: props.variables }]
   });
@@ -57,7 +57,7 @@ const MUTATION_DELETESIEGEGAME = gql`
 `;
 
 DeleteSiegeGameModal.propTypes = {
-  questionreportid: PropTypes.string,
+  siegegameid: PropTypes.string.isRequired,
   variables: PropTypes.object
 };
 

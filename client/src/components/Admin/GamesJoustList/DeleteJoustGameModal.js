@@ -4,16 +4,16 @@ import { Button, Icon, Modal } from "semantic-ui-react";
 //graphql
 import { gql } from "apollo-boost";
 import { useMutation } from "@apollo/react-hooks";
-import QUERY_SIEGEGAMEPAGE from "../../../apollo/queries/siegeGamePage";
+import QUERY_JOUSTGAMEPAGE from "../../../apollo/queries/joustGamePage";
 
-const DeleteSiegeGameModal = props => {
+const DeleteJoustGameModal = props => {
   const [modalOpen, setModalOpen] = useState(false);
 
-  const [deleteSiegeGame] = useMutation(MUTATION_DELETESIEGEGAME, {
+  const [deleteJoustGame] = useMutation(MUTATION_DELETEJOUSTGAME, {
     variables: {
-      id: props.siegegameid
+      gameid: props.joustgameid
     },
-    refetchQueries: [{ query: QUERY_SIEGEGAMEPAGE, variables: props.variables }]
+    refetchQueries: [{ query: QUERY_JOUSTGAMEPAGE, variables: props.variables }]
   });
 
   const handleOpen = () => setModalOpen(true);
@@ -31,7 +31,7 @@ const DeleteSiegeGameModal = props => {
       size="mini"
     >
       <Modal.Header>
-        Are you sure you want to delete the siege game?
+        Are you sure you want to delete the joust game?
       </Modal.Header>
       <Modal.Content>
         <Modal.Description>
@@ -39,8 +39,8 @@ const DeleteSiegeGameModal = props => {
         </Modal.Description>
       </Modal.Content>
       <Modal.Actions>
-        <Button negative onClick={deleteSiegeGame}>
-          Delete Siege Game
+        <Button negative onClick={deleteJoustGame}>
+          Delete Joust Game
         </Button>
         <Button onClick={handleClose}>Cancel</Button>
       </Modal.Actions>
@@ -48,17 +48,17 @@ const DeleteSiegeGameModal = props => {
   );
 };
 
-const MUTATION_DELETESIEGEGAME = gql`
-  mutation deleteSiegeGame($gameid: ID!) {
-    deletesiegegame(gameid: $gameid) {
+const MUTATION_DELETEJOUSTGAME = gql`
+  mutation deleteJoustGame($gameid: ID!) {
+    deletejoustgame(gameid: $gameid) {
       _id
     }
   }
 `;
 
-DeleteSiegeGameModal.propTypes = {
-  questionreportid: PropTypes.string,
+DeleteJoustGameModal.propTypes = {
+  joustgameid: PropTypes.string.isRequired,
   variables: PropTypes.object
 };
 
-export default DeleteSiegeGameModal;
+export default DeleteJoustGameModal;

@@ -19,6 +19,7 @@ import NewQuestion from "./NewQuestion/NewQuestion";
 import EditQuestion from "./EditQuestion/EditQuestion";
 import QuestionReports from "./QuestionReports/QuestionReports";
 //games
+import GamesJoust from "./GamesJoust/GamesJoust";
 import GamesSiege from "./GamesSiege/GamesSiege";
 
 // when the url matches `/admin` this component renders
@@ -105,6 +106,12 @@ class Admin extends React.PureComponent {
               path={match.url + "/questions/reports"}
               name="Question Reports"
               component={QuestionReports}
+            />
+            <Route
+              exact
+              path={match.url + "/joustgames"}
+              name="Joust Games"
+              component={GamesJoust}
             />
             <Route
               exact

@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { Table, Grid, Pagination } from "semantic-ui-react";
-import DeleteSiegeGameModal from "./DeleteSiegeGameModal";
+import DeleteJoustGameModal from "./DeleteJoustGameModal";
 import format from "date-fns/format";
 //graphql
 import { useQuery } from "@apollo/react-hooks";
-import QUERY_SIEGEGAMEPAGE from "../../../apollo/queries/siegeGamePage";
+import QUERY_JOUSTGAMEPAGE from "../../../apollo/queries/joustGamePage";
 
-const GamesSiegeList = () => {
+const GamesJoustList = () => {
   const [activePage, setActivePage] = useState(1);
   const [limit] = useState(15);
 
@@ -16,8 +16,8 @@ const GamesSiegeList = () => {
     limit
   };
 
-  const { loading, data: { siegegamepage } = {}, fetchMore } = useQuery(
-    QUERY_SIEGEGAMEPAGE,
+  const { loading, data: { joustgamepage } = {}, fetchMore } = useQuery(
+    QUERY_JOUSTGAMEPAGE,
     {
       variables,
       fetchPolicy: "cache-and-network"
@@ -46,7 +46,7 @@ const GamesSiegeList = () => {
           <Table.Row>
             <Table.HeaderCell>Created On</Table.HeaderCell>
             <Table.HeaderCell>Players</Table.HeaderCell>
-            <Table.HeaderCell>Topic</Table.HeaderCell>
+            <Table.HeaderCell>Category</Table.HeaderCell>
             <Table.HeaderCell>Last Played</Table.HeaderCell>
             <Table.HeaderCell>Status</Table.HeaderCell>
             <Table.HeaderCell>Game ID</Table.HeaderCell>
@@ -62,13 +62,13 @@ const GamesSiegeList = () => {
         ) : (
           <>
             <Table.Body>
-              {siegegamepage.siegegames.length ? (
-                siegegamepage.siegegames.map(game => (
+              {joustgamepage.joustgames.length ? (
+                joustgamepage.joustgames.map(game => (
                   <Table.Row key={game._id}>
                     <Table.Cell collapsing>
                       {format(
-                        new Date(report.createdAt),
-                        "dddd, MMMM Do, YYYY"
+                        new Date(Number(game.createdAt)),
+                        "EEEE, LLLL do, yyyy"
                       )}
                     </Table.Cell>
                     <Table.Cell>
@@ -76,11 +76,11 @@ const GamesSiegeList = () => {
                         .map(player => player.player.name)
                         .join(", ")}
                     </Table.Cell>
-                    <Table.Cell>{game.topic}</Table.Cell>
+                    <Table.Cell>{game.category.name}</Table.Cell>
                     <Table.Cell>
                       {format(
-                        new Date(report.updatedAt),
-                        "dddd, MMMM Do, YYYY"
+                        new Date(Number(game.updatedAt)),
+                        "EEEE, LLLL do, yyyy"
                       )}
                     </Table.Cell>
                     <Table.Cell>
@@ -91,8 +91,8 @@ const GamesSiegeList = () => {
 
                     <Table.Cell collapsing>
                       <div>
-                        <DeleteSiegeGameModal
-                          siegegameid={game._id}
+                        <DeleteJoustGameModal
+                          joustgameid={game._id}
                           variables={variables}
                         />
                       </div>
@@ -114,17 +114,17 @@ const GamesSiegeList = () => {
                     <Grid.Column width={2}>
                       <div className="tableItemNumbers">
                         <p>
-                          {siegegamepage.totalrecords} item
-                          {siegegamepage.totalrecords !== 1 ? "s" : ""}
+                          {joustgamepage.totalrecords} item
+                          {joustgamepage.totalrecords !== 1 ? "s" : ""}
                         </p>
                       </div>
                     </Grid.Column>
 
                     <Grid.Column className="tablePaginationColumn">
-                      {siegegamepage.pages >= 2 ? (
+                      {joustgamepage.pages >= 2 ? (
                         <Pagination
                           activePage={activePage}
-                          totalPages={siegegamepage.pages}
+                          totalPages={joustgamepage.pages}
                           onPageChange={(e, { activePage }) =>
                             fetchMoreHandler({ activePage })
                           }
@@ -142,9 +142,9 @@ const GamesSiegeList = () => {
   );
 };
 
-GamesSiegeList.propTypes = {
+GamesJoustList.propTypes = {
   history: PropTypes.object.isRequired,
   match: PropTypes.object.isRequired
 };
 
-export default GamesSiegeList;
+export default GamesJoustList;
