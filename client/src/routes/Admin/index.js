@@ -99,15 +99,15 @@ class Admin extends React.PureComponent {
             />
             <Route
               exact
-              path={match.url + "/questions/:_id"}
-              name="Edit Question"
-              component={EditQuestion}
-            />
-            <Route
-              exact
               path={match.url + "/questions/reports"}
               name="Question Reports"
               component={QuestionReports}
+            />
+            <Route
+              exact
+              path={match.url + "/questions/:_id"}
+              name="Edit Question"
+              component={EditQuestion}
             />
             <Route
               exact

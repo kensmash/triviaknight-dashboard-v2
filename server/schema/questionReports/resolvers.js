@@ -30,6 +30,7 @@ const resolvers = {
           ]);
           const reportResults = reports[0];
           const reportCount = reports[1];
+
           return {
             pages: Math.ceil(reportCount / limit),
             totalrecords: reportCount,
