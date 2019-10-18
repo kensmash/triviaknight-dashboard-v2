@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
+import { format } from "date-fns";
 import { Table, Grid, Pagination } from "semantic-ui-react";
 import DeleteQuestionReportModal from "./DeleteQuestionReportModal";
 //graphql
@@ -59,8 +60,8 @@ const QuestionReportsList = () => {
         ) : (
           <>
             <Table.Body>
-              {questionReportsPage.categorytypes.length ? (
-                questionReportsPage.categorytypes.map(report => (
+              {questionReportsPage.reports.length ? (
+                questionReportsPage.reports.map(report => (
                   <Table.Row key={report._id}>
                     <Table.Cell collapsing>
                       <Link to={`${report.question._id}`}>
