@@ -2,7 +2,7 @@ const schedule = require("node-schedule");
 const Category = require("../models/Category");
 const User = require("../models/User");
 const ExpoPushTicket = require("../models/ExpoPushTicket");
-const Expo = require("expo-server-sdk");
+const { Expo } = require("expo-server-sdk");
 
 //send notification for new categories
 const newCategories = schedule.scheduleJob(

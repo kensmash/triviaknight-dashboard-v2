@@ -1,5 +1,5 @@
 const schedule = require("node-schedule");
-const Expo = require("expo-server-sdk");
+const { Expo } = require("expo-server-sdk");
 const ExpoPushTicket = require("../models/ExpoPushTicket");
 const ExpoPushReceipt = require("../models/ExpoPushReceipt");
 const {

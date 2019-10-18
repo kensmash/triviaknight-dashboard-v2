@@ -2,7 +2,7 @@ const schedule = require("node-schedule");
 const CategoryGenre = require("../models/CategoryGenre");
 const User = require("../models/User");
 const ExpoPushTicket = require("../models/ExpoPushTicket");
-const Expo = require("expo-server-sdk");
+const { Expo } = require("expo-server-sdk");
 
 //send notification for weekly Press Luck genre
 const weeklyPressLuckGenre = schedule.scheduleJob(

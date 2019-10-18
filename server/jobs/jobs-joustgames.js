@@ -2,7 +2,7 @@ const schedule = require("node-schedule");
 const GameJoust = require("../models/GameJoust");
 const User = require("../models/User");
 const ExpoPushTicket = require("../models/ExpoPushTicket");
-const Expo = require("expo-server-sdk");
+const { Expo } = require("expo-server-sdk");
 
 //delete declined games after 2 days
 const deleteDeclinedJoustGames = schedule.scheduleJob(
