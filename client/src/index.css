@@ -165,6 +165,11 @@ img {
   margin-bottom: 0;
 }
 
+/*override style that messes up question answers distribution*/
+.ui.card > .content {
+  flex-grow: 0 !important;
+}
+
 .stretchCard {
   display: flex;
   height: 100%;
