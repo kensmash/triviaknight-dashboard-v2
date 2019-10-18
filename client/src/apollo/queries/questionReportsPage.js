@@ -1,4 +1,4 @@
-import gql from "graphql-tag";
+import { gql } from "apollo-boost";
 
 export default gql`
   query questionReportsPage($limit: Int!, $offset: Int!, $updated: Boolean) {

@@ -10,17 +10,17 @@ import "semantic-ui-css/semantic.min.css";
 import "./index.css";
 
 function App() {
-  const [restored, setRestored] = useState(false);
+  const [isRestored, setIsRestored] = useState(false);
 
   useEffect(() => {
     persistor.restore().then(() => {
-      setRestored(true);
+      setIsRestored(true);
     });
   }, []);
 
   return (
     <>
-      {!restored ? (
+      {!isRestored ? (
         <div>Loading!!!</div>
       ) : (
         <ApolloProvider client={client}>

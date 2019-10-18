@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
-import { format } from "date-fns";
+import format from "date-fns/format";
 import { Table, Grid, Pagination } from "semantic-ui-react";
 import DeleteQuestionReportModal from "./DeleteQuestionReportModal";
 //graphql
@@ -21,7 +21,7 @@ const QuestionReportsList = () => {
     QUERY_QUESTIONREPORTSPAGE,
     {
       variables,
-      fetchPolicy: "cache-and-network"
+      fetchPolicy: "network-only"
     }
   );
 

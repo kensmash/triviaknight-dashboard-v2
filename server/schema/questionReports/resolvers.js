@@ -13,7 +13,7 @@ const resolvers = {
 
     questionReportsPage: requiresAdmin.createResolver(
       async (parent, { offset, limit, updated }) => {
-        const queryBuilder = (type, receiptFetched) => {
+        const queryBuilder = updated => {
           const query = {};
           if (updated) {
             query.questionupdated = { $eq: updated };
