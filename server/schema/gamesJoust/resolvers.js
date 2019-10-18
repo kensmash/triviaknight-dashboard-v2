@@ -9,6 +9,7 @@ const {
   changeJoustTurn,
   endJoustGame
 } = require("../_helpers/helper-gamesjoust");
+const { joustQuestions } = require("../_helpers/helper-questions");
 
 const resolvers = {
   Query: {

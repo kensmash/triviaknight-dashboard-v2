@@ -1,6 +1,9 @@
 const User = require("../../models/User");
+const GameJoust = require("../../models/GameJoust");
+const GameSiege = require("../../models/GameSiege");
+const GamePressYourLuck = require("../../models/GamePressYourLuck");
 const ExpoPushTicket = require("../../models/ExpoPushTicket");
-const Expo = require("expo-server-sdk");
+const { Expo } = require("expo-server-sdk");
 //auth helpers
 const { requiresAuth } = require("../_helpers/helper-permissions");
 const {
@@ -407,13 +410,13 @@ const resolvers = {
       async (parent, args, { user }) => {
         try {
           const allpressluckgames = await GamePressYourLuck.find({
-            "players.player": user
+            "players.player": user.id
           })
             .populate("players.player")
             .populate("genre");
           //joust games
           const alljoustgames = await GameJoust.find({
-            "players.player": user
+            "players.player": user.id
           })
             .populate("createdby")
             .populate("players.player")
@@ -421,11 +424,12 @@ const resolvers = {
             .sort({ updatedAt: -1 });
           //siege games
           const allsiegegames = await GameSiege.find({
-            "players.player": user
+            "players.player": user.id
           })
             .populate("createdby")
             .populate("players.player")
             .sort({ updatedAt: -1 });
+
           return {
             pressluckgames: allpressluckgames,
             joustgames: alljoustgames,

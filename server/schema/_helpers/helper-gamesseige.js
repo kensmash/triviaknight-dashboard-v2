@@ -1,7 +1,7 @@
 const User = require("../../models/User");
 const GameSiege = require("../../models/GameSiege");
 const ExpoPushTicket = require("../../models/ExpoPushTicket");
-const Expo = require("expo-server-sdk");
+const { Expo } = require("expo-server-sdk");
 
 const changeSiegeTurn = async (gameid, player, opponent, expo) => {
   try {

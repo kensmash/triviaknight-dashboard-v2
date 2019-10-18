@@ -1,4 +1,6 @@
 const GameSiege = require("../../models/GameSiege");
+const CategoryType = require("../../models/CategoryType");
+const CategoryGenre = require("../../models/CategoryGenre");
 //auth helpers
 const {
   requiresAuth,
@@ -9,6 +11,10 @@ const {
   changeSiegeTurn,
   endSiegeGame
 } = require("../_helpers/helper-gamesseige");
+const {
+  siegeCatTypeQuestions,
+  siegeGenreQuestions
+} = require("../_helpers/helper-questions");
 
 const resolvers = {
   Query: {

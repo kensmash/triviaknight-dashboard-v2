@@ -1,7 +1,7 @@
 const User = require("../../models/User");
 const GameJoust = require("../../models/GameJoust");
 const ExpoPushTicket = require("../../models/ExpoPushTicket");
-const Expo = require("expo-server-sdk");
+const { Expo } = require("expo-server-sdk");
 
 const changeJoustTurn = async (gameid, player, opponent, expo) => {
   try {
