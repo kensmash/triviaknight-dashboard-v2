@@ -21,6 +21,8 @@ import QuestionReports from "./QuestionReports/QuestionReports";
 //games
 import GamesJoust from "./GamesJoust/GamesJoust";
 import GamesSiege from "./GamesSiege/GamesSiege";
+//users
+import Users from "./Users/Users";
 
 // when the url matches `/admin` this component renders
 class Admin extends React.PureComponent {
@@ -118,6 +120,12 @@ class Admin extends React.PureComponent {
               path={match.url + "/siegegames"}
               name="Siege Games"
               component={GamesSiege}
+            />
+            <Route
+              exact
+              path={match.url + "/users"}
+              name="Users"
+              component={Users}
             />
           </Switch>
         </Layout>
