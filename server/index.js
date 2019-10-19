@@ -34,7 +34,8 @@ mongoose.connect(keys.mongoURI, {
   useUnifiedTopology: true,
   useFindAndModify: false,
   useNewUrlParser: true,
-  useCreateIndex: true
+  useCreateIndex: true,
+  retryWrites=false
 });
 
 const PORT = process.env.PORT || 4000;
