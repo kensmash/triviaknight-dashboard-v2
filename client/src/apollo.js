@@ -4,7 +4,7 @@ import { CachePersistor } from "apollo-cache-persist";
 import categorySearchQuery from "./apollo/queries/client-categorySearchCriteria";
 import categoryGenreSearchQuery from "./apollo/queries/client-categoryGenreSearchCriteria";
 import questionSearchQuery from "./apollo/queries/client-questionSearchCriteria";
-
+import addQuestionCriteriaQuery from "./apollo/queries/client-addQuestionCriteria";
 //use Apollo Link State for local application data
 const cache = new InMemoryCache();
 //persist local cache https://gist.github.com/randytorres/2d8c36f567a1be7ddb89bb7b8ca7929d
@@ -40,6 +40,10 @@ const defaultState = {
     difficulty: "",
     type: "",
     publishedstatus: null
+  },
+  addQuestionCriteria: {
+    __typename: "addQuestionCriteria",
+    category: ""
   }
 };
 
@@ -121,6 +125,18 @@ const client = new ApolloClient({
           };
           cache.writeQuery({ query, data });
           return data.questionSearchCriteria;
+        },
+        updateAddQuestionCriteria: (_, { category }, { cache }) => {
+          const query = addQuestionCriteriaQuery;
+          const previous = cache.readQuery({ query });
+          const data = {
+            addQuestionCriteria: {
+              ...previous.addQuestionCriteria,
+              category
+            }
+          };
+          cache.writeQuery({ query, data });
+          return data.addQuestionCriteria;
         }
       }
     }

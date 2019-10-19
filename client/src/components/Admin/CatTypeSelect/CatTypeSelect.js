@@ -19,7 +19,6 @@ const CatTypeSelect = props => {
       placeholder={props.placeholder}
       value={props.value}
       fluid
-      search
       selection
       clearable
       multiple={props.type === "genre" ? true : false}
@@ -27,7 +26,6 @@ const CatTypeSelect = props => {
       options={categorytypes.map(item => ({
         key: item._id,
         value: item._id,
-        hasgenres: item.hasgenres.toString(),
         text: item.name
       }))}
     />
