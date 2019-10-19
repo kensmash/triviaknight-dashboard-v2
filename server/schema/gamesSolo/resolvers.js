@@ -60,7 +60,7 @@ const resolvers = {
           });
 
           const soloGame = await newgame.save();
-          checkRank(user.id, expo);
+
           return soloGame;
         } catch (error) {
           console.error(error);
