@@ -45,10 +45,7 @@ const CategoryGenreForm = props => {
       setFields({
         name: categorygenre.name,
         categorytypes: categorygenre.categorytypes
-          ? categorygenre.categorytypes.map(type => ({
-              label: type.name,
-              value: type._id
-            }))
+          ? categorygenre.categorytypes.map(type => type._id)
           : [],
         playable: categorygenre.playable,
         pressluckactive: categorygenre.pressluckactive

@@ -49,7 +49,7 @@ const CategoriesList = props => {
           !data.categoriespage.categories.length &&
           categorySearchCriteria.activePage > 1
         ) {
-          props.updateCategorySearch({
+          updateCategorySearch({
             variables: {
               ...categorySearchCriteria,
               activePage: 1

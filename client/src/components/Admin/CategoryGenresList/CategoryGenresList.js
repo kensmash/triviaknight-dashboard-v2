@@ -196,27 +196,25 @@ const CategoryGenresList = props => {
                           activePage={categoryGenreSearchCriteria.activePage}
                           totalPages={categoryGenresPage.pages}
                           onPageChange={(e, { activePage }) =>
-                            props
-                              .updateCategoryGenreSearch({
+                            updateCategoryGenreSearch({
+                              variables: {
+                                ...categoryGenreSearchCriteria,
+                                activePage
+                              }
+                            }).then(() =>
+                              fetchMore({
                                 variables: {
-                                  ...categoryGenreSearchCriteria,
-                                  activePage
+                                  offset:
+                                    categoryGenreSearchCriteria.limit *
+                                      parseInt(activePage, 10) -
+                                    categoryGenreSearchCriteria.limit
+                                },
+                                updateQuery: (prev, { fetchMoreResult }) => {
+                                  if (!fetchMoreResult) return prev;
+                                  return fetchMoreResult;
                                 }
                               })
-                              .then(() =>
-                                fetchMore({
-                                  variables: {
-                                    offset:
-                                      categoryGenreSearchCriteria.limit *
-                                        parseInt(activePage, 10) -
-                                      categoryGenreSearchCriteria.limit
-                                  },
-                                  updateQuery: (prev, { fetchMoreResult }) => {
-                                    if (!fetchMoreResult) return prev;
-                                    return fetchMoreResult;
-                                  }
-                                })
-                              )
+                            )
                           }
                         />
                       ) : null}
