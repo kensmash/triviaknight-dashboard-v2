@@ -38,17 +38,13 @@ const CategoryTypeForm = props => {
 
   useEffect(() => {
     if (props.pageType === "edit") {
-      const { categorygenre } = props;
+      const { categorytype } = props;
       setFields({
-        name: categorygenre.name,
-        categorytypes: categorygenre.categorytypes
-          ? categorygenre.categorytypes.map(type => ({
-              label: type.name,
-              value: type._id
-            }))
-          : [],
-        playable: categorygenre.playable,
-        pressluckactive: categorygenre.pressluckactive
+        name: categorytype.name,
+        iconname: categorytype.iconname,
+        iconset: categorytype.iconset ? categorytype.iconset : "Ionicons",
+        hasgenres: categorytype.hasgenres,
+        playable: categorytype.playable
       });
     }
   }, [props]);
