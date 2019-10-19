@@ -1,5 +1,5 @@
 body {
-  background: rgba(0, 0, 0, 1);
+  background: rgba(238, 238, 238, 1);
 }
 
 #root {
@@ -20,8 +20,8 @@ img {
 }
 
 .ui.menu {
-  margin-bottom: 0;
-  border-radius: 0;
+  margin-bottom: 0 !important;
+  border-radius: 0 !important;
 }
 
 .publiccontent {
@@ -34,6 +34,7 @@ img {
   display: flex;
   justify-content: center;
   padding: 3em 8em 0 8em;
+  background: rgba(0, 0, 0, 1);
 }
 
 .bigphone {
@@ -90,13 +91,6 @@ img {
 
 .form-addcattype {
   margin-top: 0.5em;
-}
-
-/* Semantic UI modal position fix */
-/* https://github.com/Semantic-Org/Semantic-UI-CSS/issues/40 */
-.ui.active.dimmer.modals.transition {
-  display: flex !important;
-  display: -ms-flexbox !important;
 }
 
 /* right align pagination in table footer */
