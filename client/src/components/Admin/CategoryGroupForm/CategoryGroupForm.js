@@ -39,19 +39,14 @@ const CategoryGroupForm = props => {
   useEffect(() => {
     if (props.pageType === "edit") {
       const { categorygroup } = props;
+      console.log(categorygroup);
       setFields({
-        fields: {
-          name: categorygroup.name,
-          displaytext: categorygroup.displaytext,
-          categories: categorygroup.categories
-            ? categorygroup.categories.map(cat => ({
-                key: cat._id,
-                text: cat.name,
-                value: cat._id
-              }))
-            : [],
-          active: categorygroup.active
-        }
+        name: categorygroup.name,
+        displaytext: categorygroup.displaytext,
+        categories: categorygroup.categories
+          ? categorygroup.categories.map(cat => cat._id)
+          : [],
+        active: categorygroup.active
       });
     }
   }, [props]);
@@ -138,7 +133,7 @@ const CategoryGroupForm = props => {
 
   return (
     <Form>
-      {props.pageType === "edit" ? <h3>Edit Category Type</h3> : null}
+      {props.pageType === "edit" ? <h3>Edit Category Group</h3> : null}
       <Form.Field required>
         <label>Category Group Name</label>
         <input
