@@ -119,6 +119,16 @@ server.applyMiddleware({
 
 const httpServer = http.createServer(app);
 
-httpServer.listen({ port: PORT }, () =>
-  console.log(`🚀 Server ready at ${PORT}${server.graphqlPath}`)
-);
+httpServer
+  .listen({ port: PORT }, () =>
+    console.log(`🚀 Server ready at ${PORT}${server.graphqlPath}`)
+  )
+  .on("error", function(err) {
+    console.log("on error handler");
+    console.log(err);
+  });
+
+process.on("uncaughtException", function(err) {
+  console.log("process.on handler");
+  console.log(err);
+});
