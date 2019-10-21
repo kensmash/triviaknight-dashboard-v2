@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Category = require("../../models/Category");
+const CategoryGroup = require("../../models/CategoryGroup");
 //auth helpers
 const {
   requiresAuth,
@@ -13,6 +14,20 @@ const resolvers = {
         .sort({ createdAt: -1 })
         .populate("type")
         .populate("genres");
+    }),
+
+    categoriesandgroups: requiresAuth.createResolver(async (parent, args) => {
+      const categories = await Category.find({})
+        .sort({ createdAt: -1 })
+        .populate("type")
+        .populate("genres");
+      const groups = await CategoryGroup.find({})
+        .sort({ name: 1 })
+        .populate({
+          path: "categories",
+          populate: { path: "type" }
+        });
+      return { categories, groups };
     }),
 
     categoriespage: requiresAuth.createResolver(async (parent, { input }) => {

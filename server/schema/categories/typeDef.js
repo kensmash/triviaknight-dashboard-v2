@@ -31,6 +31,11 @@ const typeDef = gql`
     unpublishedcategories: Int!
   }
 
+  type CategoriesAndGroupsResponse {
+    categories: [Category]!
+    groups: [CategoryGroup]
+  }
+
   input categoryPageInput {
     limit: Int!
     offset: Int!
@@ -59,6 +64,7 @@ const typeDef = gql`
   extend type Query {
     categories: [Category]
     categorieswidget: CategoryWidgetResponse
+    categoriesandgroups: CategoriesAndGroupsResponse
     tkgamecategories: [Category]
     categorysearch(name: String!): [Category]
     category(id: ID!): Category
