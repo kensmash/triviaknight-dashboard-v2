@@ -39,7 +39,7 @@ const CategoryGroupForm = props => {
   useEffect(() => {
     if (props.pageType === "edit") {
       const { categorygroup } = props;
-      console.log(categorygroup);
+
       setFields({
         name: categorygroup.name,
         displaytext: categorygroup.displaytext,
@@ -105,6 +105,7 @@ const CategoryGroupForm = props => {
     const graphqlResponse = await upsertCategoryGroup({
       variables: {
         input: {
+          id: props.pageType === "edit" ? props.categorygroup._id : null,
           name,
           displaytext,
           categories,

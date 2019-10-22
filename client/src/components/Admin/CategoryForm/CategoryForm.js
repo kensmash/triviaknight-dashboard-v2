@@ -8,10 +8,10 @@ import FormErrorMessage from "../../FormMessage/FormErrorMessage";
 import FormSuccessMessage from "../../FormMessage/FormSuccessMessage";
 //graphql
 import { gql } from "apollo-boost";
-import { useMutation } from "@apollo/react-hooks";
-import categoriesQuery from "../../../apollo/queries/categories";
-import categoriesPageQuery from "../../../apollo/queries/categoriesPage";
-import categorySearchCriteria from "../../../apollo/queries/client-categorySearchCriteria";
+import { useQuery, useMutation } from "@apollo/react-hooks";
+import QUERY_CATEGORIES from "../../../apollo/queries/categories";
+import QUERY_CATEGORIESPAGE from "../../../apollo/queries/categoriesPage";
+import QUERY_CLIENTCATEGORYSEARCH from "../../../apollo/queries/client-categorySearchCriteria";
 
 const CategoryForm = props => {
   const [submittedCategoryName, setSubmittedCategoryName] = useState("");
@@ -36,6 +36,10 @@ const CategoryForm = props => {
     type: "",
     categorydescription: ""
   });
+
+  const { data: { categorySearchCriteria } = {} } = useQuery(
+    QUERY_CLIENTCATEGORYSEARCH
+  );
 
   const [upsertCategory] = useMutation(MUTATION_UPSERTCATEGORY);
 
@@ -164,7 +168,7 @@ const CategoryForm = props => {
       },
       refetchQueries: [
         {
-          query: categoriesPageQuery,
+          query: QUERY_CATEGORIESPAGE,
           variables: {
             input: {
               offset:
@@ -175,17 +179,18 @@ const CategoryForm = props => {
               name: categorySearchCriteria.name,
               type: categorySearchCriteria.type,
               genres: categorySearchCriteria.genres,
-              partycategory: categorySearchCriteria.partycategory
+              partycategory: categorySearchCriteria.partycategory === "true"
             }
           }
         },
-        { query: categoriesQuery }
+        { query: QUERY_CATEGORIES }
       ]
     });
     setSubmittedCategoryName(graphqlResponse.data.upsertcategory.name);
   };
 
   const clearFormHandler = () => {
+    setSubmittedCategoryName("");
     setFields(initialState);
   };
 

@@ -60,6 +60,7 @@ const resolvers = {
       ]);
       const categoryResults = categories[0];
       const categoryCount = categories[1];
+
       return {
         pages: Math.ceil(categoryCount / input.limit),
         totalrecords: categoryCount,

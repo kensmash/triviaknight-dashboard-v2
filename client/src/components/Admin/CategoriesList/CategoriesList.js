@@ -42,7 +42,7 @@ const CategoriesList = props => {
     QUERY_CATEGORIESPAGE,
     {
       variables,
-      fetchPolicy: "cache-and-network",
+      fetchPolicy: "network-only",
       onCompleted: data => {
         //change currently selected page when no records for page greater than 1
         if (
@@ -81,7 +81,6 @@ const CategoriesList = props => {
   };
 
   const catGenreSelectHandler = (_e, data) => {
-    console.log(data.value);
     updateCategorySearch({
       variables: {
         ...categorySearchCriteria,
