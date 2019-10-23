@@ -282,7 +282,10 @@ const QuestionForm = props => {
           id: props.pageType === "edit" ? props.question._id : null,
           question,
           answers,
-          category: addQuestionCriteria.category,
+          category:
+            props.pageType === "edit"
+              ? props.question.category._id
+              : addQuestionCriteria.category,
           type: questiontype,
           difficulty: questiondifficulty,
           imageurl,
