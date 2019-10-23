@@ -20,6 +20,7 @@ const CategorySelect = props => {
     <Dropdown
       value={props.value}
       fluid
+      search
       selection
       clearable
       placeholder="Filter by Category"
