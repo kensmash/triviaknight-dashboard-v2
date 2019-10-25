@@ -50,9 +50,9 @@ const resolvers = {
               .skip(offset)
               .populate("category")
               .sort({ _id: -1 }),
-            Question.find(
+            Question.countDocuments(
               queryBuilder(question, category, difficulty, type, published)
-            ).count()
+            )
           ]);
 
           const questionResults = questions[0];
@@ -111,8 +111,8 @@ const resolvers = {
     questionswidget: requiresAdmin.createResolver(async (parent, args) => {
       try {
         const widget = await Promise.all([
-          Question.find().count(),
-          Question.find({ published: { $eq: false } }).count()
+          Question.estimatedDocumentCount(),
+          Question.countDocuments({ published: { $eq: false } })
         ]);
 
         const totalquestions = widget[0];

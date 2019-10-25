@@ -53,7 +53,7 @@ const resolvers = {
               .skip(offset)
               .limit(limit)
               .populate("players.player"),
-            GameSiege.find(queryBuilder(players, gameover)).count()
+            GameSiege.countDocuments(queryBuilder(players, gameover))
           ]);
           const siegeResults = siegegames[0];
           const siegeCount = siegegames[1];

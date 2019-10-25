@@ -25,7 +25,7 @@ const resolvers = {
             SupportRequest.find(queryBuilder(replysent, resolved))
               .skip(offset)
               .limit(limit),
-            SupportRequest.find(queryBuilder(replysent, resolved)).count()
+            SupportRequest.countDocuments(queryBuilder(replysent, resolved))
           ]);
           const requestResults = requests[0];
           const requestCount = requests[1];
@@ -45,8 +45,8 @@ const resolvers = {
       async (parent, args) => {
         try {
           const widget = await Promise.all([
-            SupportRequest.find({ resolved: { $eq: false } }).count(),
-            SupportRequest.find({ replysent: { $eq: false } }).count()
+            SupportRequest.countDocuments({ resolved: { $eq: false } }),
+            SupportRequest.countDocuments({ replysent: { $eq: false } })
           ]);
 
           const openrequests = widget[0];

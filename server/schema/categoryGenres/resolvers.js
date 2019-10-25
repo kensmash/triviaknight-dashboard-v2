@@ -34,7 +34,7 @@ const resolvers = {
               .skip(offset)
               .limit(limit)
               .populate("categorytypes"),
-            CategoryGenre.find(queryBuilder(name, categorytypes)).count()
+            CategoryGenre.countDocuments(queryBuilder(name, categorytypes))
           ]);
           const categoryGenreResults = categorygenres[0];
           const categoryGenreCount = categorygenres[1];

@@ -22,7 +22,7 @@ const resolvers = {
             ExpoPushTicket.find(queryBuilder(type, receiptFetched))
               .skip(offset)
               .limit(limit),
-            ExpoPushTicket.find(queryBuilder(type, receiptFetched)).count()
+            ExpoPushTicket.countDocuments(queryBuilder(type, receiptFetched))
           ]);
           const ticketResults = tickets[0];
           const ticketCount = tickets[1];
@@ -39,11 +39,9 @@ const resolvers = {
 
     pushticketswidget: requiresAdmin.createResolver(async (parent, args) => {
       try {
-        const widget = await Promise.all([
-          ExpoPushTicket.find({ status: { $ne: "ok" } }).count()
-        ]);
-
-        const ticketswitherrors = widget[0];
+        const ticketswitherrors = ExpoPushTicket.countDocuments({
+          status: { $ne: "ok" }
+        });
 
         return { ticketswitherrors };
       } catch (error) {
@@ -83,9 +81,7 @@ const resolvers = {
 
     pushreceiptswidget: requiresAdmin.createResolver(async (parent, args) => {
       try {
-        const widget = await Promise.all([ExpoPushReceipt.find().count()]);
-
-        const receiptswitherrors = widget[0];
+        const receiptswitherrors = ExpoPushReceipt.estimatedDocumentCount();
 
         return { receiptswitherrors };
       } catch (error) {

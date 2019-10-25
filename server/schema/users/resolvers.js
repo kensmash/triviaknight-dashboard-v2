@@ -25,12 +25,12 @@ const resolvers = {
       newusertime.setDate(newusertime.getDate() - 30);
       try {
         const widget = await Promise.all([
-          User.find().count(),
-          User.find({
+          User.estimatedDocumentCount(),
+          User.countDocuments({
             createdAt: {
               $gte: newusertime
             }
-          }).count()
+          })
         ]);
 
         const totalusers = widget[0];
@@ -88,14 +88,14 @@ const resolvers = {
         var fortyFiveDaysAgo = new Date();
         fortyFiveDaysAgo.setDate(fortyFiveDaysAgo.getDate() - 45);
 
-        let recentUsers = await User.find({
+        let recentUsers = await User.countDocuments({
           _id: { $ne: user.id, $nin: daUser.blockedusers },
           roles: { $nin: ["reviewer"] },
           blockedusers: { $nin: [user.id] },
           updatedAt: {
             $gte: fortyFiveDaysAgo
           }
-        }).count();
+        });
 
         const randomNumber = Math.floor(Math.random() * recentUsers);
 
@@ -366,7 +366,7 @@ const resolvers = {
               .populate("sologames")
               .populate("joustgames")
               .sort({ createdAt: -1 }),
-            User.find(queryBuilder(offset, limit, name)).count()
+            User.countDocuments(queryBuilder(offset, limit, name))
           ]);
 
           const userResults = users[0];

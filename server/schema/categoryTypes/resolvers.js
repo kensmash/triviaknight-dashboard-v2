@@ -31,7 +31,7 @@ const resolvers = {
             .sort({ name: 1 })
             .skip(offset)
             .limit(limit),
-          CategoryType.find(queryBuilder(name, hasgenres)).count()
+          CategoryType.countDocuments(queryBuilder(name, hasgenres))
         ]);
         const categoryTypeResults = categorytypes[0];
         const categoryTypeCount = categorytypes[1];

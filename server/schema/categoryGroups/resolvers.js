@@ -30,7 +30,7 @@ const resolvers = {
               .skip(offset)
               .limit(limit)
               .populate("categories"),
-            CategoryGroup.find(queryBuilder()).count()
+            CategoryGroup.countDocuments(queryBuilder())
           ]);
           const categoryGroupResults = categorygroups[0];
           const categoryGroupCount = categorygroups[1];

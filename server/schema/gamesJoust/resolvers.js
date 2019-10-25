@@ -49,7 +49,7 @@ const resolvers = {
               .limit(limit)
               .populate("category")
               .populate("players.player"),
-            GameJoust.find(queryBuilder(players, gameover)).count()
+            GameJoust.countDocuments(queryBuilder(players, gameover))
           ]);
           const joustResults = joustgames[0];
           const joustCount = joustgames[1];

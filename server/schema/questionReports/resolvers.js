@@ -26,7 +26,7 @@ const resolvers = {
               .skip(offset)
               .limit(limit)
               .populate("question"),
-            QuestionReport.find(queryBuilder(updated)).count()
+            QuestionReport.countDocuments(queryBuilder(updated))
           ]);
           const reportResults = reports[0];
           const reportCount = reports[1];
@@ -45,9 +45,7 @@ const resolvers = {
     questionreportswidget: requiresAdmin.createResolver(
       async (parent, args) => {
         try {
-          const widget = await Promise.all([QuestionReport.find().count()]);
-
-          const totalreports = widget[0];
+          const totalreports = QuestionReport.estimatedDocumentCount();
 
           return {
             totalreports
