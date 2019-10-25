@@ -54,7 +54,7 @@ const resolvers = {
     upsertcategorygroup: requiresAdmin.createResolver(
       async (parent, { input }) => {
         try {
-          const upsertedCategoryGroup = await CategoryGroup.deleteOne(
+          const upsertedCategoryGroup = await CategoryGroup.findOneAndUpdate(
             {
               _id: mongoose.Types.ObjectId(input.id)
             },
@@ -72,7 +72,7 @@ const resolvers = {
     deletecategorygroup: requiresAdmin.createResolver(
       async (parent, { id }) => {
         try {
-          const deletedCategoryGroup = await CategoryGroup.findByIdAndRemove({
+          const deletedCategoryGroup = await CategoryGroup.deleteOne({
             _id: id
           });
           return deletedCategoryGroup;

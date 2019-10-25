@@ -2,7 +2,7 @@ const { gql } = require("apollo-server-express");
 
 const typeDef = gql`
   type SupportRequest {
-    _id: ID!
+    _id: ID
     from: String
     subject: String
     text: String
