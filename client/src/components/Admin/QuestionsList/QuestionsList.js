@@ -227,7 +227,9 @@ const QuestionsList = props => {
                       {ques.published ? "Published" : "Draft"}
                     </Table.Cell>
                     <Table.Cell>
-                      {ques.category.name ? ques.category.name : null}
+                      {ques.category && ques.category.name
+                        ? ques.category.name
+                        : null}
                     </Table.Cell>
                     <Table.Cell>{ques.difficulty}</Table.Cell>
                     <Table.Cell>{ques.type}</Table.Cell>

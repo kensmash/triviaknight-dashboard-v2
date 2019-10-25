@@ -151,10 +151,9 @@ const resolvers = {
 
     deletequestion: requiresAdmin.createResolver(async (parent, { id }) => {
       try {
-        const foundQuestion = await Question.findById({
+        const deletedQuestion = await Question.deleteOne({
           _id: id
         });
-        const deletedQuestion = await foundQuestion.remove();
         return deletedQuestion;
       } catch (error) {
         console.error(error);

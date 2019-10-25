@@ -161,7 +161,7 @@ const resolvers = {
 
     deletepushticket: requiresAdmin.createResolver(async (parent, { id }) => {
       try {
-        const deletedTicket = await ExpoPushTicket.findByIdAndRemove({
+        const deletedTicket = await ExpoPushTicket.deleteOne({
           _id: id
         });
         return deletedTicket;
@@ -184,7 +184,7 @@ const resolvers = {
 
     deletepushreceipt: requiresAdmin.createResolver(async (parent, { id }) => {
       try {
-        const deletedReceipt = await ExpoPushReceipt.findByIdAndRemove({
+        const deletedReceipt = await ExpoPushReceipt.deleteOne({
           _id: id
         });
         return deletedReceipt;

@@ -220,7 +220,7 @@ const resolvers = {
     deletejoustgame: requiresAdmin.createResolver(
       async (parent, { gameid }) => {
         try {
-          const deletedJoustGame = await GameJoust.findByIdAndRemove({
+          const deletedJoustGame = await GameJoust.deleteOne({
             _id: gameid
           });
           return deletedJoustGame;

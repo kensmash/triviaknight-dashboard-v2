@@ -69,7 +69,7 @@ const resolvers = {
 
     deletecategorytype: requiresAdmin.createResolver(async (parent, { id }) => {
       try {
-        const deletedCategoryType = await CategoryType.findByIdAndRemove({
+        const deletedCategoryType = await CategoryType.deleteOne({
           _id: id
         });
         return deletedCategoryType;

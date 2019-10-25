@@ -233,7 +233,7 @@ const resolvers = {
     deletesiegegame: requiresAdmin.createResolver(
       async (parent, { gameid }) => {
         try {
-          const deletedSiegeGame = await GameSiege.findByIdAndRemove({
+          const deletedSiegeGame = await GameSiege.deleteOne({
             _id: gameid
           });
           return deletedSiegeGame;

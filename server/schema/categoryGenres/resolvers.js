@@ -80,7 +80,7 @@ const resolvers = {
     deletecategorygenre: requiresAdmin.createResolver(
       async (parent, { id }) => {
         try {
-          const deletedCategoryGenre = await CategoryGenre.findByIdAndRemove({
+          const deletedCategoryGenre = await CategoryGenre.deleteOne({
             _id: id
           });
           return deletedCategoryGenre;

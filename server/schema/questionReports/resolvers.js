@@ -77,7 +77,7 @@ const resolvers = {
     deletequestionreport: requiresAdmin.createResolver(
       async (parent, { id }) => {
         try {
-          const deletedQuestion = await QuestionReport.findByIdAndRemove({
+          const deletedQuestion = await QuestionReport.deleteOne({
             _id: id
           });
           return deletedQuestion;

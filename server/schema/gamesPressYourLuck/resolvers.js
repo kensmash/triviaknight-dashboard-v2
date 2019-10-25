@@ -180,11 +180,9 @@ const resolvers = {
     deletepressluckgame: requiresAdmin.createResolver(
       async (parent, { gameid }) => {
         try {
-          const deletedPressLuckGame = await GamePressYourLuck.findByIdAndRemove(
-            {
-              _id: gameid
-            }
-          );
+          const deletedPressLuckGame = await GamePressYourLuck.deleteOne({
+            _id: gameid
+          });
           return deletedPressLuckGame;
         } catch (error) {
           console.error(error);

@@ -136,7 +136,7 @@ const resolvers = {
 
     deletecategory: requiresAdmin.createResolver(async (parent, { id }) => {
       try {
-        const deletedCategory = await Category.findByIdAndRemove({
+        const deletedCategory = await Category.deleteOne({
           _id: id
         });
         return deletedCategory;
