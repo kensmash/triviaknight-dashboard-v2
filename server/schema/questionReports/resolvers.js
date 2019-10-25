@@ -77,10 +77,11 @@ const resolvers = {
     deletequestionreport: requiresAdmin.createResolver(
       async (parent, { id }) => {
         try {
-          const deletedQuestion = await QuestionReport.deleteOne({
+          const deletedQuestionReport = await QuestionReport.deleteOne({
             _id: id
           });
-          return deletedQuestion;
+
+          return deletedQuestionReport;
         } catch (error) {
           console.error(error);
         }

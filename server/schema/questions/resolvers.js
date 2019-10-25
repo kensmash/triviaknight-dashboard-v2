@@ -154,6 +154,7 @@ const resolvers = {
         const deletedQuestion = await Question.deleteOne({
           _id: id
         });
+
         return deletedQuestion;
       } catch (error) {
         console.error(error);

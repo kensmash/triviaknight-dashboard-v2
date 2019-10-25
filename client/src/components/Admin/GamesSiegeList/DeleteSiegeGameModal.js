@@ -51,7 +51,7 @@ const DeleteSiegeGameModal = props => {
 const MUTATION_DELETESIEGEGAME = gql`
   mutation deleteSiegeGame($gameid: ID!) {
     deletesiegegame(gameid: $gameid) {
-      _id
+      gameover
     }
   }
 `;
