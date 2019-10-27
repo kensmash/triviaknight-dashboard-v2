@@ -62,6 +62,12 @@ const resolvers = {
     upsertcategorygenre: requiresAdmin.createResolver(
       async (parent, { input }) => {
         try {
+          if (input.pressluckactive) {
+            //reset press luck active on other genres
+            await CategoryGenre.updateMany({
+              $set: { pressluckactive: false }
+            });
+          }
           const upsertedCategoryGenre = await CategoryGenre.findOneAndUpdate(
             {
               _id: mongoose.Types.ObjectId(input.id)
