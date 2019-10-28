@@ -1,17 +1,17 @@
 const schedule = require("node-schedule");
-const GameJoust = require("../models/GameJoust");
+const GameSiege = require("../models/GameSiege");
 const User = require("../models/User");
 const ExpoPushTicket = require("../models/ExpoPushTicket");
 const { Expo } = require("expo-server-sdk");
 
 //delete declined games after 2 days
-const deleteDeclinedJoustGames = schedule.scheduleJob(
+const deleteDeclinedSiegeGames = schedule.scheduleJob(
   "0 0 * * *", // run everyday at midnight
   () => {
-    console.log("joust game delete games function called");
+    console.log("siege game delete games function called");
     var deadline = new Date();
     deadline.setDate(deadline.getDate() - 2);
-    GameJoust.deleteMany(
+    GameSiege.deleteMany(
       {
         declined: { $eq: true },
         updatedAt: {
@@ -25,12 +25,12 @@ const deleteDeclinedJoustGames = schedule.scheduleJob(
   }
 );
 
-//time out joust games that are haven't been played in 10 days
-const timeOutJoustGames = schedule.scheduleJob("0 0 * * *", () => {
-  console.log("joust game time out function called");
+//time out siege games that are haven't been played in 10 days
+const timeOutSiegeGames = schedule.scheduleJob("0 0 * * *", () => {
+  console.log("siege game time out function called");
   var tenDaysAgo = new Date();
   tenDaysAgo.setDate(tenDaysAgo.getDate() - 10);
-  GameJoust.update(
+  GameSiege.update(
     {
       updatedAt: {
         $lte: tenDaysAgo
@@ -49,7 +49,7 @@ const timeOutJoustGames = schedule.scheduleJob("0 0 * * *", () => {
       if (err) {
         console.log(err);
       } else {
-        console.log("what did joust time out function find", count);
+        console.log("what did siege time out function find", count);
       }
     }
   );
@@ -57,11 +57,11 @@ const timeOutJoustGames = schedule.scheduleJob("0 0 * * *", () => {
 
 //delete timed out games
 //TODO: just mark the
-const deleteTimedOutJoustGames = schedule.scheduleJob(
+const deleteTimedOutSiegeGames = schedule.scheduleJob(
   "0 0 * * *", // run everyday at midnight
   () => {
-    console.log("joust game delete timed out function called");
-    GameJoust.deleteMany(
+    console.log("siege game delete timed out function called");
+    GameSiege.deleteMany(
       {
         timedout: { $eq: true }
       },
@@ -79,7 +79,7 @@ const runningOutOfTime = schedule.scheduleJob(
   async () => {
     var sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-    const games = await GameJoust.find({
+    const games = await GameSiege.find({
       updatedAt: {
         $lte: sevenDaysAgo
       },
@@ -105,7 +105,7 @@ const runningOutOfTime = schedule.scheduleJob(
         //send them a push notification
         const expo = new Expo();
         let messages = [];
-        const pushMessage = `It’s your turn! You have 3 days finish your turn in your Joust game.`;
+        const pushMessage = `It’s your turn! You have 3 days to finish your turn in your Siege game.`;
         for (let pushToken of pushTokens) {
           // Check that all your push tokens appear to be valid Expo push tokens
           if (!Expo.isExpoPushToken(pushToken)) {
@@ -119,9 +119,9 @@ const runningOutOfTime = schedule.scheduleJob(
             sound: "default",
             body: pushMessage,
             data: {
-              title: "It’s your turn in a Joust!",
+              title: "It’s your turn in a Siege!",
               text: pushMessage,
-              type: "Joust Time Running Out"
+              type: "Siege Time Running Out"
             },
             channelId: "game-messages"
           });
@@ -140,14 +140,14 @@ const runningOutOfTime = schedule.scheduleJob(
             }
             //add types
             const ticketsWithTypes = tickets.map(ticket => ({
-              type: "Joust Time Running Out",
+              type: "Siege Time Running Out",
               ...ticket
             }));
             //save tickets to database for later retrieval
             for (let ticket of ticketsWithTypes) {
               try {
                 const newticket = new ExpoPushTicket(ticket);
-                const savedTicket = await newticket.save();
+                await newticket.save();
               } catch (error) {
                 console.error(error);
               }
@@ -155,7 +155,7 @@ const runningOutOfTime = schedule.scheduleJob(
           }
         })();
         //update the games so we don't send push notifications every day
-        GameJoust.update(
+        GameSiege.update(
           {
             updatedAt: {
               $lte: sevenDaysAgo
@@ -173,7 +173,7 @@ const runningOutOfTime = schedule.scheduleJob(
             if (err) {
               console.log(err);
             } else {
-              console.log("what did joust running out function find", count);
+              console.log("what did siege running out function find", count);
             }
           }
         );
@@ -183,8 +183,8 @@ const runningOutOfTime = schedule.scheduleJob(
 );
 
 module.exports = {
-  deleteDeclinedJoustGames,
-  timeOutJoustGames,
-  deleteTimedOutJoustGames,
+  deleteDeclinedSiegeGames,
+  timeOutSiegeGames,
+  deleteTimedOutSiegeGames,
   runningOutOfTime
 };

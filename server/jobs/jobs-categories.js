@@ -78,7 +78,7 @@ const newCategories = schedule.scheduleJob(
             for (let ticket of ticketsWithTypes) {
               try {
                 const newticket = new ExpoPushTicket(ticket);
-                const savedTicket = await newticket.save();
+                await newticket.save();
               } catch (error) {
                 console.error(error);
               }

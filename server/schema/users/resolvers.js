@@ -386,20 +386,15 @@ const resolvers = {
     username: requiresAuth.createResolver(
       async (parent, { name, cursor }, { user }) => {
         try {
-          const paginatedusers = await User.paginate(
-            {
-              _id: { $ne: user },
-              $text: { $search: name },
-              roles: { $nin: ["reviewer"] },
-              blockedusers: { $nin: [user] }
-            },
-            {
-              sort: { _id: 1 },
-              startingAfter: cursor,
-              limit: 10
-            }
-          );
-          return paginatedusers;
+          const paginatedusers = await User.find({
+            _id: { $ne: user.id },
+            $text: { $search: name },
+            roles: { $nin: ["reviewer"] },
+            blockedusers: { $nin: [user.id] }
+          });
+
+          //TODO: make user cursor pagination work here
+          return { items: paginatedusers, hasMore: false };
         } catch (error) {
           console.error(error);
         }
