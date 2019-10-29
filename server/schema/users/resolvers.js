@@ -685,7 +685,7 @@ const resolvers = {
 
             //push notifications
             let messages = [];
-            const pushTokens = playerpushtokens;
+            const pushTokens = editedUser.expoPushTokens;
             for (let pushToken of pushTokens) {
               // Check that all your push tokens appear to be valid Expo push tokens
               if (!Expo.isExpoPushToken(pushToken)) {

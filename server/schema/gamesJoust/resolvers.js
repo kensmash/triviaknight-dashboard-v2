@@ -53,6 +53,7 @@ const resolvers = {
           ]);
           const joustResults = joustgames[0];
           const joustCount = joustgames[1];
+          console.log("joust games returned", joustResults.length);
           return {
             pages: Math.ceil(joustCount / limit),
             totalrecords: joustCount,

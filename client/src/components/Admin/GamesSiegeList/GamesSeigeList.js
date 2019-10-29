@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Table, Grid, Pagination } from "semantic-ui-react";
 import DeleteSiegeGameModal from "./DeleteSiegeGameModal";
@@ -8,11 +8,11 @@ import { useQuery } from "@apollo/react-hooks";
 import QUERY_SIEGEGAMEPAGE from "../../../apollo/queries/siegeGamePage";
 
 const GamesSiegeList = () => {
-  const [activePage, setActivePage] = useState(1);
+  const [currentActivePage, setCurrentActivePage] = useState(1);
   const [limit] = useState(15);
 
   const variables = {
-    offset: limit * parseInt(activePage, 10) - limit,
+    offset: limit * parseInt(currentActivePage, 10) - limit,
     limit
   };
 
@@ -24,20 +24,17 @@ const GamesSiegeList = () => {
     }
   );
 
-  const fetchMoreHandler = activePage => {
-    setActivePage(activePage);
-    if (activePage > 1) {
-      fetchMore({
-        variables: {
-          offset: limit * parseInt(activePage, 10) - limit
-        },
-        updateQuery: (prev, { fetchMoreResult }) => {
-          if (!fetchMoreResult) return prev;
-          return fetchMoreResult;
-        }
-      });
-    }
-  };
+  useEffect(() => {
+    fetchMore({
+      variables: {
+        offset: limit * parseInt(currentActivePage, 10) - limit
+      },
+      updateQuery: (prev, { fetchMoreResult }) => {
+        if (!fetchMoreResult) return prev;
+        return fetchMoreResult;
+      }
+    });
+  }, [currentActivePage, limit, fetchMore]);
 
   return (
     <>
@@ -123,10 +120,10 @@ const GamesSiegeList = () => {
                     <Grid.Column className="tablePaginationColumn">
                       {siegegamepage.pages >= 2 ? (
                         <Pagination
-                          activePage={activePage}
+                          activePage={currentActivePage}
                           totalPages={siegegamepage.pages}
                           onPageChange={(e, { activePage }) =>
-                            fetchMoreHandler({ activePage })
+                            setCurrentActivePage(activePage)
                           }
                         />
                       ) : null}

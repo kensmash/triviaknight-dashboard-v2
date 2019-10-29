@@ -73,7 +73,7 @@ const deleteTimedOutSiegeGames = schedule.scheduleJob(
 );
 
 //find games that haven't been played in a week
-const runningOutOfTime = schedule.scheduleJob(
+const runningOutOfSiegeTime = schedule.scheduleJob(
   "0 12 * * *", // run everyday at noon
   //"*/5 * * * *", //every 5 minutes
   async () => {
@@ -186,5 +186,5 @@ module.exports = {
   deleteDeclinedSiegeGames,
   timeOutSiegeGames,
   deleteTimedOutSiegeGames,
-  runningOutOfTime
+  runningOutOfSiegeTime
 };

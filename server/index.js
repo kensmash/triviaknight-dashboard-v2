@@ -25,6 +25,12 @@ const {
   runningOutOfTime
 } = require("./jobs/jobs-joustgames");
 const {
+  deleteDeclinedSiegeGames,
+  timeOutSiegeGames,
+  deleteTimedOutSiegeGames,
+  runningOutOfSiegeTime
+} = require("./jobs/jobs-siegegames");
+const {
   checkPushReceipts,
   deletePushTickets,
   pushTicketErrorCheck
