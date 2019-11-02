@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
+const User = require("../../models/User");
 const Category = require("../../models/Category");
 const Question = require("../../models/Question");
+const { shuffleArray } = require("./helper-arrays");
 
 //solo games
 const randomCategoriesQuestions = async (samplesize, difficulty) => {
@@ -40,6 +42,82 @@ const randomCategoriesQuestions = async (samplesize, difficulty) => {
               published: { $eq: true },
               category: { $eq: category._id },
               difficulty: { $eq: difficulty }
+            }
+          },
+          { $sample: { size: 1 } }
+        ]);
+
+        return question[0];
+      })
+    );
+    return { categories, questions };
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const userCategoriesQuestions = async user => {
+  try {
+    let categories = [];
+    let userCats = [];
+    const currentUser = await User.findOne({ _id: user.id }).populate(
+      "categories"
+    );
+
+    if (currentUser.categories.length) {
+      userCats = shuffleArray(
+        currentUser.categories.filter(
+          cat => cat.published && !cat.partycategory
+        )
+      );
+    }
+
+    if (userCats.length < 6) {
+      //get random published categories
+      const randomCats = await Category.aggregate([
+        {
+          $match: {
+            _id: {
+              $nin: userCats.map(cat => {
+                mongoose.Types.ObjectId(cat._id);
+              })
+            },
+            published: { $eq: true },
+            partycategory: { $eq: false },
+            joustexclusive: { $eq: false }
+          }
+        },
+        { $sample: { size: 6 - userCats.length } },
+        //get cat type icon
+        {
+          $lookup: {
+            from: "categorytypes",
+            localField: "type",
+            foreignField: "_id",
+            as: "type"
+          }
+        },
+        {
+          $project: {
+            name: 1,
+            type: { $arrayElemAt: ["$type", 0] }
+          }
+        }
+      ]);
+
+      categories = userCats.concat(randomCats);
+    } else {
+      categories = userCats.slice(0, 6);
+    }
+    //for each category we generated, get a random question
+    const questions = await Promise.all(
+      categories.map(async category => {
+        const question = await Question.aggregate([
+          {
+            $match: {
+              published: { $eq: true },
+              category: { $eq: category._id },
+              difficulty: { $eq: "Normal" }
             }
           },
           { $sample: { size: 1 } }
@@ -318,6 +396,7 @@ const pressLuckQuestions = async genre => {
 
 module.exports = {
   randomCategoriesQuestions,
+  userCategoriesQuestions,
   joustQuestions,
   siegeGenreQuestions,
   siegeCatTypeQuestions,

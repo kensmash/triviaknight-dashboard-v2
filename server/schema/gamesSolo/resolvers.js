@@ -1,7 +1,7 @@
 const GameSolo = require("../../models/GameSolo");
 //auth helpers
 const { requiresAuth } = require("../_helpers/helper-permissions");
-const { randomCategoriesQuestions } = require("../_helpers/helper-questions");
+const { userCategoriesQuestions } = require("../_helpers/helper-questions");
 
 const resolvers = {
   Query: {
@@ -19,7 +19,7 @@ const resolvers = {
     ),
 
     newsologame: requiresAuth.createResolver((parent, { args }, { user }) => {
-      return randomCategoriesQuestions(6, "Normal");
+      return userCategoriesQuestions(user);
     }),
 
     currentgame: requiresAuth.createResolver(
