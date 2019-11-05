@@ -365,7 +365,8 @@ const resolvers = {
               .populate("categories")
               .populate("sologames")
               .populate("joustgames")
-              .sort({ createdAt: -1 }),
+              .populate("siegegames")
+              .sort({ updatedAt: -1 }),
             User.countDocuments(queryBuilder(offset, limit, name))
           ]);
 

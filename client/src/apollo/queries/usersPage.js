@@ -20,6 +20,9 @@ export default gql`
         joustgames {
           _id
         }
+        siegegames {
+          _id
+        }
       }
     }
   }

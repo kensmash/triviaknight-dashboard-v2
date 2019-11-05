@@ -49,6 +49,7 @@ const UsersList = () => {
             <Table.HeaderCell>Categories</Table.HeaderCell>
             <Table.HeaderCell>Solo Games</Table.HeaderCell>
             <Table.HeaderCell>Joust Games</Table.HeaderCell>
+            <Table.HeaderCell>Siege Games</Table.HeaderCell>
           </Table.Row>
         </Table.Header>
         {loading ? (
@@ -85,6 +86,9 @@ const UsersList = () => {
                     <Table.Cell collapsing>
                       {user.joustgames.length ? user.joustgames.length : 0}
                     </Table.Cell>
+                    <Table.Cell collapsing>
+                      {user.siegegames.length ? user.siegegames.length : 0}
+                    </Table.Cell>
                   </Table.Row>
                 ))
               ) : (
@@ -97,7 +101,7 @@ const UsersList = () => {
             </Table.Body>
             <Table.Footer>
               <Table.Row>
-                <Table.HeaderCell colSpan="6">
+                <Table.HeaderCell colSpan="7">
                   <Grid columns="equal">
                     <Grid.Column width={2}>
                       <div className="tableItemNumbers">
@@ -114,7 +118,7 @@ const UsersList = () => {
                           activePage={activePage}
                           totalPages={userspage.pages}
                           onPageChange={(e, { activePage }) =>
-                            fetchMoreHandler({ activePage })
+                            fetchMoreHandler(activePage)
                           }
                         />
                       ) : null}
