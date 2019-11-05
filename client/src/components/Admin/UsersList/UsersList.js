@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Table, Grid, Pagination } from "semantic-ui-react";
 import format from "date-fns/format";
@@ -7,11 +7,11 @@ import { useQuery } from "@apollo/react-hooks";
 import QUERY_USERSPAGE from "../../../apollo/queries/usersPage";
 
 const UsersList = () => {
-  const [activePage, setActivePage] = useState(1);
+  const [currentActivePage, setCurrentActivePage] = useState(1);
   const [limit] = useState(15);
 
   const variables = {
-    offset: limit * parseInt(activePage, 10) - limit,
+    offset: limit * parseInt(currentActivePage, 10) - limit,
     limit
   };
 
@@ -23,20 +23,17 @@ const UsersList = () => {
     }
   );
 
-  const fetchMoreHandler = activePage => {
-    setActivePage(activePage);
-    if (activePage > 1) {
-      fetchMore({
-        variables: {
-          offset: limit * parseInt(activePage, 10) - limit
-        },
-        updateQuery: (prev, { fetchMoreResult }) => {
-          if (!fetchMoreResult) return prev;
-          return fetchMoreResult;
-        }
-      });
-    }
-  };
+  useEffect(() => {
+    fetchMore({
+      variables: {
+        offset: limit * parseInt(currentActivePage, 10) - limit
+      },
+      updateQuery: (prev, { fetchMoreResult }) => {
+        if (!fetchMoreResult) return prev;
+        return fetchMoreResult;
+      }
+    });
+  }, [currentActivePage, limit, fetchMore]);
 
   return (
     <>
@@ -115,11 +112,11 @@ const UsersList = () => {
                     <Grid.Column className="tablePaginationColumn">
                       {userspage.pages >= 2 ? (
                         <Pagination
-                          activePage={activePage}
+                          activePage={currentActivePage}
                           totalPages={userspage.pages}
-                          onPageChange={(e, { activePage }) =>
-                            fetchMoreHandler(activePage)
-                          }
+                          onPageChange={(e, { activePage }) => {
+                            setCurrentActivePage(activePage);
+                          }}
                         />
                       ) : null}
                     </Grid.Column>
