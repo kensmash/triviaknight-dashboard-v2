@@ -90,6 +90,7 @@ const typeDef = gql`
       roundresults: RoundResultsInput!
       advance: Boolean!
     ): GameJoust
+    resignjoustgame(gameid: ID!): GameJoust
     joustresultsseen(gameid: ID!): GameJoust
     expirejoustgame(gameid: ID!): GameJoust
     deletejoustgame(gameid: ID!): GameJoust

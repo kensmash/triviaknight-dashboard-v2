@@ -189,6 +189,40 @@ const resolvers = {
       }
     ),
 
+    resignjoustgame: requiresAuth.createResolver(
+      async (parent, { gameid }, { user, expo }) => {
+        try {
+          //first add round results
+          let updatedGame = await GameJoust.findOneAndUpdate(
+            { _id: gameid, "players.player": user.id },
+            {
+              $set: { "players.$.resultsseen": true }
+            },
+            { new: true }
+          ).populate("players.player");
+
+          const player = updatedGame.players.find(
+            player => player.player._id == user.id
+          );
+
+          const opponent = updatedGame.players.find(
+            player => player.player._id != user.id
+          );
+
+          updatedGame = await endJoustGame(
+            updatedGame._id,
+            player,
+            opponent,
+            expo
+          );
+
+          return updatedGame;
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    ),
+
     joustresultsseen: requiresAuth.createResolver(
       async (parent, { gameid }, { user }) => {
         try {
