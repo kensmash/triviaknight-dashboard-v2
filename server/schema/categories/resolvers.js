@@ -17,7 +17,10 @@ const resolvers = {
     }),
 
     categoriesandgroups: requiresAuth.createResolver(async (parent, args) => {
-      const categories = await Category.find({})
+      const categories = await Category.find({
+        published: { $eq: true },
+        partycategory: { $eq: false }
+      })
         .sort({ createdAt: -1 })
         .populate("type")
         .populate("genres");
