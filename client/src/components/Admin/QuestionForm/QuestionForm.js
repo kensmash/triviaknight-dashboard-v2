@@ -59,7 +59,7 @@ const QuestionForm = props => {
   );
 
   useEffect(() => {
-    if (props.pageType === "edit") {
+    if (props.pageType === "edit" && !questionSubmitted) {
       const { question } = props;
       setFields({
         question: question.question,
@@ -76,7 +76,7 @@ const QuestionForm = props => {
         published: question.published
       });
     }
-  }, [props]);
+  }, [props, questionSubmitted]);
 
   const gotoQuestionsPageHandler = () => {
     clearFormHandler();

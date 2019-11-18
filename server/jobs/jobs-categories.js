@@ -6,20 +6,25 @@ const { Expo } = require("expo-server-sdk");
 
 //send notification for new categories
 const newCategories = schedule.scheduleJob(
-  "0 16 * * 0", // run Sundays at noon
+  "0 18 * * 0", // run Mondays after noon
+  //"0 16 * * 0", // run Sundays at noon
   //"*/5 * * * *", //every 5 minutes
   async () => {
+    //only get cats published in last seven days
+    var sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
     const categories = await Category.find({
       published: { $eq: true },
       partycategory: { $eq: false },
       showasnew: { $eq: true },
-      newpushsent: { $eq: false }
+      updatedAt: {
+        $lte: sevenDaysAgo
+      }
     });
 
     if (categories.length) {
-      const trimmedcats = categories
-        .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
-        .slice(0, 5);
+      const trimmedcats = categories.slice(0, 5);
       const catnames = trimmedcats.map(cat => cat.name).join(", ");
       //find users in database
       const users = await User.find({});
@@ -85,28 +90,6 @@ const newCategories = schedule.scheduleJob(
             }
           }
         })();
-        //update the categories so we don't send repeat cats in push notification
-        Category.update(
-          {
-            published: { $eq: true },
-            partycategory: { $eq: false },
-            showasnew: { $eq: true },
-            newpushsent: { $eq: false }
-          }, // conditions
-          {
-            newpushsent: true
-          },
-          {
-            multi: true // options
-          },
-          function(err, count) {
-            if (err) {
-              console.log(err);
-            } else {
-              console.log("what did new category function find", count);
-            }
-          }
-        );
       }
     }
   }
