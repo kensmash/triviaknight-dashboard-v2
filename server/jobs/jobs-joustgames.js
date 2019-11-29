@@ -105,7 +105,7 @@ const runningOutOfTime = schedule.scheduleJob(
         //send them a push notification
         const expo = new Expo();
         let messages = [];
-        const pushMessage = `It’s your turn! You have 3 days finish your turn in your Joust game.`;
+        const pushMessage = `It’s your turn! You have 3 days to finish your turn in your Joust game.`;
         for (let pushToken of pushTokens) {
           // Check that all your push tokens appear to be valid Expo push tokens
           if (!Expo.isExpoPushToken(pushToken)) {

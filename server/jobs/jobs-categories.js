@@ -11,17 +11,17 @@ const newCategories = schedule.scheduleJob(
   //"*/5 * * * *", //every 5 minutes
   async () => {
     //only get cats published in last seven days
-    var sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    var lastWeek = new Date();
+    lastWeek.setDate(lastWeek.getDate() - 7);
 
     const categories = await Category.find({
       published: { $eq: true },
       partycategory: { $eq: false },
       showasnew: { $eq: true },
       updatedAt: {
-        $lte: sevenDaysAgo
+        $gte: lastWeek
       }
-    });
+    }).sort({ updatedAt: -1 });
 
     if (categories.length) {
       const trimmedcats = categories.slice(0, 5);
