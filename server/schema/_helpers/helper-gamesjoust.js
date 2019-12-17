@@ -133,9 +133,9 @@ const endJoustGame = async (gameid, player, opponent, expo) => {
     }
     //then end game
     const endedGame = await GameJoust.findOneAndUpdate(
-      { _id: gameid },
+      { _id: gameid, "players.player": player.player._id },
       {
-        $set: { gameover: true }
+        $set: { gameover: true, "players.$.resultsseen": true }
       },
       { new: true }
     ).populate("players.player");
