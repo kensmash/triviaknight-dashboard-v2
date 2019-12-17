@@ -578,7 +578,7 @@ const pressLuckLastWeekWinners = async () => {
   }
 };
 
-//press your luck last week winner
+//press your luck all time winners
 const pressLuckAllTimeWinners = async () => {
   try {
     let results = [];
