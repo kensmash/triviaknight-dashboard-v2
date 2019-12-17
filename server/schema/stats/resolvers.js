@@ -6,7 +6,9 @@ const {
   categoryStats,
   joustGameStats,
   siegeGameStats,
-  pressLuckGameStats
+  pressLuckGameStats,
+  pressLuckLastWeekWinners,
+  pressLuckAllTimeWinners
 } = require("../_helpers/helper-stats");
 
 const resolvers = {
@@ -35,7 +37,17 @@ const resolvers = {
       (parent, { genre }, { user }) => {
         return pressLuckGameStats(genre);
       }
-    )
+    ),
+
+    presslucklastweekwinners: requiresAuth.createResolver(
+      (parent, { args }) => {
+        return pressLuckLastWeekWinners();
+      }
+    ),
+
+    pressluckalltimewinners: requiresAuth.createResolver((parent, { args }) => {
+      return pressLuckAllTimeWinners();
+    })
   }
 };
 

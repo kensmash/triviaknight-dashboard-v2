@@ -53,9 +53,25 @@ const typeDef = gql`
     name: String
     rank: String
     avatar: String
-    string: String
     gamesplayed: Int
     highscore: Int
+  }
+
+  type PressLuckPrevWeekWinners {
+    genre: String
+    id: ID
+    name: String
+    rank: String
+    avatar: String
+    highscore: Int
+  }
+
+  type PressLuckAllTimeWinners {
+    id: ID
+    name: String
+    rank: String
+    avatar: String
+    wins: Int
   }
 
   extend type Query {
@@ -64,6 +80,8 @@ const typeDef = gql`
     joustgamestats: [JoustGameStats]
     siegegamestats: [SiegeGameStats]
     pressluckgamestats: [PressLuckGameStats]
+    presslucklastweekwinners: [PressLuckPrevWeekWinners]
+    pressluckalltimewinners: [PressLuckAllTimeWinners]
   }
 `;
 

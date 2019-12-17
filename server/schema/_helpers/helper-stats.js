@@ -543,10 +543,72 @@ const pressLuckGameStats = async () => {
   }
 };
 
+//press your luck last week winner
+const pressLuckLastWeekWinners = async () => {
+  let thisWeek = new Date();
+  const currentDay = thisWeek.getDay();
+  thisWeek.setDate(
+    thisWeek.getDate() - currentDay + (currentDay == 0 ? -6 : 1)
+  );
+  var lastWeek = new Date();
+  lastWeek.setDate(lastWeek.getDate() - 16);
+  try {
+    let results = [];
+    const winners = await User.find({
+      "pressluckhighscores.date": { $gte: thisWeek }
+    });
+    if (winners.length) {
+      results = winners.map(winner => {
+        const lasthighscore =
+          winner.pressluckhighscores[winner.pressluckhighscores.length - 1];
+        return {
+          genre: lasthighscore.topic,
+          id: winner._id,
+          name: winner.name,
+          rank: winner.rank,
+          avatar: winner.avatar,
+          highscore: lasthighscore.score
+        };
+      });
+    }
+
+    return results;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+//press your luck last week winner
+const pressLuckAllTimeWinners = async () => {
+  try {
+    let results = [];
+    const winners = await User.find({
+      "pressluckhighscores.date": { $exists: true }
+    });
+    if (winners.length) {
+      results = winners.map(winner => {
+        return {
+          id: winner._id,
+          name: winner.name,
+          rank: winner.rank,
+          avatar: winner.avatar,
+          wins: winner.pressluckhighscores.length
+        };
+      });
+    }
+
+    return results;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 module.exports = {
   gameStats,
   categoryStats,
   joustGameStats,
   siegeGameStats,
-  pressLuckGameStats
+  pressLuckGameStats,
+  pressLuckLastWeekWinners,
+  pressLuckAllTimeWinners
 };
