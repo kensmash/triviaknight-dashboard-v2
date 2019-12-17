@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 const bcrypt = require("bcrypt");
+const PlayerPressLuckHighScoresSchema = require("./PlayerPressLuckHighScores");
 
 //Define the model
 const userSchema = new Schema(
@@ -32,7 +33,8 @@ const userSchema = new Schema(
     friends: [{ type: Schema.Types.ObjectId, ref: "user" }],
     blockedusers: [{ type: Schema.Types.ObjectId, ref: "user" }],
     categories: [{ type: Schema.Types.ObjectId, ref: "category" }],
-    expoPushTokens: [{ type: String }]
+    expoPushTokens: [{ type: String }],
+    pressluckhighscores: [PlayerPressLuckHighScoresSchema]
   },
   { timestamps: true }
 );

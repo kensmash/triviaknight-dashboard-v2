@@ -5,6 +5,8 @@ const {
   requiresAuth,
   requiresAdmin
 } = require("../_helpers/helper-permissions");
+//press luck helper
+const { savePressLuckHighScore } = require("../_helpers/helper-gamespressluck");
 
 const resolvers = {
   Query: {
@@ -60,10 +62,15 @@ const resolvers = {
 
   Mutation: {
     upsertcategorygenre: requiresAdmin.createResolver(
-      async (parent, { input }) => {
+      async (parent, { input }, { expo }) => {
         try {
           if (input.pressluckactive) {
-            //reset press luck active on other genres
+            //first, save player high score from previous week
+            const currentGenre = await CategoryGenre.findOne({
+              pressluckactive: { $eq: true }
+            });
+            await savePressLuckHighScore(currentGenre, expo);
+            //then reset press luck active on other genres
             await CategoryGenre.updateMany({
               $set: { pressluckactive: false }
             });
