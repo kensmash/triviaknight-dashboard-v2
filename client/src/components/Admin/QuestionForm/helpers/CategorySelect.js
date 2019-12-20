@@ -47,6 +47,7 @@ const CategorySelect = props => {
             value={props.selectedCategory}
             fluid
             selection
+            search
             clearable
             placeholder="Filter by Category"
             onChange={props.categorySelectHandler}
