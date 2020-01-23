@@ -595,6 +595,8 @@ const pressLuckAllTimeWinners = async () => {
           wins: winner.pressluckhighscores.length
         };
       });
+
+      results = results.sort((a, b) => b.wins - a.wins);
     }
 
     return results;
