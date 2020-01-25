@@ -1,7 +1,7 @@
 import React from "react";
 import { Switch, Route } from "react-router-dom";
 import Layout from "../../components/Admin/Layout/Layout";
-import TopNav from "../../components/TopNav/TopNav";
+
 //Dashboard
 import Dashboard from "./Dashboard/Dashboard";
 //categories
@@ -33,7 +33,6 @@ import Users from "./Users/Users";
 const Admin = ({ match }) => {
   return (
     <>
-      <Route path="/" component={TopNav} />
       <Layout>
         <Switch>
           <Route exact path={match.url + "/"} component={Dashboard} />

@@ -1,3 +1,8 @@
+html,
+body {
+  margin: 0;
+}
+
 body {
   background: rgba(238, 238, 238, 1);
 }
@@ -31,8 +36,11 @@ img {
 }
 
 .homepage-top {
+  height: 100vh;
+  width: 100vw;
   display: flex;
   justify-content: center;
+  align-items: center;
   padding: 3em 8em 0 8em;
   background: rgba(0, 0, 0, 1);
 }
@@ -56,9 +64,7 @@ img {
   background: #fff;
   display: flex;
   justify-content: center;
-  margin-top: -4em;
-  padding: 4em 22em;
-  min-height: 20em;
+  padding: 4em;
 }
 
 .bullet-container {
