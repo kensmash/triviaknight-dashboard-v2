@@ -11,7 +11,7 @@ const DeleteSupportRequestModal = props => {
 
   const [deleteSupportRequest] = useMutation(MUTATION_DELETESUPPORTREQUEST, {
     variables: {
-      id: props.questionid
+      id: props.supportrequestid
     },
     refetchQueries: [
       { query: QUERY_SUPPORTREQUESTPAGE, variables: props.variables }
@@ -59,7 +59,7 @@ const MUTATION_DELETESUPPORTREQUEST = gql`
 `;
 
 DeleteSupportRequestModal.propTypes = {
-  questionid: PropTypes.string,
+  supportrequestid: PropTypes.string.isRequired,
   variables: PropTypes.object
 };
 
