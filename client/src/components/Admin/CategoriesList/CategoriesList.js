@@ -132,6 +132,7 @@ const CategoriesList = props => {
             <Table.HeaderCell>Name</Table.HeaderCell>
             <Table.HeaderCell>Status</Table.HeaderCell>
             <Table.HeaderCell>Joust Only</Table.HeaderCell>
+            <Table.HeaderCell>Press Luck Active</Table.HeaderCell>
             <Table.HeaderCell>Type</Table.HeaderCell>
             <Table.HeaderCell>Genres</Table.HeaderCell>
             <Table.HeaderCell />
@@ -175,6 +176,10 @@ const CategoriesList = props => {
                       {cat.joustexclusive ? "Yes" : "No"}
                     </Table.Cell>
 
+                    <Table.Cell>
+                      {cat.pressluckactive ? "Yes" : "No"}
+                    </Table.Cell>
+
                     <Table.Cell>{cat.type && cat.type.name}</Table.Cell>
 
                     <Table.Cell>
@@ -203,7 +208,7 @@ const CategoriesList = props => {
             </Table.Body>
             <Table.Footer>
               <Table.Row>
-                <Table.HeaderCell colSpan="6">
+                <Table.HeaderCell colSpan="7">
                   <Grid columns="equal">
                     <Grid.Column width={2}>
                       <div className="tableItemNumbers">

@@ -164,7 +164,8 @@ const endJoustGame = async (gameid, player, opponent, expo) => {
         data: {
           title: pushTitle,
           text: pushMessage,
-          type: pushType
+          type: pushType,
+          gameid: endedGame._id
         },
         channelId: "game-messages"
       });

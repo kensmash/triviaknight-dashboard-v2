@@ -7,7 +7,8 @@ const categoryTypeSchema = new Schema(
     iconname: { type: String, trim: true },
     iconset: { type: String, trim: true },
     hasgenres: { type: Boolean, required: true, default: true },
-    playable: { type: Boolean, default: false }
+    playable: { type: Boolean, default: false },
+    pressluckactive: { type: Boolean, default: false }
   },
   { timestamps: true }
 );

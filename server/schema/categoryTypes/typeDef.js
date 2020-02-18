@@ -9,6 +9,7 @@ const typeDef = gql`
     iconset: String
     imageurl: String
     hasgenres: Boolean
+    pressluckactive: Boolean
     categories: [Category]
   }
 
@@ -36,6 +37,7 @@ const typeDef = gql`
     iconset: String
     hasgenres: Boolean!
     playable: Boolean
+    pressluckactive: Boolean
   }
 
   extend type Mutation {

@@ -5,6 +5,7 @@ const {
   requiresAdmin
 } = require("../_helpers/helper-permissions");
 //query helpers
+const { currentPressLuckTopic } = require("../_helpers/helper-gamespressluck");
 const { pressLuckQuestions } = require("../_helpers/helper-questions");
 
 const resolvers = {
@@ -52,7 +53,7 @@ const resolvers = {
             _id: id,
             "players.player": user.id
           })
-            .populate("genre")
+
             .populate("players.player")
 
             .populate({
@@ -66,18 +67,41 @@ const resolvers = {
           console.error(error);
         }
       }
+    ),
+
+    currentpresslucktopic: requiresAuth.createResolver(
+      async (parent, { args }) => {
+        const results = await currentPressLuckTopic();
+        return results;
+      }
     )
   },
 
   Mutation: {
     createpressluckgame: requiresAuth.createResolver(
-      async (parent, { genre }, { user }) => {
+      async (parent, { input }, { user }) => {
         try {
-          const catsAndQuestions = await pressLuckQuestions(genre);
-
+          let catsAndQuestions;
+          if (input.topictype === "Category Type") {
+            catsAndQuestions = await pressLuckQuestions(
+              input.topictype,
+              input.cattype
+            );
+          } else if (input.topictype === "Category") {
+            catsAndQuestions = await pressLuckQuestions(
+              input.topictype,
+              input.category
+            );
+          } else {
+            catsAndQuestions = await pressLuckQuestions(
+              input.topictype,
+              input.genre
+            );
+          }
           const newgame = new GamePressYourLuck({
             createdby: user.id,
-            genre,
+            topictype: input.topictype,
+            topic: input.topic,
             players: [{ player: user.id }],
             categories: catsAndQuestions.categories,
             questions: catsAndQuestions.questions

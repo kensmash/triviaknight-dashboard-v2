@@ -26,7 +26,8 @@ const CategoryForm = props => {
     showasnew: false,
     showasupdated: false,
     showaspopular: false,
-    joustexclusive: false
+    joustexclusive: false,
+    pressluckactive: false
   };
 
   const [fields, setFields] = useState(initialState);
@@ -56,7 +57,8 @@ const CategoryForm = props => {
         showasnew: category.showasnew || false,
         showasupdated: category.showasupdated || false,
         showaspopular: category.showaspopular || false,
-        joustexclusive: category.joustexclusive || false
+        joustexclusive: category.joustexclusive || false,
+        pressluckactive: category.pressluckactive || false
       });
     }
   }, [props]);
@@ -119,6 +121,14 @@ const CategoryForm = props => {
     }
   };
 
+  const pressLuckCheckboxHandler = (_event, data) => {
+    if (data.checked) {
+      setFields({ ...fields, pressluckactive: true });
+    } else {
+      setFields({ ...fields, pressluckactive: false });
+    }
+  };
+
   const formValidateHandler = (name, type, description) => {
     const errors = {};
     if (type.label === "") errors.type = "Please select a Category Type.";
@@ -163,7 +173,8 @@ const CategoryForm = props => {
           partycategory: fields.partycategory,
           showasnew: fields.showasnew,
           showaspopular: fields.showaspopular,
-          joustexclusive: fields.joustexclusive
+          joustexclusive: fields.joustexclusive,
+          pressluckactive: fields.pressluckactive
         }
       },
       refetchQueries: [
@@ -303,6 +314,14 @@ const CategoryForm = props => {
           label="Show as Popular"
           checked={fields.showaspopular}
           onChange={(event, data) => popularCheckboxHandler(event, data)}
+        />
+      </Form.Field>
+
+      <Form.Field>
+        <Checkbox
+          label="Active Press Your Luck Topic"
+          checked={fields.pressluckactive}
+          onChange={(event, data) => pressLuckCheckboxHandler(event, data)}
         />
       </Form.Field>
 

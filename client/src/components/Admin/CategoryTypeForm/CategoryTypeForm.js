@@ -24,7 +24,8 @@ const CategoryTypeForm = props => {
     iconname: "",
     iconset: "Ionicons",
     hasgenres: true,
-    playable: false
+    playable: false,
+    pressluckactive: false
   };
 
   const [fields, setFields] = useState(initialState);
@@ -44,7 +45,8 @@ const CategoryTypeForm = props => {
         iconname: categorytype.iconname,
         iconset: categorytype.iconset ? categorytype.iconset : "Ionicons",
         hasgenres: categorytype.hasgenres,
-        playable: categorytype.playable
+        playable: categorytype.playable,
+        pressluckactive: categorytype.pressluckactive
       });
     }
   }, [props]);
@@ -74,6 +76,14 @@ const CategoryTypeForm = props => {
     }
   };
 
+  const pressLuckCheckboxHandler = (_event, data) => {
+    if (data.checked) {
+      setFields({ ...fields, pressluckactive: true });
+    } else {
+      setFields({ ...fields, pressluckactive: false });
+    }
+  };
+
   const formValidateHandler = (name, iconname) => {
     const errors = {};
     if (name.length < 2)
@@ -98,7 +108,14 @@ const CategoryTypeForm = props => {
   };
 
   const UpsertCategoryTypeHandler = async () => {
-    const { name, iconname, iconset, hasgenres, playable } = fields;
+    const {
+      name,
+      iconname,
+      iconset,
+      hasgenres,
+      playable,
+      pressluckactive
+    } = fields;
     //add category
     const graphqlResponse = await upsertCategoryType({
       variables: {
@@ -108,7 +125,8 @@ const CategoryTypeForm = props => {
           iconname,
           iconset,
           hasgenres,
-          playable
+          playable,
+          pressluckactive
         }
       },
       refetchQueries: [
@@ -194,6 +212,14 @@ const CategoryTypeForm = props => {
           label="Playable"
           checked={fields.playable}
           onChange={(event, data) => playableCheckboxHandler(event, data)}
+        />
+      </Form.Field>
+
+      <Form.Field>
+        <Checkbox
+          label="Active Press Your Luck Topic"
+          checked={fields.pressluckactive}
+          onChange={(event, data) => pressLuckCheckboxHandler(event, data)}
         />
       </Form.Field>
 

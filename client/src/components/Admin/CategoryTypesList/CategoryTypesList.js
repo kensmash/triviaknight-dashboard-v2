@@ -49,6 +49,7 @@ const CategoryTypesList = props => {
           <Table.Row>
             <Table.HeaderCell>Name</Table.HeaderCell>
             <Table.HeaderCell>Playable</Table.HeaderCell>
+            <Table.HeaderCell>Press Luck Active</Table.HeaderCell>
             <Table.HeaderCell>Has Genres</Table.HeaderCell>
             <Table.HeaderCell>Actions</Table.HeaderCell>
           </Table.Row>
@@ -67,6 +68,10 @@ const CategoryTypesList = props => {
                   <Table.Row key={type._id}>
                     <Table.Cell>{type.name}</Table.Cell>
                     <Table.Cell>{type.playable ? "Yes" : "No"}</Table.Cell>
+
+                    <Table.Cell>
+                      {type.pressluckactive ? "Yes" : "No"}
+                    </Table.Cell>
                     <Table.Cell>{type.hasgenres ? "Yes" : "No"}</Table.Cell>
                     <Table.Cell collapsing>
                       <div>
@@ -98,7 +103,7 @@ const CategoryTypesList = props => {
             </Table.Body>
             <Table.Footer>
               <Table.Row>
-                <Table.HeaderCell colSpan="6">
+                <Table.HeaderCell colSpan="7">
                   <Grid columns="equal">
                     <Grid.Column width={2}>
                       <div className="tableItemNumbers">

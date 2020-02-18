@@ -1,16 +1,62 @@
 const mongoose = require("mongoose");
 const User = require("../../models/User");
 const GamePressYourLuck = require("../../models/GamePressYourLuck");
+const CategoryType = require("../../models/CategoryType");
+const CategoryGenre = require("../../models/CategoryGenre");
+const Category = require("../../models/Category");
 const ExpoPushTicket = require("../../models/ExpoPushTicket");
 const { Expo } = require("expo-server-sdk");
 
-const savePressLuckHighScore = async (currentgenre, expo) => {
+const currentPressLuckTopic = async () => {
+  try {
+    let results = {};
+    //look in categories
+    const catTopic = await Category.findOne({
+      pressluckactive: { $eq: true }
+    });
+    if (catTopic) {
+      results = {
+        id: catTopic._id,
+        type: "Category",
+        topic: catTopic.name
+      };
+    }
+    //also in category types
+    const catTypeTopic = await CategoryType.findOne({
+      pressluckactive: { $eq: true }
+    });
+    if (catTypeTopic) {
+      results = {
+        id: catTypeTopic._id,
+        type: "Category Type",
+        topic: catTypeTopic.name
+      };
+    }
+    //and in genres
+    const catGenreTopic = await CategoryGenre.findOne({
+      pressluckactive: { $eq: true }
+    });
+    if (catGenreTopic) {
+      results = {
+        id: catGenreTopic._id,
+        type: "Genre",
+        topic: catGenreTopic.name
+      };
+    }
+
+    return results;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const savePressLuckHighScore = async (topic, expo) => {
   //first, get all games from previous week with current topic
   try {
     var lastWeek = new Date();
     lastWeek.setDate(lastWeek.getDate() - 8);
     const lastWeeksGames = await GamePressYourLuck.find({
-      genre: mongoose.Types.ObjectId(currentgenre._id),
+      topic,
       updatedAt: {
         $gte: lastWeek
       }
@@ -42,7 +88,7 @@ const savePressLuckHighScore = async (currentgenre, expo) => {
             {
               $addToSet: {
                 pressluckhighscores: {
-                  topic: currentgenre.name,
+                  topic,
                   score: winningPlayers[0].score,
                   date: Date.Now
                 }
@@ -56,7 +102,7 @@ const savePressLuckHighScore = async (currentgenre, expo) => {
             {
               $addToSet: {
                 pressluckhighscores: {
-                  topic: currentgenre.name,
+                  topic,
                   score: winningPlayers[0].score,
                   date: Date.Now
                 }
@@ -143,5 +189,6 @@ const savePressLuckHighScore = async (currentgenre, expo) => {
 };
 
 module.exports = {
+  currentPressLuckTopic,
   savePressLuckHighScore
 };

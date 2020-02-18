@@ -91,6 +91,7 @@ const resolvers = {
         let recentUsers = await User.countDocuments({
           _id: { $ne: user.id, $nin: daUser.blockedusers },
           roles: { $nin: ["reviewer"] },
+          access: { $eq: "paid" },
           blockedusers: { $nin: [user.id] },
           updatedAt: {
             $gte: fortyFiveDaysAgo
@@ -343,7 +344,7 @@ const resolvers = {
       (parent, { args }, { user }) => {
         return User.find({
           _id: { $ne: user.id },
-          roles: { $in: ["matchdefault"] }
+          roles: { $in: ["joustdefault"] }
         });
       }
     ),

@@ -3,7 +3,9 @@ const { gql } = require("apollo-server-express");
 const typeDef = gql`
   type GamePressYourLuck {
     _id: ID!
-    genre: CategoryGenre
+    type: String
+    topictype: String
+    topic: String
     players: [PlayerPressYourLuck]!
     rounds: Int
     categories: [Category]
@@ -22,7 +24,16 @@ const typeDef = gql`
     roundresults: [RoundResults]
   }
 
+  input createPressLuckGameInput {
+    topictype: String!
+    topic: String!
+    cattype: ID
+    category: ID
+    genre: ID
+  }
+
   extend type Query {
+    currentpresslucktopic: PressLuckTopicResponse
     currentpressluckgame(id: ID!): GamePressYourLuck
     pressluckgamepage(
       limit: Int!
@@ -38,8 +49,14 @@ const typeDef = gql`
     pressluckgames: [GamePressYourLuck]
   }
 
+  type PressLuckTopicResponse {
+    id: ID
+    type: String
+    topic: String
+  }
+
   extend type Mutation {
-    createpressluckgame(genre: ID!): GamePressYourLuck
+    createpressluckgame(input: createPressLuckGameInput!): GamePressYourLuck
     enterpressluckanswer(
       gameid: ID!
       roundresults: RoundResultsInput!

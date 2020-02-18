@@ -18,6 +18,7 @@ const typeDef = gql`
     showasupdated: Boolean
     showaspopular: Boolean
     joustexclusive: Boolean
+    pressluckactive: Boolean
   }
 
   type CategoryPageResponse {
@@ -59,6 +60,7 @@ const typeDef = gql`
     showasupdated: Boolean
     showaspopular: Boolean
     joustexclusive: Boolean
+    pressluckactive: Boolean
   }
 
   extend type Query {

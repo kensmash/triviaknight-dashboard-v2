@@ -1,10 +1,15 @@
 const mongoose = require("mongoose");
 const CategoryType = require("../../models/CategoryType");
+const Category = require("../../models/Category");
+const CategoryGenre = require("../../models/CategoryGenre");
 //auth helpers
 const {
   requiresAuth,
   requiresAdmin
 } = require("../_helpers/helper-permissions");
+//press luck helpers
+const { currentPressLuckTopic } = require("../_helpers/helper-gamespressluck");
+const { savePressLuckHighScore } = require("../_helpers/helper-gamespressluck");
 
 const resolvers = {
   Query: {
@@ -50,8 +55,24 @@ const resolvers = {
 
   Mutation: {
     upsertcategorytype: requiresAdmin.createResolver(
-      async (parent, { input }) => {
+      async (parent, { input }, { expo }) => {
         try {
+          if (input.pressluckactive) {
+            //first, save player high score from previous week
+            const currentTopic = await currentPressLuckTopic();
+            await savePressLuckHighScore(currentTopic.topic, expo);
+            //then reset press luck active on other genres
+            //then reset press luck active on other types
+            await CategoryGenre.updateMany({
+              $set: { pressluckactive: false }
+            });
+            await CategoryType.updateMany({
+              $set: { pressluckactive: false }
+            });
+            await Category.updateMany({
+              $set: { pressluckactive: false }
+            });
+          }
           const upsertedCategoryType = await CategoryType.findOneAndUpdate(
             {
               _id: mongoose.Types.ObjectId(input.id)

@@ -1,11 +1,14 @@
 const mongoose = require("mongoose");
 const CategoryGenre = require("../../models/CategoryGenre");
+const CategoryType = require("../../models/CategoryType");
+const Category = require("../../models/Category");
 //auth helpers
 const {
   requiresAuth,
   requiresAdmin
 } = require("../_helpers/helper-permissions");
-//press luck helper
+//press luck helpers
+const { currentPressLuckTopic } = require("../_helpers/helper-gamespressluck");
 const { savePressLuckHighScore } = require("../_helpers/helper-gamespressluck");
 
 const resolvers = {
@@ -66,12 +69,16 @@ const resolvers = {
         try {
           if (input.pressluckactive) {
             //first, save player high score from previous week
-            const currentGenre = await CategoryGenre.findOne({
-              pressluckactive: { $eq: true }
-            });
-            await savePressLuckHighScore(currentGenre, expo);
-            //then reset press luck active on other genres
+            const currentTopic = await currentPressLuckTopic();
+            await savePressLuckHighScore(currentTopic.topic, expo);
+            //then reset press luck active on other types
             await CategoryGenre.updateMany({
+              $set: { pressluckactive: false }
+            });
+            await CategoryType.updateMany({
+              $set: { pressluckactive: false }
+            });
+            await Category.updateMany({
               $set: { pressluckactive: false }
             });
           }

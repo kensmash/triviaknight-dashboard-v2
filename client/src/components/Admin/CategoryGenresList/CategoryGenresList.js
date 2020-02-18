@@ -122,7 +122,7 @@ const CategoryGenresList = props => {
           <Table.Row>
             <Table.HeaderCell>Name</Table.HeaderCell>
             <Table.HeaderCell>Siege Playable</Table.HeaderCell>
-            <Table.HeaderCell>Press Your Luck Active</Table.HeaderCell>
+            <Table.HeaderCell>Press Luck Active</Table.HeaderCell>
             <Table.HeaderCell>Category Types</Table.HeaderCell>
             <Table.HeaderCell>Actions</Table.HeaderCell>
           </Table.Row>

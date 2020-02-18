@@ -20,6 +20,7 @@ export default gql`
         name
         hasgenres
         playable
+        pressluckactive
       }
     }
   }

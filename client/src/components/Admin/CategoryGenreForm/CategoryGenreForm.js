@@ -183,7 +183,7 @@ const CategoryGenreForm = props => {
 
       <Form.Field>
         <Checkbox
-          label="Active Press Your Luck Genre"
+          label="Active Press Your Luck Topic"
           checked={fields.pressluckactive}
           onChange={(event, data) => pressLuckCheckboxHandler(event, data)}
         />

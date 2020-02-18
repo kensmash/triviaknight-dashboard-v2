@@ -5,10 +5,8 @@ const PlayerPressLuckSchema = require("./PlayerPressLuck");
 const gamePressYourLuckSchema = new Schema(
   {
     type: { type: String, default: "PressYourLuck" },
-    genre: {
-      type: Schema.Types.ObjectId,
-      ref: "categorygenres"
-    },
+    topictype: { type: String, default: "Genre" },
+    topic: { type: String },
     players: [PlayerPressLuckSchema],
     rounds: { type: Number, default: 12 },
     categories: [

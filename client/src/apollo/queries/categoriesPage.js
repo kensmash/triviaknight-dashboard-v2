@@ -22,6 +22,7 @@ export default gql`
         showasnew
         showaspopular
         joustexclusive
+        pressluckactive
       }
     }
   }

@@ -16,6 +16,7 @@ const categorySchema = new Schema(
     genres: [{ type: Schema.Types.ObjectId, ref: "categorygenres" }],
     partycategory: { type: Boolean, default: false },
     joustexclusive: { type: Boolean, default: false },
+    pressluckactive: { type: Boolean, default: false },
     published: { type: Boolean, default: false },
     popular: { type: Boolean, default: false },
     showasnew: { type: Boolean, default: false },

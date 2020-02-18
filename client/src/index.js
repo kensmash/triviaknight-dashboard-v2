@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
+import { Dimmer, Loader } from "semantic-ui-react";
 import "./index.css";
 import Routes from "./routes";
 //yo apollo
@@ -21,7 +22,11 @@ function App() {
   return (
     <>
       {!isRestored ? (
-        <div>Loading!!!</div>
+        <div>
+          <Dimmer active>
+            <Loader />
+          </Dimmer>
+        </div>
       ) : (
         <ApolloProvider client={client}>
           <Routes />
