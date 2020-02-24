@@ -9,6 +9,7 @@ import {
   Grid,
   Form,
   Select,
+  Input,
   Pagination
 } from "semantic-ui-react";
 //components
@@ -24,6 +25,7 @@ import QUERY_QUESTIONSPAGE from "../../../apollo/queries/questionsPage";
 import QUERY_QUESTIONSEARCHCRITERIA from "../../../apollo/queries/client-questionSearchCriteria";
 
 const QuestionsList = props => {
+  const [searchText, setSearchText] = useState("");
   const [perPageOptions] = useState([
     { value: 10, text: "10" },
     { value: 15, text: "15" },
@@ -76,6 +78,29 @@ const QuestionsList = props => {
       variables: {
         ...questionSearchCriteria,
         limit: data.value
+      }
+    });
+  };
+
+  const inputChangedHandler = event => {
+    setSearchText(event.target.value);
+  };
+
+  const questionSearchHandler = () => {
+    updateQuestionSearch({
+      variables: {
+        ...questionSearchCriteria,
+        question: searchText
+      }
+    });
+  };
+
+  const clearQuestionSearchHandler = () => {
+    setSearchText("");
+    updateQuestionSearch({
+      variables: {
+        ...questionSearchCriteria,
+        question: ""
       }
     });
   };
@@ -137,6 +162,19 @@ const QuestionsList = props => {
                 />
               </Form.Group>
             </Form>
+          </Grid.Column>
+          <Grid.Column className="tablePerPageColumn">
+            <Input type="text" fluid placeholder="Search..." action>
+              <input
+                placeholder="Search by Question"
+                value={searchText}
+                onChange={inputChangedHandler}
+              />
+              <Button icon="search" onClick={() => questionSearchHandler()} />
+              {searchText !== "" ? (
+                <Button icon="x" onClick={() => clearQuestionSearchHandler()} />
+              ) : null}
+            </Input>
           </Grid.Column>
         </Grid.Row>
         <Grid.Row>

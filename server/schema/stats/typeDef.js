@@ -58,7 +58,7 @@ const typeDef = gql`
   }
 
   type PressLuckPrevWeekWinners {
-    genre: String
+    topic: String
     id: ID
     name: String
     rank: String
