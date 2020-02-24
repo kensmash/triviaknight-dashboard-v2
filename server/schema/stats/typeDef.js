@@ -48,7 +48,7 @@ const typeDef = gql`
   }
 
   type PressLuckGameStats {
-    genre: String
+    topic: String
     id: ID
     name: String
     rank: String

@@ -4,6 +4,7 @@ const GameJoust = require("../../models/GameJoust");
 const GameSiege = require("../../models/GameSiege");
 const GamePressYourLuck = require("../../models/GamePressYourLuck");
 const CategoryGenre = require("../../models/CategoryGenre");
+const { currentPressLuckTopic } = require("../_helpers/helper-gamespressluck");
 
 //tracks questions answered, correct and incorrect per game type
 const gameStats = async userId => {
@@ -483,7 +484,8 @@ const joustGameStats = async userId => {
 
 //tracks press your luck games per genre
 const pressLuckGameStats = async () => {
-  const genre = await CategoryGenre.findOne({ pressluckactive: { $eq: true } });
+  //const genre = await CategoryGenre.findOne({ pressluckactive: { $eq: true } });
+  const currentTopic = await currentPressLuckTopic();
   let thisWeek = new Date();
   const currentDay = thisWeek.getDay();
   thisWeek.setDate(
@@ -495,7 +497,7 @@ const pressLuckGameStats = async () => {
       {
         $match: {
           createdAt: { $gt: thisWeek },
-          genre: { $eq: mongoose.Types.ObjectId(genre._id) },
+          topic: { $eq: mongoose.Types.ObjectId(currentTopic.id) },
           gameover: true,
           timedout: false
         }
@@ -526,7 +528,7 @@ const pressLuckGameStats = async () => {
       {
         $project: {
           _id: 0,
-          genre: genre.name,
+          topic: currentTopic.topic,
           id: { $arrayElemAt: ["$player._id", 0] },
           name: { $arrayElemAt: ["$player.name", 0] },
           rank: { $arrayElemAt: ["$player.rank", 0] },
@@ -562,7 +564,7 @@ const pressLuckLastWeekWinners = async () => {
         const lasthighscore =
           winner.pressluckhighscores[winner.pressluckhighscores.length - 1];
         return {
-          genre: lasthighscore.topic,
+          topic: lasthighscore.topic,
           id: winner._id,
           name: winner.name,
           rank: winner.rank,

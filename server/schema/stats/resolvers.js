@@ -33,11 +33,9 @@ const resolvers = {
       }
     ),
 
-    pressluckgamestats: requiresAuth.createResolver(
-      (parent, { genre }, { user }) => {
-        return pressLuckGameStats(genre);
-      }
-    ),
+    pressluckgamestats: requiresAuth.createResolver((parent, { args }) => {
+      return pressLuckGameStats();
+    }),
 
     presslucklastweekwinners: requiresAuth.createResolver(
       (parent, { args }) => {

@@ -133,7 +133,6 @@ const resolvers = {
             //first, save player high score from previous week
             const currentTopic = await currentPressLuckTopic();
             await savePressLuckHighScore(currentTopic.topic, expo);
-            //then reset press luck active on other genres
             //then reset press luck active on other types
             await CategoryGenre.updateMany({
               $set: { pressluckactive: false }
