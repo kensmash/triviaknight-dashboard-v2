@@ -193,7 +193,7 @@ const siegeGenreQuestions = async genre => {
     }
     //for each category we generated, get a random question
     const firstQuestions = await Promise.all(
-      categories.slice(0, 6).map(async category => {
+      categories.slice(0, 7).map(async category => {
         const question = await Question.aggregate([
           {
             $match: {
@@ -264,7 +264,7 @@ const siegeCatTypeQuestions = async cattype => {
     }
     //for each category we generated, get a random question
     const firstQuestions = await Promise.all(
-      categories.slice(0, 6).map(async category => {
+      categories.slice(0, 7).map(async category => {
         const question = await Question.aggregate([
           {
             $match: {

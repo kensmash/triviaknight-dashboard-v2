@@ -7,6 +7,7 @@ const typeDef = gql`
     updatedAt: String
     name: String
     email: String
+    hasCompletedSignUpFlow: Boolean
     isAdmin: Boolean
     rank: String
     avatar: String
@@ -136,6 +137,7 @@ const typeDef = gql`
     resetpasswordcode(email: String!, code: Int!): Boolean
     updatepassword(email: String!, password: String!): Boolean
     updateusername(name: String!): UserNameChangeResponse
+    updatesignupflow: User
     changeemail(email: String!): User
     changerank: Boolean
     blockuser(playerid: ID!): User

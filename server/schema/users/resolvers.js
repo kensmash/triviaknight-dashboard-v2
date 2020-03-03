@@ -491,7 +491,7 @@ const resolvers = {
         try {
           const editedUser = await User.findOneAndUpdate(
             { _id: user.id },
-            { $set: { avatar } },
+            { $set: { avatar, hasCompletedSignUpFlow: true } },
             { new: true }
           );
           return editedUser;
@@ -608,6 +608,21 @@ const resolvers = {
     changeemail: requiresAuth.createResolver((parent, { email }, { user }) => {
       return updateEmail(user.id, email);
     }),
+
+    updatesignupflow: requiresAuth.createResolver(
+      async (parent, { args }, { user }) => {
+        try {
+          const editedUser = await User.findOneAndUpdate(
+            { _id: user.id },
+            { $set: { hasCompletedSignUpFlow: true } },
+            { new: true }
+          );
+          return editedUser;
+        } catch (err) {
+          return err;
+        }
+      }
+    ),
 
     changerank: requiresAuth.createResolver(
       async (parent, { args }, { user, expo }) => {
@@ -729,7 +744,7 @@ const resolvers = {
                 for (let ticket of ticketsWithTypes) {
                   try {
                     const newticket = new ExpoPushTicket(ticket);
-                    const savedTicket = await newticket.save();
+                    await newticket.save();
                   } catch (error) {
                     console.error(error);
                   }

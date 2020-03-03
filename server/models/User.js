@@ -20,6 +20,7 @@ const userSchema = new Schema(
     avatar: String,
     isAdmin: { type: Boolean, default: false },
     overEighteen: { type: Boolean, default: false },
+    hasCompletedSignUpFlow: { type: Boolean, default: false },
     roles: { type: [String] },
     banned: { type: Boolean, default: false },
     rank: { type: String, default: "Page" },

@@ -129,7 +129,7 @@ const savePressLuckHighScore = async (topic, expo) => {
         let messages = [];
         let pushType = "PressLuckWinner";
         let pushTitle = `You won!`;
-        let pushMessage = `Congratulations! You won this past week’s ${currentgenre.name} Press Your Luck with your score of ${winningPlayers[0].score}!`;
+        let pushMessage = `Congratulations! You won this past week’s ${topic} Press Your Luck with your score of ${winningPlayers[0].score}!`;
 
         for (let pushToken of pushTokens) {
           // Check that all your push tokens appear to be valid Expo push tokens

@@ -47,7 +47,7 @@ const trySignup = async (
       name: { $regex: new RegExp("^" + name + "$", "i"), $options: "i" }
     });
     if (existingName) {
-      //throw new Error("Email already used");
+      console.log("Sorry, that name is already in use.");
       return {
         error: {
           field: "name",
