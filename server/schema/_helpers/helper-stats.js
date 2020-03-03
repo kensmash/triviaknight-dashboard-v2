@@ -3,7 +3,6 @@ const User = require("../../models/User");
 const GameJoust = require("../../models/GameJoust");
 const GameSiege = require("../../models/GameSiege");
 const GamePressYourLuck = require("../../models/GamePressYourLuck");
-const CategoryGenre = require("../../models/CategoryGenre");
 const { currentPressLuckTopic } = require("../_helpers/helper-gamespressluck");
 
 //tracks questions answered, correct and incorrect per game type
@@ -497,7 +496,7 @@ const pressLuckGameStats = async () => {
       {
         $match: {
           createdAt: { $gt: thisWeek },
-          topic: { $eq: mongoose.Types.ObjectId(currentTopic.id) },
+          topic: { $eq: currentTopic.topic },
           gameover: true,
           timedout: false
         }
