@@ -22,7 +22,7 @@ const defaultState = {
     name: "",
     type: null,
     genres: [],
-    partycategory: null
+    partycategory: false
   },
   categoryGenreSearchCriteria: {
     __typename: "categoryGenreSearchCriteria",

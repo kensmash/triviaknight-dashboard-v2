@@ -53,7 +53,7 @@ const resolvers = {
         if (input.partycategory !== null) {
           query.partycategory = { $eq: input.partycategory };
         }
-
+        //console.log(query);
         return query;
       };
       const categories = await Promise.all([

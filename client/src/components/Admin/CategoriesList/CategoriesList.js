@@ -34,7 +34,7 @@ const CategoriesList = props => {
       name: categorySearchCriteria.name,
       type: categorySearchCriteria.type,
       genres: categorySearchCriteria.genres,
-      partycategory: categorySearchCriteria.partycategory === "true"
+      partycategory: categorySearchCriteria.partycategory
     }
   };
 
@@ -72,6 +72,7 @@ const CategoriesList = props => {
   };
 
   const catGameTypeSelectHandler = (_e, data) => {
+    console.log(data.value);
     updateCategorySearch({
       variables: {
         ...categorySearchCriteria,
