@@ -61,6 +61,11 @@ const QuestionForm = props => {
   useEffect(() => {
     if (props.pageType === "edit" && !questionSubmitted) {
       const { question } = props;
+      updateAddQuestionCriteria({
+        variables: {
+          category: question.category._id
+        }
+      });
       setFields({
         question: question.question,
         answers: question.answers.map(question => ({
@@ -76,7 +81,7 @@ const QuestionForm = props => {
         published: question.published
       });
     }
-  }, [props, questionSubmitted]);
+  }, [props, questionSubmitted, updateAddQuestionCriteria]);
 
   const gotoQuestionsPageHandler = () => {
     clearFormHandler();
@@ -248,9 +253,7 @@ const QuestionForm = props => {
     const errors = formValidateHandler(
       fields.question,
       fields.answers,
-      props.pageType === "edit"
-        ? fields.category
-        : addQuestionCriteria.category,
+      addQuestionCriteria.category,
       fields.questiontype,
       fields.questiondifficulty
     );
@@ -292,6 +295,11 @@ const QuestionForm = props => {
 
   const clearFormHandler = () => {
     setQuestionSubmitted(false);
+    updateAddQuestionCriteria({
+      variables: {
+        category: ""
+      }
+    });
     setFields({
       question: "",
       answers: [
