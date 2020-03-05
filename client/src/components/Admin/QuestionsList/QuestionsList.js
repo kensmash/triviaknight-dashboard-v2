@@ -25,7 +25,6 @@ import QUERY_QUESTIONSPAGE from "../../../apollo/queries/questionsPage";
 import QUERY_QUESTIONSEARCHCRITERIA from "../../../apollo/queries/client-questionSearchCriteria";
 
 const QuestionsList = props => {
-  const [searchText, setSearchText] = useState("");
   const [perPageOptions] = useState([
     { value: 10, text: "10" },
     { value: 15, text: "15" },
@@ -83,20 +82,15 @@ const QuestionsList = props => {
   };
 
   const inputChangedHandler = event => {
-    setSearchText(event.target.value);
-  };
-
-  const questionSearchHandler = () => {
     updateQuestionSearch({
       variables: {
         ...questionSearchCriteria,
-        question: searchText
+        question: event.target.value
       }
     });
   };
 
   const clearQuestionSearchHandler = () => {
-    setSearchText("");
     updateQuestionSearch({
       variables: {
         ...questionSearchCriteria,
@@ -164,14 +158,20 @@ const QuestionsList = props => {
             </Form>
           </Grid.Column>
           <Grid.Column className="tablePerPageColumn">
-            <Input type="text" fluid placeholder="Search..." action>
+            <Input
+              type="text"
+              fluid
+              placeholder="Search..."
+              icon="search"
+              action
+            >
               <input
                 placeholder="Search by Question"
-                value={searchText}
+                value={questionSearchCriteria.question}
                 onChange={inputChangedHandler}
               />
-              <Button icon="search" onClick={() => questionSearchHandler()} />
-              {searchText !== "" ? (
+
+              {questionSearchCriteria.question !== "" ? (
                 <Button icon="x" onClick={() => clearQuestionSearchHandler()} />
               ) : null}
             </Input>
