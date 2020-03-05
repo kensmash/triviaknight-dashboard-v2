@@ -62,7 +62,8 @@ const resolvers = {
           .skip(input.offset)
           .limit(input.limit)
           .populate("type")
-          .populate("genres"),
+          .populate("genres")
+          .populate("questions"),
         //Category.find(queryBuilder(input)).count()
         Category.countDocuments(queryBuilder(input))
       ]);

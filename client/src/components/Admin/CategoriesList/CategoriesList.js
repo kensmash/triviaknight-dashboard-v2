@@ -130,6 +130,7 @@ const CategoriesList = props => {
         <Table.Header>
           <Table.Row>
             <Table.HeaderCell>Name</Table.HeaderCell>
+            <Table.HeaderCell>Questions</Table.HeaderCell>
             <Table.HeaderCell>Status</Table.HeaderCell>
             <Table.HeaderCell>Joust Only</Table.HeaderCell>
             <Table.HeaderCell>Press Luck Active</Table.HeaderCell>
@@ -168,6 +169,8 @@ const CategoriesList = props => {
                       )}
                       <Link to={`${match.url}/${cat._id}`}>{cat.name}</Link>
                     </Table.Cell>
+                    <Table.Cell>{cat.questions.length}</Table.Cell>
+
                     <Table.Cell className="publishedstatuscell">
                       {cat.published ? "Published" : "Draft"}
                     </Table.Cell>
@@ -208,7 +211,7 @@ const CategoriesList = props => {
             </Table.Body>
             <Table.Footer>
               <Table.Row>
-                <Table.HeaderCell colSpan="7">
+                <Table.HeaderCell colSpan="8">
                   <Grid columns="equal">
                     <Grid.Column width={2}>
                       <div className="tableItemNumbers">

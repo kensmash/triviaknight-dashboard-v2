@@ -23,6 +23,10 @@ export default gql`
         showaspopular
         joustexclusive
         pressluckactive
+        questions {
+          _id
+          difficulty
+        }
       }
     }
   }
