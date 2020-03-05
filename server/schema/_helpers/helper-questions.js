@@ -366,7 +366,7 @@ const pressLuckQuestions = async (topictype, topicid) => {
             $match: {
               published: { $eq: true },
               partycategory: { $eq: false },
-              genres: { $eq: mongoose.Types.ObjectId(genre) }
+              genres: { $eq: mongoose.Types.ObjectId(topicid) }
             }
           },
           { $sample: { size: catsToGet } }
