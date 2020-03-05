@@ -169,13 +169,7 @@ const QuestionForm = props => {
     setFieldErrors({ ...fieldErrors, questiondifficulty: "" });
   };
 
-  const formValidateHandler = (
-    question,
-    answers,
-    category,
-    type,
-    difficulty
-  ) => {
+  const formValidateHandler = (question, answers, type, difficulty) => {
     const errors = {};
     const emptyanswers = fields.answers.filter(answer => answer.answer === "");
     const allanswers = fields.answers.map(answer => answer.answer);
@@ -228,7 +222,8 @@ const QuestionForm = props => {
     if (answers.length < 2)
       errors.answers = "Please enter at least two answers.";
 
-    if (!category.length) errors.category = "Please select a category.";
+    if (!addQuestionCriteria.category.length)
+      errors.category = "Please select a category.";
     if (!type.length) errors.questiontype = "Please select a question type.";
     if (!difficulty.length)
       errors.questiondifficulty = "Please select a question difficulty.";
@@ -268,7 +263,6 @@ const QuestionForm = props => {
     const {
       question,
       answers,
-      category,
       questiontype,
       questiondifficulty,
       imageurl,
@@ -283,7 +277,7 @@ const QuestionForm = props => {
           id: props.pageType === "edit" ? props.question._id : null,
           question,
           answers,
-          category,
+          category: addQuestionCriteria.category,
           type: questiontype,
           difficulty: questiondifficulty,
           imageurl,

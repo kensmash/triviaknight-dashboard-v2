@@ -158,13 +158,7 @@ const QuestionsList = props => {
             </Form>
           </Grid.Column>
           <Grid.Column className="tablePerPageColumn">
-            <Input
-              type="text"
-              fluid
-              placeholder="Search..."
-              icon="search"
-              action
-            >
+            <Input type="text" fluid placeholder="Search..." action>
               <input
                 placeholder="Search by Question"
                 value={questionSearchCriteria.question}
