@@ -295,11 +295,6 @@ const QuestionForm = props => {
 
   const clearFormHandler = () => {
     setQuestionSubmitted(false);
-    updateAddQuestionCriteria({
-      variables: {
-        category: ""
-      }
-    });
     setFields({
       question: "",
       answers: [
