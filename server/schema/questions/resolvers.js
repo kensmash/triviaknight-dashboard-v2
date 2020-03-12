@@ -69,7 +69,7 @@ const resolvers = {
       }
     ),
 
-    tkgamequestions: requiresAuth.createResolver(async (parent, args) => {
+    tkgamequestions: async (parent, args) => {
       try {
         const questions = await Question.aggregate([
           {
@@ -106,7 +106,7 @@ const resolvers = {
       } catch (error) {
         console.error(error);
       }
-    }),
+    },
 
     questionswidget: requiresAdmin.createResolver(async (parent, args) => {
       try {

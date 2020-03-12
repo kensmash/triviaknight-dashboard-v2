@@ -556,7 +556,7 @@ const pressLuckLastWeekWinners = async () => {
   try {
     let results = [];
     const winners = await User.find({
-      "pressluckhighscores.date": { $gte: thisWeek }
+      "pressluckhighscores.date": { $gte: lastWeek }
     });
     if (winners.length) {
       results = winners.map(winner => {
