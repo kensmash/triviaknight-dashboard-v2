@@ -36,11 +36,24 @@ const gameStats = async userId => {
           as: "siegeGames"
         }
       },
+      {
+        $lookup: {
+          from: "gamespressyourluck",
+          localField: "_id",
+          foreignField: "players.player",
+          as: "pressLuckGames"
+        }
+      },
       //combine games
       {
         $project: {
           totalGames: {
-            $concatArrays: ["$soloGames", "$joustGames", "$siegeGames"]
+            $concatArrays: [
+              "$soloGames",
+              "$joustGames",
+              "$siegeGames",
+              "$pressLuckGames"
+            ]
           }
         }
       },
@@ -177,11 +190,24 @@ const categoryStats = async userId => {
           as: "siegeGames"
         }
       },
+      {
+        $lookup: {
+          from: "gamespressyourluck",
+          localField: "_id",
+          foreignField: "players.player",
+          as: "pressLuckGames"
+        }
+      },
       //combine games
       {
         $project: {
           totalGames: {
-            $concatArrays: ["$soloGames", "$joustGames", "$siegeGames"]
+            $concatArrays: [
+              "$soloGames",
+              "$joustGames",
+              "$siegeGames",
+              "$pressLuckGames"
+            ]
           }
         }
       },
