@@ -66,6 +66,9 @@ userSchema.virtual("siegegames", {
   foreignField: "players.player" // contains `foreignField`
 });
 
+userSchema.set("toObject", { virtuals: true });
+userSchema.set("toJSON", { virtuals: true });
+
 //On Save hook, encrypt password
 userSchema.pre("save", function(next) {
   const user = this;

@@ -42,7 +42,7 @@ const newCategories = schedule.scheduleJob(
           categories.length > 1
             ? `New categories added! Trivia Knight has added ${catnames}. Check them out!`
             : `New category added! Trivia Knight has added ${catnames}. Check it out!`;
-        console.log("push message", pushMessage);
+
         for (let pushToken of pushTokens) {
           // Check that all your push tokens appear to be valid Expo push tokens
           if (!Expo.isExpoPushToken(pushToken)) {

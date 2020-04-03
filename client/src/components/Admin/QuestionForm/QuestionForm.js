@@ -408,7 +408,6 @@ const QuestionForm = props => {
               addQuestionType={props.addQuestionType}
               selectedQuestionType={fields.questiontype}
               questionTypeSelectHandler={questionTypeSelectHandler}
-              errormessage={fieldErrors.questiontype}
             />
             <QuestionDifficulty
               selectedQuestionDifficulty={fields.questiondifficulty}

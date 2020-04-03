@@ -406,31 +406,30 @@ const resolvers = {
     allusergames: requiresAuth.createResolver(
       async (parent, args, { user }) => {
         try {
-          const allpressluckgames = await GamePressYourLuck.find({
-            "players.player": user.id
-          })
-            .populate("players.player")
-            .populate("genre");
-          //joust games
-          const alljoustgames = await GameJoust.find({
-            "players.player": user.id
-          })
-            .populate("createdby")
-            .populate("players.player")
-            .populate("category")
-            .sort({ updatedAt: -1 });
-          //siege games
-          const allsiegegames = await GameSiege.find({
-            "players.player": user.id
-          })
-            .populate("createdby")
-            .populate("players.player")
+          const player = await User.findOne({ _id: user.id })
+            .populate({
+              path: "pressluckgames",
+              populate: { path: "players.player" }
+            })
+            .populate({
+              path: "joustgames",
+              populate: [
+                { path: "createdby" },
+                { path: "players.player" },
+                { path: "category" }
+              ]
+            })
+            .sort({ updatedAt: -1 })
+            .populate({
+              path: "siegegames",
+              populate: [{ path: "createdby" }, { path: "players.player" }]
+            })
             .sort({ updatedAt: -1 });
 
           return {
-            pressluckgames: allpressluckgames,
-            joustgames: alljoustgames,
-            siegegames: allsiegegames
+            pressluckgames: player.pressluckgames,
+            joustgames: player.joustgames,
+            siegegames: player.siegegames
           };
         } catch (error) {
           console.error(error);
