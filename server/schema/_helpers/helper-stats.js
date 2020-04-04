@@ -576,6 +576,11 @@ const pressLuckLastWeekWinners = async () => {
     let lastWeeksTopic = "";
     let results = [];
 
+    //date stuff
+    var lastWeek = new Date();
+    lastWeek.setDate(lastWeek.getDate() - 16);
+
+    //find last week's topic
     const allPreviousWinners = await User.find({
       pressluckhighscores: { $exists: true, $ne: [] }
     }).sort({ "pressluckhighscores.date": -1 });
@@ -586,11 +591,13 @@ const pressLuckLastWeekWinners = async () => {
           allPreviousWinners[0].pressluckhighscores.length - 1
         ].topic;
     }
-
+    //only get last week's topic winners from previous week
     const winners = await User.find({
-      "pressluckhighscores.topic": { $eq: lastWeeksTopic }
+      "pressluckhighscores.topic": { $eq: lastWeeksTopic },
+      "pressluckhighscores.date": { $gte: lastWeek }
     }).sort({ "pressluckhighscores.date": -1 });
 
+    //return results
     if (winners.length) {
       results = winners.map(winner => {
         const lasthighscore =
