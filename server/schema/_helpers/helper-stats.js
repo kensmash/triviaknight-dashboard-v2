@@ -572,18 +572,25 @@ const pressLuckGameStats = async () => {
 
 //press your luck last week winner
 const pressLuckLastWeekWinners = async () => {
-  let thisWeek = new Date();
-  const currentDay = thisWeek.getDay();
-  thisWeek.setDate(
-    thisWeek.getDate() - currentDay + (currentDay == 0 ? -6 : 1)
-  );
-  var lastWeek = new Date();
-  lastWeek.setDate(lastWeek.getDate() - 14);
   try {
+    let lastWeeksTopic = "";
     let results = [];
+
+    const allPreviousWinners = await User.find({
+      pressluckhighscores: { $exists: true, $ne: [] }
+    }).sort({ "pressluckhighscores.date": -1 });
+
+    if (allPreviousWinners.length) {
+      lastWeeksTopic =
+        allPreviousWinners[0].pressluckhighscores[
+          allPreviousWinners[0].pressluckhighscores.length - 1
+        ].topic;
+    }
+
     const winners = await User.find({
-      "pressluckhighscores.date": { $gte: lastWeek, $lt: thisWeek }
-    });
+      "pressluckhighscores.topic": { $eq: lastWeeksTopic }
+    }).sort({ "pressluckhighscores.date": -1 });
+
     if (winners.length) {
       results = winners.map(winner => {
         const lasthighscore =
