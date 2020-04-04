@@ -578,7 +578,7 @@ const pressLuckLastWeekWinners = async () => {
     thisWeek.getDate() - currentDay + (currentDay == 0 ? -6 : 1)
   );
   var lastWeek = new Date();
-  lastWeek.setDate(lastWeek.getDate() - 16);
+  lastWeek.setDate(lastWeek.getDate() - 14);
   try {
     let results = [];
     const winners = await User.find({
