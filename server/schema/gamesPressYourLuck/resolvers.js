@@ -2,7 +2,7 @@ const GamePressYourLuck = require("../../models/GamePressYourLuck");
 //auth helpers
 const {
   requiresAuth,
-  requiresAdmin
+  requiresAdmin,
 } = require("../_helpers/helper-permissions");
 //query helpers
 const { currentPressLuckTopic } = require("../_helpers/helper-gamespressluck");
@@ -31,14 +31,14 @@ const resolvers = {
               .skip(offset)
               .limit(limit)
               .populate("players.player"),
-            GamePressYourLuck.find(queryBuilder(players, gameover)).count()
+            GamePressYourLuck.find(queryBuilder(players, gameover)).count(),
           ]);
           const pressLuckResults = pressluckgames[0];
           const pressLuckCount = pressluckgames[1];
           return {
             pages: Math.ceil(pressLuckCount / limit),
             totalrecords: pressLuckCount,
-            pressluckgames: pressLuckResults
+            pressluckgames: pressLuckResults,
           };
         } catch (error) {
           console.error(error);
@@ -51,14 +51,13 @@ const resolvers = {
         try {
           const currentpressluckgame = await GamePressYourLuck.findOne({
             _id: id,
-            "players.player": user.id
+            "players.player": user.id,
           })
 
             .populate("players.player")
-
             .populate({
               path: "categories",
-              populate: { path: "type" }
+              populate: { path: "type" },
             })
             .populate("questions");
 
@@ -74,7 +73,7 @@ const resolvers = {
         const results = await currentPressLuckTopic();
         return results;
       }
-    )
+    ),
   },
 
   Mutation: {
@@ -104,7 +103,7 @@ const resolvers = {
             topic: input.topic,
             players: [{ player: user.id }],
             categories: catsAndQuestions.categories,
-            questions: catsAndQuestions.questions
+            questions: catsAndQuestions.questions,
           });
           const pressLuckGame = await newgame.save();
           return pressLuckGame;
@@ -121,7 +120,7 @@ const resolvers = {
           let updatedGame = await GamePressYourLuck.findOneAndUpdate(
             { _id: gameid, "players.player": user.id },
             {
-              $addToSet: { "players.$.roundresults": { ...roundresults } }
+              $addToSet: { "players.$.roundresults": { ...roundresults } },
             },
             { new: true }
           ).populate("players.player");
@@ -129,10 +128,10 @@ const resolvers = {
           if (advance) {
             const player = updatedGame.players[0];
             let points = player.roundresults
-              .map(results => results.points)
+              .map((results) => results.points)
               .reduce((a, b) => a + b, 0);
             const playerWrongAnswers = player.roundresults.filter(
-              result => result.points === 0
+              (result) => result.points === 0
             );
             if (playerWrongAnswers.length === 3) {
               points = 0;
@@ -140,7 +139,7 @@ const resolvers = {
             updatedGame = await GamePressYourLuck.findOneAndUpdate(
               { _id: gameid, "players.player": user.id },
               {
-                $set: { gameover: true, "players.$.score": points }
+                $set: { gameover: true, "players.$.score": points },
               },
               { new: true }
             ).populate("players.player");
@@ -158,7 +157,7 @@ const resolvers = {
           const endedGame = await GamePressYourLuck.findOneAndUpdate(
             { _id: gameid, "players.player": user.id },
             {
-              $set: { gameover: true, "players.$.score": points }
+              $set: { gameover: true, "players.$.score": points },
             },
             { new: true }
           ).populate("players.player");
@@ -190,7 +189,7 @@ const resolvers = {
           const updatedGame = await GamePressYourLuck.findOneAndUpdate(
             { _id: gameid },
             {
-              $set: { expired: true }
+              $set: { expired: true },
             },
             { new: true }
           ).populate("players.player");
@@ -205,17 +204,17 @@ const resolvers = {
       async (parent, { gameid }) => {
         try {
           const deletedPressLuckGame = await GamePressYourLuck.deleteOne({
-            _id: gameid
+            _id: gameid,
           });
           return deletedPressLuckGame;
         } catch (error) {
           console.error(error);
         }
       }
-    )
-  }
+    ),
+  },
 };
 
 module.exports = {
-  resolvers
+  resolvers,
 };

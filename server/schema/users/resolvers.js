@@ -1,6 +1,6 @@
 const User = require("../../models/User");
 const GameJoust = require("../../models/GameJoust");
-const GameSiege = require("../../models/GameSiege");
+const GameSolo = require("../../models/GameSolo");
 const GamePressYourLuck = require("../../models/GamePressYourLuck");
 const ExpoPushTicket = require("../../models/ExpoPushTicket");
 const { Expo } = require("expo-server-sdk");
@@ -14,7 +14,7 @@ const {
   resetPasswordCode,
   updatePassword,
   updateEmail,
-  updateName
+  updateName,
 } = require("../_helpers/helper-auth");
 
 const resolvers = {
@@ -28,9 +28,9 @@ const resolvers = {
           User.estimatedDocumentCount(),
           User.countDocuments({
             createdAt: {
-              $gte: newusertime
-            }
-          })
+              $gte: newusertime,
+            },
+          }),
         ]);
 
         const totalusers = widget[0];
@@ -38,7 +38,7 @@ const resolvers = {
 
         return {
           totalusers,
-          newusers
+          newusers,
         };
       } catch (error) {
         console.error(error);
@@ -51,16 +51,16 @@ const resolvers = {
 
           .populate({
             path: "categories",
-            populate: { path: "type" }
+            populate: { path: "type" },
           })
           .populate({
             path: "friends",
             populate: {
               path: "categories",
               populate: {
-                path: "type"
-              }
-            }
+                path: "type",
+              },
+            },
           });
       }
 
@@ -73,11 +73,11 @@ const resolvers = {
         .populate("blockedusers")
         .populate({
           path: "joustgames",
-          populate: { path: "players.player" }
+          populate: { path: "players.player" },
         })
         .populate({
           path: "siegegames",
-          populate: { path: "players.player" }
+          populate: { path: "players.player" },
         });
     }),
 
@@ -94,8 +94,8 @@ const resolvers = {
           access: { $eq: "paid" },
           blockedusers: { $nin: [user.id] },
           updatedAt: {
-            $gte: fortyFiveDaysAgo
-          }
+            $gte: fortyFiveDaysAgo,
+          },
         });
 
         const randomNumber = Math.floor(Math.random() * recentUsers);
@@ -105,8 +105,8 @@ const resolvers = {
           roles: { $nin: ["reviewer"] },
           blockedusers: { $nin: [user.id] },
           updatedAt: {
-            $gte: fortyFiveDaysAgo
-          }
+            $gte: fortyFiveDaysAgo,
+          },
         })
           .skip(randomNumber)
           .limit(1);
@@ -117,39 +117,39 @@ const resolvers = {
 
     joustleaders: requiresAuth.createResolver(async (parent, { args }) => {
       const joustplayers = await User.find({
-        roles: { $nin: ["reviewer"] }
+        roles: { $nin: ["reviewer"] },
       }).populate({
         path: "joustgames",
-        populate: { path: "players.player" }
+        populate: { path: "players.player" },
       });
 
-      const playersArray = joustplayers.map(player => ({
+      const playersArray = joustplayers.map((player) => ({
         player: {
           id: player.id,
           name: player.name,
           rank: player.rank,
-          avatar: player.avatar
+          avatar: player.avatar,
         },
         finishedgames: player.joustgames.filter(
-          game => game.gameover && !game.declined
-        )
+          (game) => game.gameover && !game.declined
+        ),
       }));
 
       const sortedArray = playersArray
         .sort((a, b) => b.finishedgames.length - a.finishedgames.length)
         .slice(0, 15);
 
-      const results = sortedArray.map(player => ({
+      const results = sortedArray.map((player) => ({
         joustid: player.player.id,
         name: player.player.name,
         rank: player.player.rank,
         avatar: player.player.avatar,
         gamesplayed: player.finishedgames.length,
-        wins: player.finishedgames.filter(game =>
+        wins: player.finishedgames.filter((game) =>
           game.players.some(
-            foo => foo.player._id == player.player.id && foo.winner
+            (foo) => foo.player._id == player.player.id && foo.winner
           )
-        ).length
+        ).length,
       }));
 
       return results;
@@ -158,10 +158,10 @@ const resolvers = {
     joustleaderssevendays: requiresAuth.createResolver(
       async (parent, { args }) => {
         const joustplayers = await User.find({
-          roles: { $nin: ["reviewer"] }
+          roles: { $nin: ["reviewer"] },
         }).populate({
           path: "joustgames",
-          populate: { path: "players.player" }
+          populate: { path: "players.player" },
         });
 
         //let sevenDaysAgo = new Date();
@@ -172,33 +172,34 @@ const resolvers = {
         thisWeek.setDate(
           thisWeek.getDate() - currentDay + (currentDay == 0 ? -6 : 1)
         );
-        const playersArray = joustplayers.map(player => ({
+        const playersArray = joustplayers.map((player) => ({
           player: {
             id: player.id,
             name: player.name,
             rank: player.rank,
-            avatar: player.avatar
+            avatar: player.avatar,
           },
           finishedgames: player.joustgames.filter(
-            game => game.gameover && !game.declined && game.updatedAt > thisWeek
-          )
+            (game) =>
+              game.gameover && !game.declined && game.updatedAt > thisWeek
+          ),
         }));
 
         const sortedArray = playersArray
           .sort((a, b) => b.finishedgames.length - a.finishedgames.length)
           .slice(0, 15);
 
-        const results = sortedArray.map(player => ({
+        const results = sortedArray.map((player) => ({
           joustsevendayid: player.player.id,
           name: player.player.name,
           rank: player.player.rank,
           avatar: player.player.avatar,
           gamesplayed: player.finishedgames.length,
-          wins: player.finishedgames.filter(game =>
+          wins: player.finishedgames.filter((game) =>
             game.players.some(
-              foo => foo.player._id == player.player.id && foo.winner
+              (foo) => foo.player._id == player.player.id && foo.winner
             )
-          ).length
+          ).length,
         }));
 
         return results;
@@ -207,39 +208,39 @@ const resolvers = {
 
     siegeleaders: requiresAuth.createResolver(async (parent, { args }) => {
       const siegeplayers = await User.find({
-        roles: { $nin: ["reviewer"] }
+        roles: { $nin: ["reviewer"] },
       }).populate({
         path: "siegegames",
-        populate: { path: "players.player" }
+        populate: { path: "players.player" },
       });
 
-      const playersArray = siegeplayers.map(player => ({
+      const playersArray = siegeplayers.map((player) => ({
         player: {
           id: player.id,
           name: player.name,
           rank: player.rank,
-          avatar: player.avatar
+          avatar: player.avatar,
         },
         finishedgames: player.siegegames.filter(
-          game => game.gameover && !game.declined
-        )
+          (game) => game.gameover && !game.declined
+        ),
       }));
 
       const sortedArray = playersArray
         .sort((a, b) => b.finishedgames.length - a.finishedgames.length)
         .slice(0, 15);
 
-      const results = sortedArray.map(player => ({
+      const results = sortedArray.map((player) => ({
         siegeid: player.player.id,
         name: player.player.name,
         rank: player.player.rank,
         avatar: player.player.avatar,
         gamesplayed: player.finishedgames.length,
-        wins: player.finishedgames.filter(game =>
+        wins: player.finishedgames.filter((game) =>
           game.players.some(
-            foo => foo.player._id == player.player.id && foo.winner
+            (foo) => foo.player._id == player.player.id && foo.winner
           )
-        ).length
+        ).length,
       }));
 
       return results;
@@ -248,10 +249,10 @@ const resolvers = {
     pressluckleaderssevendays: requiresAuth.createResolver(
       async (parent, { args }) => {
         const pressluckplayers = await User.find({
-          roles: { $nin: ["reviewer"] }
+          roles: { $nin: ["reviewer"] },
         }).populate({
           path: "pressluckgames",
-          populate: { path: "players.player" }
+          populate: { path: "players.player" },
         });
 
         let thisWeek = new Date();
@@ -259,28 +260,28 @@ const resolvers = {
         thisWeek.setDate(
           thisWeek.getDate() - currentDay + (currentDay == 0 ? -6 : 1)
         );
-        const playersArray = pressluckplayers.map(player => ({
+        const playersArray = pressluckplayers.map((player) => ({
           player: {
             id: player.id,
             name: player.name,
             rank: player.rank,
-            avatar: player.avatar
+            avatar: player.avatar,
           },
           finishedgames: player.pressluckgames.filter(
-            game => game.gameover && game.updatedAt > thisWeek
-          )
+            (game) => game.gameover && game.updatedAt > thisWeek
+          ),
         }));
 
         const sortedArray = playersArray
           .sort((a, b) => b.finishedgames.length - a.finishedgames.length)
           .slice(0, 15);
 
-        const results = sortedArray.map(player => ({
+        const results = sortedArray.map((player) => ({
           id: player.player.id,
           name: player.player.name,
           rank: player.player.rank,
           avatar: player.player.avatar,
-          gamesplayed: player.finishedgames.length
+          gamesplayed: player.finishedgames.length,
         }));
 
         return results;
@@ -290,10 +291,10 @@ const resolvers = {
     siegeleaderssevendays: requiresAuth.createResolver(
       async (parent, { args }) => {
         const siegeplayers = await User.find({
-          roles: { $nin: ["reviewer"] }
+          roles: { $nin: ["reviewer"] },
         }).populate({
           path: "siegegames",
-          populate: { path: "players.player" }
+          populate: { path: "players.player" },
         });
 
         //let sevenDaysAgo = new Date();
@@ -303,33 +304,34 @@ const resolvers = {
         thisWeek.setDate(
           thisWeek.getDate() - currentDay + (currentDay == 0 ? -6 : 1)
         );
-        const playersArray = siegeplayers.map(player => ({
+        const playersArray = siegeplayers.map((player) => ({
           player: {
             id: player.id,
             name: player.name,
             rank: player.rank,
-            avatar: player.avatar
+            avatar: player.avatar,
           },
           finishedgames: player.siegegames.filter(
-            game => game.gameover && !game.declined && game.updatedAt > thisWeek
-          )
+            (game) =>
+              game.gameover && !game.declined && game.updatedAt > thisWeek
+          ),
         }));
 
         const sortedArray = playersArray
           .sort((a, b) => b.finishedgames.length - a.finishedgames.length)
           .slice(0, 15);
 
-        const results = sortedArray.map(player => ({
+        const results = sortedArray.map((player) => ({
           siegesevendayid: player.player.id,
           name: player.player.name,
           rank: player.player.rank,
           avatar: player.player.avatar,
           gamesplayed: player.finishedgames.length,
-          wins: player.finishedgames.filter(game =>
+          wins: player.finishedgames.filter((game) =>
             game.players.some(
-              foo => foo.player._id == player.player.id && foo.winner
+              (foo) => foo.player._id == player.player.id && foo.winner
             )
-          ).length
+          ).length,
         }));
 
         return results;
@@ -344,14 +346,14 @@ const resolvers = {
       (parent, { args }, { user }) => {
         return User.find({
           _id: { $ne: user.id },
-          roles: { $in: ["joustdefault"] }
+          roles: { $in: ["joustdefault"] },
         });
       }
     ),
 
     userspage: requiresAuth.createResolver(
       async (parent, { offset, limit, name }) => {
-        const queryBuilder = name => {
+        const queryBuilder = (name) => {
           const query = {};
           if (name) {
             //query.$text = { $search: name };
@@ -368,7 +370,7 @@ const resolvers = {
               .populate("joustgames")
               .populate("siegegames")
               .sort({ updatedAt: -1 }),
-            User.countDocuments(queryBuilder(offset, limit, name))
+            User.countDocuments(queryBuilder(offset, limit, name)),
           ]);
 
           const userResults = users[0];
@@ -377,7 +379,7 @@ const resolvers = {
           return {
             pages: Math.ceil(userCount / limit),
             totalrecords: userCount,
-            users: userResults
+            users: userResults,
           };
         } catch (error) {
           console.error(error);
@@ -392,11 +394,86 @@ const resolvers = {
             _id: { $ne: user.id },
             $text: { $search: name },
             roles: { $nin: ["reviewer"] },
-            blockedusers: { $nin: [user.id] }
+            blockedusers: { $nin: [user.id] },
           });
 
           //TODO: make user cursor pagination work here
           return { items: paginatedusers, hasMore: false };
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    ),
+
+    currentsologames: requiresAuth.createResolver(
+      async (parent, args, { user }) => {
+        try {
+          const currentsologames = await GameSolo.find({
+            "players.player": user.id,
+            gameover: { $eq: false },
+          }).sort({ updatedAt: -1 });
+
+          return currentsologames;
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    ),
+
+    currentjoustgames: requiresAuth.createResolver(
+      async (parent, args, { user }) => {
+        try {
+          const currentjoustgames = await GameJoust.find({
+            "players.player": user.id,
+            gameover: { $eq: false },
+          })
+            .populate("createdby")
+            .populate("players.player")
+            .populate("category")
+            .populate("questions")
+            .sort({ updatedAt: -1 });
+
+          return currentjoustgames;
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    ),
+
+    completedjoustgames: requiresAuth.createResolver(
+      async (parent, args, { user }) => {
+        try {
+          const completedjoustgames = await GameJoust.find({
+            "players.player": user.id,
+            gameover: { $eq: true },
+          })
+            .populate("players.player")
+            .sort({ updatedAt: -1 })
+            .limit(12);
+
+          return completedjoustgames;
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    ),
+
+    recentpressluckgames: requiresAuth.createResolver(
+      async (parent, args, { user }) => {
+        try {
+          const recentpressluckgames = await GamePressYourLuck.find({
+            "players.player": user.id,
+          })
+            .populate("players.player")
+            .populate({
+              path: "categories",
+              populate: { path: "type" },
+            })
+            .populate("questions")
+            .sort({ updatedAt: -1 })
+            .limit(10);
+
+          return recentpressluckgames;
         } catch (error) {
           console.error(error);
         }
@@ -409,27 +486,27 @@ const resolvers = {
           const player = await User.findOne({ _id: user.id })
             .populate({
               path: "pressluckgames",
-              populate: { path: "players.player" }
+              populate: { path: "players.player" },
             })
             .populate({
               path: "joustgames",
               populate: [
                 { path: "createdby" },
                 { path: "players.player" },
-                { path: "category" }
-              ]
+                { path: "category" },
+              ],
             })
             .sort({ updatedAt: -1 })
             .populate({
               path: "siegegames",
-              populate: [{ path: "createdby" }, { path: "players.player" }]
+              populate: [{ path: "createdby" }, { path: "players.player" }],
             })
             .sort({ updatedAt: -1 });
 
           return {
             pressluckgames: player.pressluckgames,
             joustgames: player.joustgames,
-            siegegames: player.siegegames
+            siegegames: player.siegegames,
           };
         } catch (error) {
           console.error(error);
@@ -445,10 +522,10 @@ const resolvers = {
 
         return {
           hostedgameshost: player.hostedgameshost,
-          hostedgamesplayer: player.hostedgamesplayer
+          hostedgamesplayer: player.hostedgamesplayer,
         };
       }
-    )
+    ),
   },
 
   Mutation: {
@@ -475,7 +552,7 @@ const resolvers = {
       const { user } = context.req.session;
       if (user) {
         removeAllUsersSessions(user.id, context.redisclient);
-        context.req.session.destroy(err => {
+        context.req.session.destroy((err) => {
           if (err) {
             console.log(err);
           }
@@ -629,11 +706,11 @@ const resolvers = {
           .populate("sologames")
           .populate({
             path: "joustgames",
-            populate: { path: "players.player" }
+            populate: { path: "players.player" },
           })
           .populate({
             path: "siegegames",
-            populate: { path: "players.player" }
+            populate: { path: "players.player" },
           });
 
         const sologames = player.sologames;
@@ -643,14 +720,14 @@ const resolvers = {
         //calculate questions player has answered
         const soloquestionsanswered = sologames.length * 6;
         const joustquestionsanswered = joustgames
-          .map(game => {
-            return game.players.find(player => player.player._id == user.id)
+          .map((game) => {
+            return game.players.find((player) => player.player._id == user.id)
               .roundresults.length;
           })
           .reduce((a, b) => a + b, 0);
         const siegequestionsanswered = siegegames
-          .map(game => {
-            return game.players.find(player => player.player._id == user.id)
+          .map((game) => {
+            return game.players.find((player) => player.player._id == user.id)
               .roundresults.length;
           })
           .reduce((a, b) => a + b, 0);
@@ -716,8 +793,8 @@ const resolvers = {
                 body: `New rank! You have been upgraded to the rank of ${newRank}.`,
                 data: {
                   title: "New Rank",
-                  text: `You have been upgraded to the rank of ${newRank}!`
-                }
+                  text: `You have been upgraded to the rank of ${newRank}!`,
+                },
               });
             }
             //send push notifications in chunks
@@ -735,9 +812,9 @@ const resolvers = {
                   console.error(error);
                 }
                 //add types
-                const ticketsWithTypes = tickets.map(ticket => ({
+                const ticketsWithTypes = tickets.map((ticket) => ({
                   type: "New User Rank",
-                  ...ticket
+                  ...ticket,
                 }));
                 //save tickets to database for later retrieval
                 for (let ticket of ticketsWithTypes) {
@@ -759,10 +836,10 @@ const resolvers = {
           return false;
         }
       }
-    )
-  }
+    ),
+  },
 };
 
 module.exports = {
-  resolvers
+  resolvers,
 };

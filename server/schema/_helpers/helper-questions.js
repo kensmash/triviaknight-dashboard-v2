@@ -13,8 +13,8 @@ const randomCategoriesQuestions = async (samplesize, difficulty) => {
         $match: {
           published: { $eq: true },
           partycategory: { $eq: false },
-          joustexclusive: { $eq: false }
-        }
+          joustexclusive: { $eq: false },
+        },
       },
       { $sample: { size: samplesize } },
       //get cat type icon
@@ -23,28 +23,28 @@ const randomCategoriesQuestions = async (samplesize, difficulty) => {
           from: "categorytypes",
           localField: "type",
           foreignField: "_id",
-          as: "type"
-        }
+          as: "type",
+        },
       },
       {
         $project: {
           name: 1,
-          type: { $arrayElemAt: ["$type", 0] }
-        }
-      }
+          type: { $arrayElemAt: ["$type", 0] },
+        },
+      },
     ]);
     //for each category we generated, get a random question
     const questions = await Promise.all(
-      categories.map(async category => {
+      categories.map(async (category) => {
         const question = await Question.aggregate([
           {
             $match: {
               published: { $eq: true },
               category: { $eq: category._id },
-              difficulty: { $eq: difficulty }
-            }
+              difficulty: { $eq: difficulty },
+            },
           },
-          { $sample: { size: 1 } }
+          { $sample: { size: 1 } },
         ]);
 
         return question[0];
@@ -56,7 +56,7 @@ const randomCategoriesQuestions = async (samplesize, difficulty) => {
   }
 };
 
-const userCategoriesQuestions = async user => {
+const userCategoriesQuestions = async (user) => {
   try {
     let categories = [];
     let userCats = [];
@@ -67,7 +67,7 @@ const userCategoriesQuestions = async user => {
     if (currentUser.categories.length) {
       userCats = shuffleArray(
         currentUser.categories.filter(
-          cat => cat.published && !cat.partycategory
+          (cat) => cat.published && !cat.partycategory
         )
       );
     }
@@ -78,14 +78,14 @@ const userCategoriesQuestions = async user => {
         {
           $match: {
             _id: {
-              $nin: userCats.map(cat => {
+              $nin: userCats.map((cat) => {
                 mongoose.Types.ObjectId(cat._id);
-              })
+              }),
             },
             published: { $eq: true },
             partycategory: { $eq: false },
-            joustexclusive: { $eq: false }
-          }
+            joustexclusive: { $eq: false },
+          },
         },
         { $sample: { size: 6 - userCats.length } },
         //get cat type icon
@@ -94,15 +94,15 @@ const userCategoriesQuestions = async user => {
             from: "categorytypes",
             localField: "type",
             foreignField: "_id",
-            as: "type"
-          }
+            as: "type",
+          },
         },
         {
           $project: {
             name: 1,
-            type: { $arrayElemAt: ["$type", 0] }
-          }
-        }
+            type: { $arrayElemAt: ["$type", 0] },
+          },
+        },
       ]);
 
       categories = userCats.concat(randomCats);
@@ -111,16 +111,16 @@ const userCategoriesQuestions = async user => {
     }
     //for each category we generated, get a random question
     const questions = await Promise.all(
-      categories.map(async category => {
+      categories.map(async (category) => {
         const question = await Question.aggregate([
           {
             $match: {
               published: { $eq: true },
               category: { $eq: category._id },
-              difficulty: { $eq: "Normal" }
-            }
+              difficulty: { $eq: "Normal" },
+            },
           },
-          { $sample: { size: 1 } }
+          { $sample: { size: 1 } },
         ]);
 
         return question[0];
@@ -132,18 +132,89 @@ const userCategoriesQuestions = async user => {
   }
 };
 
+//solo games
+const soloQuestions = async (cattype) => {
+  try {
+    //get random published categories
+    let categories = await Category.aggregate([
+      {
+        $match: {
+          published: { $eq: true },
+          partycategory: { $eq: false },
+          joustexclusive: { $eq: false },
+          type: { $eq: mongoose.Types.ObjectId(cattype) },
+        },
+      },
+      { $sample: { size: 10 } },
+    ]);
+    if (categories.length < 10) {
+      const catsToGet = 10 - categories.length;
+      const newCategories = await Category.aggregate([
+        {
+          $match: {
+            published: { $eq: true },
+            partycategory: { $eq: false },
+            joustexclusive: { $eq: false },
+            type: { $eq: mongoose.Types.ObjectId(cattype) },
+          },
+        },
+        { $sample: { size: catsToGet } },
+      ]);
+      categories = categories.concat(newCategories);
+    }
+    //for each category we generated, get a random question
+    const firstQuestions = await Promise.all(
+      categories.slice(0, 7).map(async (category) => {
+        const question = await Question.aggregate([
+          {
+            $match: {
+              published: { $eq: true },
+              category: { $eq: category._id },
+              difficulty: { $eq: "Normal" },
+            },
+          },
+          { $sample: { size: 1 } },
+        ]);
+
+        return question[0];
+      })
+    );
+    const lastQuestions = await Promise.all(
+      categories.slice(7).map(async (category) => {
+        const question = await Question.aggregate([
+          {
+            $match: {
+              published: { $eq: true },
+              category: { $eq: category._id },
+              difficulty: { $eq: "Hard" },
+            },
+          },
+          { $sample: { size: 1 } },
+        ]);
+
+        return question[0];
+      })
+    );
+
+    const questions = firstQuestions.concat(lastQuestions);
+    return { categories, questions };
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 //joust games
-const joustQuestions = async category => {
+const joustQuestions = async (category) => {
   try {
     const firstQuestions = await Question.aggregate([
       {
         $match: {
           published: { $eq: true },
           category: { $eq: mongoose.Types.ObjectId(category) },
-          difficulty: { $eq: "Normal" }
-        }
+          difficulty: { $eq: "Normal" },
+        },
       },
-      { $sample: { size: 5 } }
+      { $sample: { size: 5 } },
     ]);
 
     const lastQuestions = await Question.aggregate([
@@ -151,10 +222,10 @@ const joustQuestions = async category => {
         $match: {
           published: { $eq: true },
           category: { $eq: mongoose.Types.ObjectId(category) },
-          difficulty: { $eq: "Hard" }
-        }
+          difficulty: { $eq: "Hard" },
+        },
       },
-      { $sample: { size: 2 } }
+      { $sample: { size: 2 } },
     ]);
 
     return firstQuestions.concat(lastQuestions);
@@ -164,7 +235,7 @@ const joustQuestions = async category => {
 };
 
 //siege genre games
-const siegeGenreQuestions = async genre => {
+const siegeGenreQuestions = async (genre) => {
   try {
     //get random published categories
     let categories = await Category.aggregate([
@@ -172,10 +243,10 @@ const siegeGenreQuestions = async genre => {
         $match: {
           published: { $eq: true },
           partycategory: { $eq: false },
-          genres: { $eq: mongoose.Types.ObjectId(genre) }
-        }
+          genres: { $eq: mongoose.Types.ObjectId(genre) },
+        },
       },
-      { $sample: { size: 10 } }
+      { $sample: { size: 10 } },
     ]);
     if (categories.length < 10) {
       const catsToGet = 10 - categories.length;
@@ -184,41 +255,41 @@ const siegeGenreQuestions = async genre => {
           $match: {
             published: { $eq: true },
             partycategory: { $eq: false },
-            genres: { $eq: mongoose.Types.ObjectId(genre) }
-          }
+            genres: { $eq: mongoose.Types.ObjectId(genre) },
+          },
         },
-        { $sample: { size: catsToGet } }
+        { $sample: { size: catsToGet } },
       ]);
       categories = categories.concat(newCategories);
     }
     //for each category we generated, get a random question
     const firstQuestions = await Promise.all(
-      categories.slice(0, 7).map(async category => {
+      categories.slice(0, 7).map(async (category) => {
         const question = await Question.aggregate([
           {
             $match: {
               published: { $eq: true },
               category: { $eq: category._id },
-              difficulty: { $eq: "Normal" }
-            }
+              difficulty: { $eq: "Normal" },
+            },
           },
-          { $sample: { size: 1 } }
+          { $sample: { size: 1 } },
         ]);
 
         return question[0];
       })
     );
     const lastQuestions = await Promise.all(
-      categories.slice(7).map(async category => {
+      categories.slice(7).map(async (category) => {
         const question = await Question.aggregate([
           {
             $match: {
               published: { $eq: true },
               category: { $eq: category._id },
-              difficulty: { $eq: "Hard" }
-            }
+              difficulty: { $eq: "Hard" },
+            },
           },
-          { $sample: { size: 1 } }
+          { $sample: { size: 1 } },
         ]);
 
         return question[0];
@@ -233,7 +304,7 @@ const siegeGenreQuestions = async genre => {
 };
 
 //siege category type games
-const siegeCatTypeQuestions = async cattype => {
+const siegeCatTypeQuestions = async (cattype) => {
   try {
     //get random published categories
     let categories = await Category.aggregate([
@@ -242,10 +313,10 @@ const siegeCatTypeQuestions = async cattype => {
           published: { $eq: true },
           partycategory: { $eq: false },
           joustexclusive: { $eq: false },
-          type: { $eq: mongoose.Types.ObjectId(cattype) }
-        }
+          type: { $eq: mongoose.Types.ObjectId(cattype) },
+        },
       },
-      { $sample: { size: 10 } }
+      { $sample: { size: 10 } },
     ]);
     if (categories.length < 10) {
       const catsToGet = 10 - categories.length;
@@ -255,41 +326,41 @@ const siegeCatTypeQuestions = async cattype => {
             published: { $eq: true },
             partycategory: { $eq: false },
             joustexclusive: { $eq: false },
-            type: { $eq: mongoose.Types.ObjectId(cattype) }
-          }
+            type: { $eq: mongoose.Types.ObjectId(cattype) },
+          },
         },
-        { $sample: { size: catsToGet } }
+        { $sample: { size: catsToGet } },
       ]);
       categories = categories.concat(newCategories);
     }
     //for each category we generated, get a random question
     const firstQuestions = await Promise.all(
-      categories.slice(0, 7).map(async category => {
+      categories.slice(0, 7).map(async (category) => {
         const question = await Question.aggregate([
           {
             $match: {
               published: { $eq: true },
               category: { $eq: category._id },
-              difficulty: { $eq: "Normal" }
-            }
+              difficulty: { $eq: "Normal" },
+            },
           },
-          { $sample: { size: 1 } }
+          { $sample: { size: 1 } },
         ]);
 
         return question[0];
       })
     );
     const lastQuestions = await Promise.all(
-      categories.slice(7).map(async category => {
+      categories.slice(7).map(async (category) => {
         const question = await Question.aggregate([
           {
             $match: {
               published: { $eq: true },
               category: { $eq: category._id },
-              difficulty: { $eq: "Hard" }
-            }
+              difficulty: { $eq: "Hard" },
+            },
           },
-          { $sample: { size: 1 } }
+          { $sample: { size: 1 } },
         ]);
 
         return question[0];
@@ -309,23 +380,23 @@ const tkGameQuestions = async () => {
     const questions = await Question.aggregate([
       {
         $match: {
-          published: { $eq: true }
-        }
+          published: { $eq: true },
+        },
       },
       {
         $lookup: {
           from: "categories",
           localField: "category",
           foreignField: "_id",
-          as: "category"
-        }
+          as: "category",
+        },
       },
       {
         $match: {
           "category.published": true,
           "category.partycategory": false,
-          "category.joustexclusive": false
-        }
+          "category.joustexclusive": false,
+        },
       },
       { $sample: { size: 250 } },
       {
@@ -333,9 +404,9 @@ const tkGameQuestions = async () => {
           question: 1,
           difficulty: 1,
           answers: 1,
-          category: { $arrayElemAt: ["$category", 0] }
-        }
-      }
+          category: { $arrayElemAt: ["$category", 0] },
+        },
+      },
     ]);
     return questions;
   } catch (error) {
@@ -354,10 +425,10 @@ const pressLuckQuestions = async (topictype, topicid) => {
           $match: {
             published: { $eq: true },
             partycategory: { $eq: false },
-            genres: { $eq: mongoose.Types.ObjectId(topicid) }
-          }
+            genres: { $eq: mongoose.Types.ObjectId(topicid) },
+          },
         },
-        { $sample: { size: 12 } }
+        { $sample: { size: 12 } },
       ]);
       if (categories.length < 12) {
         const catsToGet = 12 - categories.length;
@@ -366,25 +437,25 @@ const pressLuckQuestions = async (topictype, topicid) => {
             $match: {
               published: { $eq: true },
               partycategory: { $eq: false },
-              genres: { $eq: mongoose.Types.ObjectId(topicid) }
-            }
+              genres: { $eq: mongoose.Types.ObjectId(topicid) },
+            },
           },
-          { $sample: { size: catsToGet } }
+          { $sample: { size: catsToGet } },
         ]);
         categories = categories.concat(newCategories);
       }
       //for each category we generated, get a random question
       const questions = await Promise.all(
-        categories.map(async category => {
+        categories.map(async (category) => {
           const question = await Question.aggregate([
             {
               $match: {
                 published: { $eq: true },
                 category: { $eq: category._id },
-                difficulty: { $eq: "Normal" }
-              }
+                difficulty: { $eq: "Normal" },
+              },
             },
-            { $sample: { size: 1 } }
+            { $sample: { size: 1 } },
           ]);
           return question[0];
         })
@@ -403,10 +474,10 @@ const pressLuckQuestions = async (topictype, topicid) => {
           $match: {
             published: { $eq: true },
             partycategory: { $eq: false },
-            type: { $eq: mongoose.Types.ObjectId(topicid) }
-          }
+            type: { $eq: mongoose.Types.ObjectId(topicid) },
+          },
         },
-        { $sample: { size: 12 } }
+        { $sample: { size: 12 } },
       ]);
       if (categories.length < 12) {
         const catsToGet = 12 - categories.length;
@@ -415,25 +486,25 @@ const pressLuckQuestions = async (topictype, topicid) => {
             $match: {
               published: { $eq: true },
               partycategory: { $eq: false },
-              type: { $eq: mongoose.Types.ObjectId(topicid) }
-            }
+              type: { $eq: mongoose.Types.ObjectId(topicid) },
+            },
           },
-          { $sample: { size: catsToGet } }
+          { $sample: { size: catsToGet } },
         ]);
         categories = categories.concat(newCategories);
       }
       //for each category we generated, get a random question
       const questions = await Promise.all(
-        categories.map(async category => {
+        categories.map(async (category) => {
           const question = await Question.aggregate([
             {
               $match: {
                 published: { $eq: true },
                 category: { $eq: category._id },
-                difficulty: { $eq: "Normal" }
-              }
+                difficulty: { $eq: "Normal" },
+              },
             },
-            { $sample: { size: 1 } }
+            { $sample: { size: 1 } },
           ]);
           return question[0];
         })
@@ -453,10 +524,10 @@ const pressLuckQuestions = async (topictype, topicid) => {
           $match: {
             published: { $eq: true },
             category: { $eq: mongoose.Types.ObjectId(topicid) },
-            difficulty: { $eq: "Normal" }
-          }
+            difficulty: { $eq: "Normal" },
+          },
         },
-        { $sample: { size: 12 } }
+        { $sample: { size: 12 } },
       ]);
       return { categories: [category], questions };
     } catch (error) {
@@ -472,5 +543,6 @@ module.exports = {
   siegeGenreQuestions,
   siegeCatTypeQuestions,
   tkGameQuestions,
-  pressLuckQuestions
+  pressLuckQuestions,
+  soloQuestions,
 };

@@ -4,7 +4,14 @@ const typeDef = gql`
   type GameSolo {
     _id: ID!
     players: [PlayerSolo]!
+    categoriestype: String
     rounds: Int
+    categories: [Category]
+    questions: [Question]
+    gameover: Boolean
+    timedout: Boolean
+    createdAt: String
+    updatedAt: String
   }
 
   type PlayerSolo {
@@ -34,9 +41,10 @@ const typeDef = gql`
   }
 
   extend type Query {
+    solotopics: [CategoryType]
     allsologames: [GameSolo]
     newsologame: NewSoloGameResponse
-    currentgame(id: ID!): GameSolo
+    currentsologame(id: ID!): GameSolo
   }
 
   type GameSoloError {
@@ -49,10 +57,16 @@ const typeDef = gql`
   }
 
   extend type Mutation {
+    createsologame(typeid: ID!, typename: String!): GameSolo
+    entersoloanswer(
+      gameid: ID!
+      roundresults: RoundResultsInput!
+      endgame: Boolean!
+    ): GameSolo
     savesologame(results: [RoundResultsInput]!): GameSolo
   }
 `;
 
 module.exports = {
-  typeDef
+  typeDef,
 };

@@ -42,10 +42,6 @@ const typeDef = gql`
     siegegames: [GameSiege]
   }
 
-  type CompletedJoustGamesResponse {
-    completedjoustgames: Int!
-  }
-
   type JoustLeaderBoardResponse {
     joustid: ID!
     name: String!
@@ -97,7 +93,10 @@ const typeDef = gql`
     gameOpponent(id: ID!): User
     randomOpponent: User
     userGames: User
-    completedjoustgames: CompletedJoustGamesResponse
+    currentsologames: [GameSolo]
+    currentjoustgames: [GameJoust]
+    completedjoustgames: [GameJoust]
+    recentpressluckgames: [GamePressYourLuck]
     joustleaders: [JoustLeaderBoardResponse]
     joustleaderssevendays: [JoustSevenDayLeaderBoardResponse]
     siegeleaders: [SiegeLeaderBoardResponse]
@@ -182,5 +181,5 @@ const typeDef = gql`
 `;
 
 module.exports = {
-  typeDef
+  typeDef,
 };

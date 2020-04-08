@@ -2,12 +2,12 @@ const GameJoust = require("../../models/GameJoust");
 //auth helpers
 const {
   requiresAuth,
-  requiresAdmin
+  requiresAdmin,
 } = require("../_helpers/helper-permissions");
 //resolver helpers
 const {
   changeJoustTurn,
-  endJoustGame
+  endJoustGame,
 } = require("../_helpers/helper-gamesjoust");
 const { joustQuestions } = require("../_helpers/helper-questions");
 
@@ -16,7 +16,7 @@ const resolvers = {
     alljoustgames: async (parent, args, { user }) => {
       try {
         const alljoustgames = await GameJoust.find({
-          "players.player": user.id
+          "players.player": user.id,
         })
           .populate("createdby")
           .populate("players.player")
@@ -49,7 +49,7 @@ const resolvers = {
               .limit(limit)
               .populate("category")
               .populate("players.player"),
-            GameJoust.countDocuments(queryBuilder(players, gameover))
+            GameJoust.countDocuments(queryBuilder(players, gameover)),
           ]);
           const joustResults = joustgames[0];
           const joustCount = joustgames[1];
@@ -57,7 +57,7 @@ const resolvers = {
           return {
             pages: Math.ceil(joustCount / limit),
             totalrecords: joustCount,
-            joustgames: joustResults
+            joustgames: joustResults,
           };
         } catch (error) {
           console.error(error);
@@ -70,13 +70,13 @@ const resolvers = {
         try {
           const currentjoustgame = await GameJoust.findOne({
             _id: id,
-            "players.player": user.id
+            "players.player": user.id,
           })
             .populate("createdby")
             .populate("players.player")
             .populate({
               path: "category",
-              populate: { path: "type" }
+              populate: { path: "type" },
             })
             .populate("questions");
 
@@ -85,7 +85,7 @@ const resolvers = {
           console.error(error);
         }
       }
-    )
+    ),
   },
 
   Mutation: {
@@ -99,15 +99,25 @@ const resolvers = {
               {
                 player: user.id,
                 joined: true,
-                turn: true
+                turn: true,
               },
-              { player: input.opponentid }
+              { player: input.opponentid },
             ],
             category: input.category,
-            questions
+            questions,
           });
-          const joustGame = await newgame.save();
-          return joustGame;
+          const newGame = await newgame.save();
+          const returnedGame = await GameJoust.findOne({
+            _id: newGame._id,
+          })
+            .populate("createdby")
+            .populate("players.player")
+            .populate({
+              path: "category",
+              populate: { path: "type" },
+            })
+            .populate("questions");
+          return returnedGame;
         } catch (error) {
           console.error(error);
         }
@@ -150,17 +160,17 @@ const resolvers = {
           let updatedGame = await GameJoust.findOneAndUpdate(
             { _id: gameid, "players.player": user.id },
             {
-              $addToSet: { "players.$.roundresults": { ...roundresults } }
+              $addToSet: { "players.$.roundresults": { ...roundresults } },
             },
             { new: true }
           ).populate("players.player");
 
           if (advance) {
             const player = updatedGame.players.find(
-              player => player.player._id == user.id
+              (player) => player.player._id == user.id
             );
             const opponent = updatedGame.players.find(
-              player => player.player._id != user.id
+              (player) => player.player._id != user.id
             );
 
             //either change turn or end game
@@ -196,17 +206,17 @@ const resolvers = {
           let updatedGame = await GameJoust.findOneAndUpdate(
             { _id: gameid, "players.player": user.id },
             {
-              $set: { "players.$.resultsseen": true }
+              $set: { "players.$.resultsseen": true },
             },
             { new: true }
           ).populate("players.player");
 
           const player = updatedGame.players.find(
-            player => player.player._id == user.id
+            (player) => player.player._id == user.id
           );
 
           const opponent = updatedGame.players.find(
-            player => player.player._id != user.id
+            (player) => player.player._id != user.id
           );
 
           updatedGame = await endJoustGame(
@@ -242,7 +252,7 @@ const resolvers = {
         const updatedGame = await GameJoust.findOneAndUpdate(
           { _id: gameid },
           {
-            $set: { expired: true }
+            $set: { expired: true },
           },
           { new: true }
         ).populate("players.player");
@@ -256,17 +266,17 @@ const resolvers = {
       async (parent, { gameid }) => {
         try {
           const deletedJoustGame = await GameJoust.deleteOne({
-            _id: gameid
+            _id: gameid,
           });
           return deletedJoustGame;
         } catch (error) {
           console.error(error);
         }
       }
-    )
-  }
+    ),
+  },
 };
 
 module.exports = {
-  resolvers
+  resolvers,
 };

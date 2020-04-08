@@ -6,8 +6,24 @@ const gameSoloSchema = new Schema(
   {
     type: { type: String, default: "Solo" },
     players: [PlayerSoloSchema],
-    rounds: { type: Number, default: 6 }
+    rounds: { type: Number, default: 7 },
+    categoriestype: { type: String },
+    categories: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "category",
+      },
+    ],
+    questions: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "question",
+      },
+    ],
+    timedout: { type: Boolean, default: false },
+    gameover: { type: Boolean, default: false },
   },
+
   { timestamps: true, collection: "gamessolo" }
 );
 
