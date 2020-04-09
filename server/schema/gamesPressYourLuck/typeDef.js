@@ -63,6 +63,11 @@ const typeDef = gql`
       advance: Boolean!
     ): GamePressYourLuck
     endpressluckgame(gameid: ID!, points: Int!): GamePressYourLuck
+    enterpressluckanswerandadvance(
+      gameid: ID!
+      roundresults: RoundResultsInput!
+      advance: Boolean!
+    ): GamePressYourLuck
     pressluckresultsseen(gameid: ID!): GamePressYourLuck
     expirepressluckgame(gameid: ID!): GamePressYourLuck
     deletepressluckgame(gameid: ID!): GamePressYourLuck

@@ -151,6 +151,39 @@ const resolvers = {
       }
     ),
 
+    enterpressluckanswerandadvance: requiresAuth.createResolver(
+      async (parent, { gameid, roundresults, advance }, { user }) => {
+        try {
+          //first add round results
+          let updatedGame = await GamePressYourLuck.findOneAndUpdate(
+            { _id: gameid, "players.player": user.id },
+            {
+              $addToSet: { "players.$.roundresults": { ...roundresults } },
+            },
+            { new: true }
+          ).populate("players.player");
+
+          if (advance) {
+            //figure out score
+            let points = player.roundresults
+              .map((results) => results.points)
+              .reduce((a, b) => a + b, 0);
+            //end game
+            updatedGame = await GamePressYourLuck.findOneAndUpdate(
+              { _id: gameid, "players.player": user.id },
+              {
+                $set: { gameover: true, "players.$.score": points },
+              },
+              { new: true }
+            ).populate("players.player");
+          }
+          return updatedGame;
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    ),
+
     endpressluckgame: requiresAuth.createResolver(
       async (parent, { gameid, points }, { user }) => {
         try {

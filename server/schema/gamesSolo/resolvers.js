@@ -109,7 +109,7 @@ const resolvers = {
           );
 
           if (endgame) {
-            await GameSolo.findOneAndUpdate(
+            updatedGame = await GameSolo.findOneAndUpdate(
               { _id: gameid, "players.player": user.id },
               {
                 $set: { gameover: true },
