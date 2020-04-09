@@ -411,7 +411,11 @@ const resolvers = {
           const currentsologames = await GameSolo.find({
             "players.player": user.id,
             gameover: { $eq: false },
-          }).sort({ updatedAt: -1 });
+          })
+            .populate("players.player")
+            .populate("categories")
+            .populate("questions")
+            .sort({ updatedAt: -1 });
 
           return currentsologames;
         } catch (error) {
@@ -448,6 +452,7 @@ const resolvers = {
             gameover: { $eq: true },
           })
             .populate("players.player")
+            .populate("category")
             .sort({ updatedAt: -1 })
             .limit(12);
 

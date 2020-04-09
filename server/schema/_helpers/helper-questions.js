@@ -145,26 +145,12 @@ const soloQuestions = async (cattype) => {
           type: { $eq: mongoose.Types.ObjectId(cattype) },
         },
       },
-      { $sample: { size: 10 } },
+      { $sample: { size: 7 } },
     ]);
-    if (categories.length < 10) {
-      const catsToGet = 10 - categories.length;
-      const newCategories = await Category.aggregate([
-        {
-          $match: {
-            published: { $eq: true },
-            partycategory: { $eq: false },
-            joustexclusive: { $eq: false },
-            type: { $eq: mongoose.Types.ObjectId(cattype) },
-          },
-        },
-        { $sample: { size: catsToGet } },
-      ]);
-      categories = categories.concat(newCategories);
-    }
+
     //for each category we generated, get a random question
     const firstQuestions = await Promise.all(
-      categories.slice(0, 7).map(async (category) => {
+      categories.slice(0, 5).map(async (category) => {
         const question = await Question.aggregate([
           {
             $match: {
@@ -180,7 +166,7 @@ const soloQuestions = async (cattype) => {
       })
     );
     const lastQuestions = await Promise.all(
-      categories.slice(7).map(async (category) => {
+      categories.slice(5).map(async (category) => {
         const question = await Question.aggregate([
           {
             $match: {

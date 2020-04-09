@@ -6,7 +6,7 @@ const CategoryGroup = require("../../models/CategoryGroup");
 //auth helpers
 const {
   requiresAuth,
-  requiresAdmin
+  requiresAdmin,
 } = require("../_helpers/helper-permissions");
 //press luck helpers
 const { currentPressLuckTopic } = require("../_helpers/helper-gamespressluck");
@@ -24,22 +24,23 @@ const resolvers = {
     categoriesandgroups: requiresAuth.createResolver(async (parent, args) => {
       const categories = await Category.find({
         published: { $eq: true },
-        partycategory: { $eq: false }
+        partycategory: { $eq: false },
       })
         .sort({ createdAt: -1 })
         .populate("type")
-        .populate("genres");
+        .populate("genres")
+        .populate("followers");
       const groups = await CategoryGroup.find({})
         .sort({ name: 1 })
         .populate({
           path: "categories",
-          populate: { path: "type" }
+          populate: { path: "type" },
         });
       return { categories, groups };
     }),
 
     categoriespage: requiresAuth.createResolver(async (parent, { input }) => {
-      const queryBuilder = input => {
+      const queryBuilder = (input) => {
         const query = {};
         if (input.name !== "") {
           query.$text = { $search: input.name };
@@ -65,7 +66,7 @@ const resolvers = {
           .populate("genres")
           .populate("questions"),
         //Category.find(queryBuilder(input)).count()
-        Category.countDocuments(queryBuilder(input))
+        Category.countDocuments(queryBuilder(input)),
       ]);
       const categoryResults = categories[0];
       const categoryCount = categories[1];
@@ -73,7 +74,7 @@ const resolvers = {
       return {
         pages: Math.ceil(categoryCount / input.limit),
         totalrecords: categoryCount,
-        categories: categoryResults
+        categories: categoryResults,
       };
     }),
 
@@ -81,7 +82,7 @@ const resolvers = {
       try {
         const widget = await Promise.all([
           Category.estimatedDocumentCount(),
-          Category.countDocuments({ published: { $eq: false } })
+          Category.countDocuments({ published: { $eq: false } }),
         ]);
 
         const totalcategories = widget[0];
@@ -89,7 +90,7 @@ const resolvers = {
 
         return {
           totalcategories,
-          unpublishedcategories
+          unpublishedcategories,
         };
       } catch (error) {
         console.error(error);
@@ -100,7 +101,7 @@ const resolvers = {
       (parent, { args }, { user }) => {
         return Category.find({
           published: { $eq: true },
-          partycategory: { $eq: false }
+          partycategory: { $eq: false },
         })
           .sort({ name: 1 })
           .populate("type")
@@ -112,7 +113,7 @@ const resolvers = {
       return Category.find({
         $text: { $search: name },
         published: { $eq: true },
-        partycategory: { $eq: false }
+        partycategory: { $eq: false },
       })
         .sort({ name: 1 })
         .populate("type");
@@ -123,7 +124,7 @@ const resolvers = {
         .populate("type")
         .populate("genres")
         .populate("followers");
-    })
+    }),
   },
 
   Mutation: {
@@ -136,18 +137,18 @@ const resolvers = {
             await savePressLuckHighScore(currentTopic.topic, expo);
             //then reset press luck active on other types
             await CategoryGenre.updateMany({
-              $set: { pressluckactive: false }
+              $set: { pressluckactive: false },
             });
             await CategoryType.updateMany({
-              $set: { pressluckactive: false }
+              $set: { pressluckactive: false },
             });
             await Category.updateMany({
-              $set: { pressluckactive: false }
+              $set: { pressluckactive: false },
             });
           }
           const upsertedCategory = await Category.findOneAndUpdate(
             {
-              _id: mongoose.Types.ObjectId(input.id)
+              _id: mongoose.Types.ObjectId(input.id),
             },
             input,
             { upsert: true, new: true }
@@ -163,16 +164,16 @@ const resolvers = {
     deletecategory: requiresAdmin.createResolver(async (parent, { id }) => {
       try {
         const deletedCategory = await Category.deleteOne({
-          _id: id
+          _id: id,
         });
         return deletedCategory;
       } catch (error) {
         console.error(error);
       }
-    })
-  }
+    }),
+  },
 };
 
 module.exports = {
-  resolvers
+  resolvers,
 };

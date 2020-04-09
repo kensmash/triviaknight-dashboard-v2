@@ -239,7 +239,7 @@ const resolvers = {
           const updatedGame = await GameJoust.findOneAndUpdate(
             { _id: gameid, "players.player": user.id },
             { $set: { "players.$.resultsseen": true } }
-          );
+          ).populate("players.player");
           return updatedGame;
         } catch (error) {
           console.error(error);
