@@ -8,7 +8,10 @@ const {
   siegeGameStats,
   pressLuckGameStats,
   pressLuckLastWeekWinners,
-  pressLuckAllTimeWinners
+  pressLuckAllTimeWinners,
+  questGameStats,
+  questLastWeekWinners,
+  questAllTimeWinners,
 } = require("../_helpers/helper-stats");
 
 const resolvers = {
@@ -45,10 +48,22 @@ const resolvers = {
 
     pressluckalltimewinners: requiresAuth.createResolver((parent, { args }) => {
       return pressLuckAllTimeWinners();
-    })
-  }
+    }),
+
+    questgamestats: requiresAuth.createResolver((parent, { args }) => {
+      return questGameStats();
+    }),
+
+    questlastweekwinners: requiresAuth.createResolver((parent, { args }) => {
+      return questLastWeekWinners();
+    }),
+
+    questalltimewinners: requiresAuth.createResolver((parent, { args }) => {
+      return questAllTimeWinners();
+    }),
+  },
 };
 
 module.exports = {
-  resolvers
+  resolvers,
 };

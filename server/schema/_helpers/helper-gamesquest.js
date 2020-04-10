@@ -9,7 +9,6 @@ const { Expo } = require("expo-server-sdk");
 
 const currentQuestTopic = async () => {
   try {
-    console.log("looking");
     let results = {};
     //look in categories
     const catTopic = await Category.findOne({
