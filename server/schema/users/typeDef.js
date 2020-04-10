@@ -18,6 +18,7 @@ const typeDef = gql`
     joustgames: [GameJoust]
     siegegames: [GameSiege]
     pressluckgames: [GamePressYourLuck]
+    questgames: [GameQuest]
     expoPushTokens: [String]
   }
 
@@ -87,6 +88,15 @@ const typeDef = gql`
     highscore: Int
   }
 
+  type QuestSevenDayLeaderBoardResponse {
+    id: ID!
+    name: String!
+    rank: String!
+    avatar: String!
+    gamesplayed: Int!
+    highscore: Int
+  }
+
   extend type Query {
     currentUser: User
     userwidget: UserWidgetResponse
@@ -94,14 +104,15 @@ const typeDef = gql`
     randomOpponent: User
     userGames: User
     currentsologames: [GameSolo]
-    currentjoustgames: [GameJoust]
-    completedjoustgames: [GameJoust]
+    joustgames: [GameJoust]
     recentpressluckgames: [GamePressYourLuck]
+    recentquestgames: [GameQuest]
     joustleaders: [JoustLeaderBoardResponse]
     joustleaderssevendays: [JoustSevenDayLeaderBoardResponse]
     siegeleaders: [SiegeLeaderBoardResponse]
     siegeleaderssevendays: [SiegeSevenDayLeaderBoardResponse]
     pressluckleaderssevendays: [PressLuckSevenDayLeaderBoardResponse]
+    questleaderssevendays: [QuestSevenDayLeaderBoardResponse]
     allusergames: UserGameResponse
     alluserpartygames: UserPartyGameResponse
     allusers: [User]!

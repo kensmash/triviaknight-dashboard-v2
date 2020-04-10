@@ -152,7 +152,7 @@ const resolvers = {
     ),
 
     enterpressluckanswerandadvance: requiresAuth.createResolver(
-      async (parent, { gameid, roundresults, advance }, { user }) => {
+      async (parent, { gameid, roundresults, endgame }, { user }) => {
         try {
           //first add round results
           let updatedGame = await GamePressYourLuck.findOneAndUpdate(
@@ -163,7 +163,7 @@ const resolvers = {
             { new: true }
           ).populate("players.player");
 
-          if (advance) {
+          if (endgame) {
             //figure out score
             let points = player.roundresults
               .map((results) => results.points)

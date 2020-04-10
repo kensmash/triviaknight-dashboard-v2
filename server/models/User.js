@@ -3,6 +3,7 @@ const { Schema } = mongoose;
 const bcrypt = require("bcrypt");
 const PlayerRewardsSchema = require("./PlayerRewards");
 const PlayerPressLuckHighScoresSchema = require("./PlayerPressLuckHighScores");
+const PlayerQuestHighScoresSchema = require("./PlayerQuestHighScores");
 
 //Define the model
 const userSchema = new Schema(
@@ -16,7 +17,7 @@ const userSchema = new Schema(
       unique: true,
       minlength: 2,
       maxlength: 20,
-      trim: true
+      trim: true,
     },
     avatar: String,
     isAdmin: { type: Boolean, default: false },
@@ -29,16 +30,18 @@ const userSchema = new Schema(
     recentquestions: [
       {
         type: Schema.Types.ObjectId,
-        ref: "question"
-      }
+        ref: "question",
+      },
     ],
     friends: [{ type: Schema.Types.ObjectId, ref: "user" }],
     blockedusers: [{ type: Schema.Types.ObjectId, ref: "user" }],
     categories: [{ type: Schema.Types.ObjectId, ref: "category" }],
     expoPushTokens: [{ type: String }],
     pressluckhighscores: [PlayerPressLuckHighScoresSchema],
+    questhighscores: [PlayerQuestHighScoresSchema],
     gems: { type: Number, default: 20 },
-    rewards: PlayerRewardsSchema
+    questiontimer: { type: Number, default: 25000 },
+    rewards: PlayerRewardsSchema,
   },
   { timestamps: true }
 );
@@ -48,38 +51,44 @@ const userSchema = new Schema(
 userSchema.virtual("sologames", {
   ref: "gamesolo", // The model to use
   localField: "_id", // Find games where `localField`
-  foreignField: "players.player" // contains `foreignField`
+  foreignField: "players.player", // contains `foreignField`
 });
 
 userSchema.virtual("pressluckgames", {
   ref: "gamepressyourluck", // The model to use
   localField: "_id", // Find games where `localField`
-  foreignField: "players.player" // contains `foreignField`
+  foreignField: "players.player", // contains `foreignField`
+});
+
+userSchema.virtual("questgames", {
+  ref: "gamequest", // The model to use
+  localField: "_id", // Find games where `localField`
+  foreignField: "players.player", // contains `foreignField`
 });
 
 userSchema.virtual("joustgames", {
   ref: "gamejoust", // The model to use
   localField: "_id", // Find games where `localField`
-  foreignField: "players.player" // contains `foreignField`
+  foreignField: "players.player", // contains `foreignField`
 });
 
 userSchema.virtual("siegegames", {
   ref: "gamesiege", // The model to use
   localField: "_id", // Find games where `localField`
-  foreignField: "players.player" // contains `foreignField`
+  foreignField: "players.player", // contains `foreignField`
 });
 
 userSchema.set("toObject", { virtuals: true });
 userSchema.set("toJSON", { virtuals: true });
 
 //On Save hook, encrypt password
-userSchema.pre("save", function(next) {
+userSchema.pre("save", function (next) {
   const user = this;
-  bcrypt.genSalt(10, function(err, salt) {
+  bcrypt.genSalt(10, function (err, salt) {
     if (err) {
       return next(err);
     }
-    bcrypt.hash(user.password, salt, function(err, hash) {
+    bcrypt.hash(user.password, salt, function (err, hash) {
       if (err) {
         return next(err);
       }
@@ -90,8 +99,8 @@ userSchema.pre("save", function(next) {
 });
 
 //compare passwords on login
-userSchema.methods.comparePassword = function(candidatePassword, callback) {
-  bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
+userSchema.methods.comparePassword = function (candidatePassword, callback) {
+  bcrypt.compare(candidatePassword, this.password, function (err, isMatch) {
     if (err) {
       return callback(err);
     }

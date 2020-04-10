@@ -424,44 +424,23 @@ const resolvers = {
       }
     ),
 
-    currentjoustgames: requiresAuth.createResolver(
-      async (parent, args, { user }) => {
-        try {
-          const currentjoustgames = await GameJoust.find({
-            "players.player": user.id,
-            gameover: { $eq: false },
-          })
-            .populate("createdby")
-            .populate("players.player")
-            .populate("category")
-            .populate("questions")
-            .sort({ updatedAt: -1 });
+    joustgames: requiresAuth.createResolver(async (parent, args, { user }) => {
+      try {
+        const joustgames = await GameJoust.find({
+          "players.player": user.id,
+        })
+          .populate("createdby")
+          .populate("players.player")
+          .populate("category")
+          .populate("questions")
+          .sort({ updatedAt: -1 })
+          .limit(25);
 
-          return currentjoustgames;
-        } catch (error) {
-          console.error(error);
-        }
+        return joustgames;
+      } catch (error) {
+        console.error(error);
       }
-    ),
-
-    completedjoustgames: requiresAuth.createResolver(
-      async (parent, args, { user }) => {
-        try {
-          const completedjoustgames = await GameJoust.find({
-            "players.player": user.id,
-            gameover: { $eq: true },
-          })
-            .populate("players.player")
-            .populate("category")
-            .sort({ updatedAt: -1 })
-            .limit(12);
-
-          return completedjoustgames;
-        } catch (error) {
-          console.error(error);
-        }
-      }
-    ),
+    }),
 
     recentpressluckgames: requiresAuth.createResolver(
       async (parent, args, { user }) => {

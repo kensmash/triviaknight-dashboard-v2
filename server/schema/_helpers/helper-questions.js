@@ -513,8 +513,183 @@ const pressLuckQuestions = async (topictype, topicid) => {
             difficulty: { $eq: "Normal" },
           },
         },
-        { $sample: { size: 12 } },
+        { $sample: { size: 10 } },
       ]);
+      return { categories: [category], questions };
+    } catch (error) {
+      console.error(error);
+    }
+  }
+};
+
+//quest games
+const questQuestions = async (topictype, topicid) => {
+  if (topictype === "Genre") {
+    //Genre
+    try {
+      //get random published categories
+      let categories = await Category.aggregate([
+        {
+          $match: {
+            published: { $eq: true },
+            partycategory: { $eq: false },
+            genres: { $eq: mongoose.Types.ObjectId(topicid) },
+          },
+        },
+        { $sample: { size: 8 } },
+      ]);
+      if (categories.length < 8) {
+        const catsToGet = 8 - categories.length;
+        const newCategories = await Category.aggregate([
+          {
+            $match: {
+              published: { $eq: true },
+              partycategory: { $eq: false },
+              genres: { $eq: mongoose.Types.ObjectId(topicid) },
+            },
+          },
+          { $sample: { size: catsToGet } },
+        ]);
+        categories = categories.concat(newCategories);
+      }
+
+      //for each category we generated, get a random question
+      const firstQuestions = await Promise.all(
+        categories.slice(0, 7).map(async (category) => {
+          const question = await Question.aggregate([
+            {
+              $match: {
+                published: { $eq: true },
+                category: { $eq: category._id },
+                difficulty: { $eq: "Normal" },
+              },
+            },
+            { $sample: { size: 1 } },
+          ]);
+
+          return question[0];
+        })
+      );
+      const lastQuestions = await Promise.all(
+        categories.slice(7).map(async (category) => {
+          const question = await Question.aggregate([
+            {
+              $match: {
+                published: { $eq: true },
+                category: { $eq: category._id },
+                difficulty: { $eq: "Hard" },
+              },
+            },
+            { $sample: { size: 1 } },
+          ]);
+
+          return question[0];
+        })
+      );
+
+      const questions = firstQuestions.concat(lastQuestions);
+
+      return { categories, questions };
+    } catch (error) {
+      console.error(error);
+    }
+    //Category Type
+  } else if (topictype === "Category Type") {
+    try {
+      //get random published categories
+      let categories = await Category.aggregate([
+        {
+          $match: {
+            published: { $eq: true },
+            partycategory: { $eq: false },
+            type: { $eq: mongoose.Types.ObjectId(topicid) },
+          },
+        },
+        { $sample: { size: 8 } },
+      ]);
+      if (categories.length < 8) {
+        const catsToGet = 12 - categories.length;
+        const newCategories = await Category.aggregate([
+          {
+            $match: {
+              published: { $eq: true },
+              partycategory: { $eq: false },
+              type: { $eq: mongoose.Types.ObjectId(topicid) },
+            },
+          },
+          { $sample: { size: catsToGet } },
+        ]);
+        categories = categories.concat(newCategories);
+      }
+
+      //for each category we generated, get a random question
+      const firstQuestions = await Promise.all(
+        categories.slice(0, 7).map(async (category) => {
+          const question = await Question.aggregate([
+            {
+              $match: {
+                published: { $eq: true },
+                category: { $eq: category._id },
+                difficulty: { $eq: "Normal" },
+              },
+            },
+            { $sample: { size: 1 } },
+          ]);
+
+          return question[0];
+        })
+      );
+      const lastQuestions = await Promise.all(
+        categories.slice(7).map(async (category) => {
+          const question = await Question.aggregate([
+            {
+              $match: {
+                published: { $eq: true },
+                category: { $eq: category._id },
+                difficulty: { $eq: "Hard" },
+              },
+            },
+            { $sample: { size: 1 } },
+          ]);
+
+          return question[0];
+        })
+      );
+
+      const questions = firstQuestions.concat(lastQuestions);
+
+      return { categories, questions };
+    } catch (error) {
+      console.error(error);
+    }
+  } else {
+    //Category
+    try {
+      const category = await Category.findOne({ _id: topicid });
+      const firstQuestions = await Question.aggregate([
+        {
+          $match: {
+            published: { $eq: true },
+            category: { $eq: mongoose.Types.ObjectId(category) },
+            difficulty: { $eq: "Normal" },
+          },
+        },
+        { $sample: { size: 7 } },
+      ]);
+
+      const lastQuestions = await Question.aggregate([
+        {
+          $match: {
+            published: { $eq: true },
+            category: { $eq: mongoose.Types.ObjectId(category) },
+            difficulty: { $eq: "Hard" },
+          },
+        },
+        { $sample: { size: 3 } },
+      ]);
+
+      const questions = firstQuestions.concat(lastQuestions);
+
       return { categories: [category], questions };
     } catch (error) {
       console.error(error);
@@ -530,5 +705,6 @@ module.exports = {
   siegeCatTypeQuestions,
   tkGameQuestions,
   pressLuckQuestions,
+  questQuestions,
   soloQuestions,
 };

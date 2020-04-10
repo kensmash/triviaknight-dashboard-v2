@@ -3,10 +3,12 @@ const User = require("../../models/User");
 const GameJoust = require("../../models/GameJoust");
 const GameSiege = require("../../models/GameSiege");
 const GamePressYourLuck = require("../../models/GamePressYourLuck");
+const GameQuest = require("../../models/GameQuest");
 const { currentPressLuckTopic } = require("../_helpers/helper-gamespressluck");
+const { currentQuestTopic } = require("../_helpers/helper-gamesquest");
 
 //tracks questions answered, correct and incorrect per game type
-const gameStats = async userId => {
+const gameStats = async (userId) => {
   try {
     const gamestats = await User.aggregate([
       //match user
@@ -17,32 +19,40 @@ const gameStats = async userId => {
           from: "gamessolo",
           localField: "_id",
           foreignField: "players.player",
-          as: "soloGames"
-        }
+          as: "soloGames",
+        },
       },
       {
         $lookup: {
           from: "gamesjoust",
           localField: "_id",
           foreignField: "players.player",
-          as: "joustGames"
-        }
+          as: "joustGames",
+        },
       },
       {
         $lookup: {
           from: "gamessiege",
           localField: "_id",
           foreignField: "players.player",
-          as: "siegeGames"
-        }
+          as: "siegeGames",
+        },
       },
       {
         $lookup: {
           from: "gamespressyourluck",
           localField: "_id",
           foreignField: "players.player",
-          as: "pressLuckGames"
-        }
+          as: "pressLuckGames",
+        },
+      },
+      {
+        $lookup: {
+          from: "gamesquest",
+          localField: "_id",
+          foreignField: "players.player",
+          as: "questGames",
+        },
       },
       //combine games
       {
@@ -52,10 +62,11 @@ const gameStats = async userId => {
               "$soloGames",
               "$joustGames",
               "$siegeGames",
-              "$pressLuckGames"
-            ]
-          }
-        }
+              "$pressLuckGames",
+              "$questGames",
+            ],
+          },
+        },
       },
       //get a document for each game
       { $unwind: "$totalGames" },
@@ -65,8 +76,8 @@ const gameStats = async userId => {
       {
         $project: {
           type: "$totalGames.type",
-          stats: "$totalGames.players"
-        }
+          stats: "$totalGames.players",
+        },
       },
       //only keep current player documents
       { $match: { "stats.player": new mongoose.Types.ObjectId(userId) } },
@@ -77,8 +88,8 @@ const gameStats = async userId => {
         $project: {
           type: "$type",
           stats: "$stats",
-          results: "$stats.roundresults"
-        }
+          results: "$stats.roundresults",
+        },
       },
       //group by game type
       {
@@ -88,18 +99,18 @@ const gameStats = async userId => {
           averagescore: { $avg: "$stats.score" },
           correctAnswers: {
             $sum: {
-              $cond: ["$results.correct", 1, 0]
-            }
+              $cond: ["$results.correct", 1, 0],
+            },
           },
           incorrectAnswers: {
             $sum: {
-              $cond: ["$results.correct", 0, 1]
-            }
+              $cond: ["$results.correct", 0, 1],
+            },
           },
           normalquestions: {
             $sum: {
-              $cond: [{ $eq: ["$results.difficulty", "Normal"] }, 1, 0]
-            }
+              $cond: [{ $eq: ["$results.difficulty", "Normal"] }, 1, 0],
+            },
           },
           normalcorrect: {
             $sum: {
@@ -107,18 +118,18 @@ const gameStats = async userId => {
                 {
                   $and: [
                     { $eq: ["$results.difficulty", "Normal"] },
-                    { $eq: ["$results.correct", true] }
-                  ]
+                    { $eq: ["$results.correct", true] },
+                  ],
                 },
                 1,
-                0
-              ]
-            }
+                0,
+              ],
+            },
           },
           hardquestions: {
             $sum: {
-              $cond: [{ $eq: ["$results.difficulty", "Hard"] }, 1, 0]
-            }
+              $cond: [{ $eq: ["$results.difficulty", "Hard"] }, 1, 0],
+            },
           },
           hardcorrect: {
             $sum: {
@@ -126,15 +137,15 @@ const gameStats = async userId => {
                 {
                   $and: [
                     { $eq: ["$results.difficulty", "Hard"] },
-                    { $eq: ["$results.correct", true] }
-                  ]
+                    { $eq: ["$results.correct", true] },
+                  ],
                 },
                 1,
-                0
-              ]
-            }
-          }
-        }
+                0,
+              ],
+            },
+          },
+        },
       },
       //the final data
       {
@@ -148,9 +159,9 @@ const gameStats = async userId => {
           normalquestions: "$normalquestions",
           normalcorrect: "$normalcorrect",
           hardquestions: "$hardquestions",
-          hardcorrect: "$hardcorrect"
-        }
-      }
+          hardcorrect: "$hardcorrect",
+        },
+      },
     ]);
     return gamestats;
   } catch (error) {
@@ -159,7 +170,7 @@ const gameStats = async userId => {
 };
 
 //tracks questions answered, correct and incorrect per category
-const categoryStats = async userId => {
+const categoryStats = async (userId) => {
   //tracks
   try {
     const categorystats = await User.aggregate([
@@ -171,32 +182,40 @@ const categoryStats = async userId => {
           from: "gamessolo",
           localField: "_id",
           foreignField: "players.player",
-          as: "soloGames"
-        }
+          as: "soloGames",
+        },
       },
       {
         $lookup: {
           from: "gamesjoust",
           localField: "_id",
           foreignField: "players.player",
-          as: "joustGames"
-        }
+          as: "joustGames",
+        },
       },
       {
         $lookup: {
           from: "gamessiege",
           localField: "_id",
           foreignField: "players.player",
-          as: "siegeGames"
-        }
+          as: "siegeGames",
+        },
       },
       {
         $lookup: {
           from: "gamespressyourluck",
           localField: "_id",
           foreignField: "players.player",
-          as: "pressLuckGames"
-        }
+          as: "pressLuckGames",
+        },
+      },
+      {
+        $lookup: {
+          from: "gamesquest",
+          localField: "_id",
+          foreignField: "players.player",
+          as: "questGames",
+        },
       },
       //combine games
       {
@@ -206,10 +225,11 @@ const categoryStats = async userId => {
               "$soloGames",
               "$joustGames",
               "$siegeGames",
-              "$pressLuckGames"
-            ]
-          }
-        }
+              "$pressLuckGames",
+              "$questGames",
+            ],
+          },
+        },
       },
 
       //get a document for each game
@@ -220,8 +240,8 @@ const categoryStats = async userId => {
       {
         $project: {
           stats: "$totalGames.players",
-          results: "$totalGames.players.roundresults"
-        }
+          results: "$totalGames.players.roundresults",
+        },
       },
       //only keep current player documents
       { $match: { "stats.player": new mongoose.Types.ObjectId(userId) } },
@@ -234,18 +254,18 @@ const categoryStats = async userId => {
           questionsanswered: { $sum: 1 },
           correct: {
             $sum: {
-              $cond: ["$results.correct", 1, 0]
-            }
+              $cond: ["$results.correct", 1, 0],
+            },
           },
           incorrect: {
             $sum: {
-              $cond: ["$results.correct", 0, 1]
-            }
+              $cond: ["$results.correct", 0, 1],
+            },
           },
           normalquestions: {
             $sum: {
-              $cond: [{ $eq: ["$results.difficulty", "Normal"] }, 1, 0]
-            }
+              $cond: [{ $eq: ["$results.difficulty", "Normal"] }, 1, 0],
+            },
           },
           normalcorrect: {
             $sum: {
@@ -253,18 +273,18 @@ const categoryStats = async userId => {
                 {
                   $and: [
                     { $eq: ["$results.difficulty", "Normal"] },
-                    { $eq: ["$results.correct", true] }
-                  ]
+                    { $eq: ["$results.correct", true] },
+                  ],
                 },
                 1,
-                0
-              ]
-            }
+                0,
+              ],
+            },
           },
           hardquestions: {
             $sum: {
-              $cond: [{ $eq: ["$results.difficulty", "Hard"] }, 1, 0]
-            }
+              $cond: [{ $eq: ["$results.difficulty", "Hard"] }, 1, 0],
+            },
           },
           hardcorrect: {
             $sum: {
@@ -272,15 +292,15 @@ const categoryStats = async userId => {
                 {
                   $and: [
                     { $eq: ["$results.difficulty", "Hard"] },
-                    { $eq: ["$results.correct", true] }
-                  ]
+                    { $eq: ["$results.correct", true] },
+                  ],
                 },
                 1,
-                0
-              ]
-            }
-          }
-        }
+                0,
+              ],
+            },
+          },
+        },
       },
       //get category info from reference
       {
@@ -288,8 +308,8 @@ const categoryStats = async userId => {
           from: "categories",
           localField: "_id.category",
           foreignField: "_id",
-          as: "category"
-        }
+          as: "category",
+        },
       },
       //shape the cat data
       {
@@ -306,15 +326,15 @@ const categoryStats = async userId => {
           normalquestions: "$normalquestions",
           normalcorrect: "$normalcorrect",
           hardquestions: "$hardquestions",
-          hardcorrect: "$hardcorrect"
-        }
+          hardcorrect: "$hardcorrect",
+        },
       },
       //only keep published and non-party cats
       {
         $match: {
           categorypublished: { $eq: true },
-          partycategory: { $eq: false }
-        }
+          partycategory: { $eq: false },
+        },
       },
       //get cat type icon
       {
@@ -322,8 +342,8 @@ const categoryStats = async userId => {
           from: "categorytypes",
           localField: "categorytype",
           foreignField: "_id",
-          as: "categorytype"
-        }
+          as: "categorytype",
+        },
       },
       //the final data
       {
@@ -337,15 +357,15 @@ const categoryStats = async userId => {
           incorrect: "$incorrect",
           percentcorrect: {
             $trunc: {
-              $multiply: [{ $divide: ["$correct", "$questionsanswered"] }, 100]
-            }
+              $multiply: [{ $divide: ["$correct", "$questionsanswered"] }, 100],
+            },
           },
           normalquestions: "$normalquestions",
           normalcorrect: "$normalcorrect",
           hardquestions: "$hardquestions",
-          hardcorrect: "$hardcorrect"
-        }
-      }
+          hardcorrect: "$hardcorrect",
+        },
+      },
     ]);
     return categorystats;
   } catch (error) {
@@ -354,7 +374,7 @@ const categoryStats = async userId => {
 };
 
 //tracks number of siege games, wins, losses and ties per opponent
-const siegeGameStats = async userId => {
+const siegeGameStats = async (userId) => {
   try {
     const siegestats = await GameSiege.aggregate([
       //find all games the user is in
@@ -362,27 +382,27 @@ const siegeGameStats = async userId => {
         $match: {
           "players.player": new mongoose.Types.ObjectId(userId),
           gameover: true,
-          timedout: false
-        }
+          timedout: false,
+        },
       },
       //get a document for each game player
       { $unwind: "$players" },
       //only use opponent documents
       {
         $match: {
-          "players.player": { $nin: [new mongoose.Types.ObjectId(userId)] }
-        }
+          "players.player": { $nin: [new mongoose.Types.ObjectId(userId)] },
+        },
       },
       //group documents by opponent
       {
         $group: {
           _id: {
-            opponent: "$players.player"
+            opponent: "$players.player",
           },
           totalGames: { $sum: 1 },
           //we are checking opponent docs, so a win for them is a loss for us
           losses: {
-            $sum: { $cond: [{ $eq: ["$players.winner", true] }, 1, 0] }
+            $sum: { $cond: [{ $eq: ["$players.winner", true] }, 1, 0] },
           },
           wins: {
             $sum: {
@@ -390,16 +410,16 @@ const siegeGameStats = async userId => {
                 {
                   $and: [
                     { $eq: ["$players.winner", false] },
-                    { $eq: ["$players.tied", false] }
-                  ]
+                    { $eq: ["$players.tied", false] },
+                  ],
                 },
                 1,
-                0
-              ]
-            }
+                0,
+              ],
+            },
           },
-          ties: { $sum: { $cond: [{ $eq: ["$players.tied", true] }, 1, 0] } }
-        }
+          ties: { $sum: { $cond: [{ $eq: ["$players.tied", true] }, 1, 0] } },
+        },
       },
       //get opponent info from reference
       {
@@ -407,8 +427,8 @@ const siegeGameStats = async userId => {
           from: "users",
           localField: "_id.opponent",
           foreignField: "_id",
-          as: "opponent"
-        }
+          as: "opponent",
+        },
       },
       //the final data
       {
@@ -420,9 +440,9 @@ const siegeGameStats = async userId => {
           gamesplayed: "$totalGames",
           wins: "$wins",
           losses: "$losses",
-          ties: "$ties"
-        }
-      }
+          ties: "$ties",
+        },
+      },
     ]);
     return siegestats;
   } catch (error) {
@@ -431,7 +451,7 @@ const siegeGameStats = async userId => {
 };
 
 //tracks number of joust games, wins, losses and ties per opponent
-const joustGameStats = async userId => {
+const joustGameStats = async (userId) => {
   try {
     const jouststats = await GameJoust.aggregate([
       //find all games the user is in
@@ -439,27 +459,27 @@ const joustGameStats = async userId => {
         $match: {
           "players.player": new mongoose.Types.ObjectId(userId),
           gameover: true,
-          timedout: false
-        }
+          timedout: false,
+        },
       },
       //get a document for each game player
       { $unwind: "$players" },
       //only use opponent documents
       {
         $match: {
-          "players.player": { $nin: [new mongoose.Types.ObjectId(userId)] }
-        }
+          "players.player": { $nin: [new mongoose.Types.ObjectId(userId)] },
+        },
       },
       //group documents by opponent
       {
         $group: {
           _id: {
-            opponent: "$players.player"
+            opponent: "$players.player",
           },
           totalGames: { $sum: 1 },
           //we are checking opponent docs, so a win for them is a loss for us
           losses: {
-            $sum: { $cond: [{ $eq: ["$players.winner", true] }, 1, 0] }
+            $sum: { $cond: [{ $eq: ["$players.winner", true] }, 1, 0] },
           },
           wins: {
             $sum: {
@@ -467,16 +487,16 @@ const joustGameStats = async userId => {
                 {
                   $and: [
                     { $eq: ["$players.winner", false] },
-                    { $eq: ["$players.tied", false] }
-                  ]
+                    { $eq: ["$players.tied", false] },
+                  ],
                 },
                 1,
-                0
-              ]
-            }
+                0,
+              ],
+            },
           },
-          ties: { $sum: { $cond: [{ $eq: ["$players.tied", true] }, 1, 0] } }
-        }
+          ties: { $sum: { $cond: [{ $eq: ["$players.tied", true] }, 1, 0] } },
+        },
       },
       //get opponent info from reference
       {
@@ -484,8 +504,8 @@ const joustGameStats = async userId => {
           from: "users",
           localField: "_id.opponent",
           foreignField: "_id",
-          as: "opponent"
-        }
+          as: "opponent",
+        },
       },
       //the final data
       {
@@ -497,9 +517,9 @@ const joustGameStats = async userId => {
           gamesplayed: "$totalGames",
           wins: "$wins",
           losses: "$losses",
-          ties: "$ties"
-        }
-      }
+          ties: "$ties",
+        },
+      },
     ]);
     return jouststats;
   } catch (error) {
@@ -524,8 +544,8 @@ const pressLuckGameStats = async () => {
           createdAt: { $gt: thisWeek },
           topic: { $eq: currentTopic.topic },
           gameover: true,
-          timedout: false
-        }
+          timedout: false,
+        },
       },
       //get a document for each game player
       { $unwind: "$players" },
@@ -533,11 +553,11 @@ const pressLuckGameStats = async () => {
       {
         $group: {
           _id: {
-            player: "$players.player"
+            player: "$players.player",
           },
           totalGames: { $sum: 1 },
-          highScore: { $max: "$players.score" }
-        }
+          highScore: { $max: "$players.score" },
+        },
       },
 
       //get player info from reference
@@ -546,8 +566,8 @@ const pressLuckGameStats = async () => {
           from: "users",
           localField: "_id.player",
           foreignField: "_id",
-          as: "player"
-        }
+          as: "player",
+        },
       },
       //the final data
       {
@@ -559,10 +579,10 @@ const pressLuckGameStats = async () => {
           rank: { $arrayElemAt: ["$player.rank", 0] },
           avatar: { $arrayElemAt: ["$player.avatar", 0] },
           gamesplayed: "$totalGames",
-          highscore: "$highScore"
-        }
+          highscore: "$highScore",
+        },
       },
-      { $sort: { highscore: -1 } }
+      { $sort: { highscore: -1 } },
     ]);
     return luckstats;
   } catch (error) {
@@ -582,7 +602,7 @@ const pressLuckLastWeekWinners = async () => {
 
     //find last week's topic
     const allPreviousWinners = await User.find({
-      pressluckhighscores: { $exists: true, $ne: [] }
+      pressluckhighscores: { $exists: true, $ne: [] },
     }).sort({ "pressluckhighscores.date": -1 });
 
     if (allPreviousWinners.length) {
@@ -594,12 +614,12 @@ const pressLuckLastWeekWinners = async () => {
     //only get last week's topic winners from previous week
     const winners = await User.find({
       "pressluckhighscores.topic": { $eq: lastWeeksTopic },
-      "pressluckhighscores.date": { $gte: lastWeek }
+      "pressluckhighscores.date": { $gte: lastWeek },
     }).sort({ "pressluckhighscores.date": -1 });
 
     //return results
     if (winners.length) {
-      results = winners.map(winner => {
+      results = winners.map((winner) => {
         const lasthighscore =
           winner.pressluckhighscores[winner.pressluckhighscores.length - 1];
         return {
@@ -608,7 +628,7 @@ const pressLuckLastWeekWinners = async () => {
           name: winner.name,
           rank: winner.rank,
           avatar: winner.avatar,
-          highscore: lasthighscore.score
+          highscore: lasthighscore.score,
         };
       });
     }
@@ -624,16 +644,156 @@ const pressLuckAllTimeWinners = async () => {
   try {
     let results = [];
     const winners = await User.find({
-      "pressluckhighscores.date": { $exists: true }
+      "pressluckhighscores.date": { $exists: true },
     });
     if (winners.length) {
-      results = winners.map(winner => {
+      results = winners.map((winner) => {
         return {
           id: winner._id,
           name: winner.name,
           rank: winner.rank,
           avatar: winner.avatar,
-          wins: winner.pressluckhighscores.length
+          wins: winner.pressluckhighscores.length,
+        };
+      });
+
+      results = results.sort((a, b) => b.wins - a.wins);
+    }
+
+    return results;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+//quest stuff
+
+//tracks quest games
+const questGameStats = async () => {
+  const currentTopic = await currentQuestTopic();
+  let thisWeek = new Date();
+  const currentDay = thisWeek.getDay();
+  thisWeek.setDate(
+    thisWeek.getDate() - currentDay + (currentDay == 0 ? -6 : 1)
+  );
+  try {
+    const luckstats = await GameQuest.aggregate([
+      //find all games of genre within past week
+      {
+        $match: {
+          createdAt: { $gt: thisWeek },
+          topic: { $eq: currentTopic.topic },
+          gameover: true,
+          timedout: false,
+        },
+      },
+      //get a document for each game player
+      { $unwind: "$players" },
+      //group documents by player
+      {
+        $group: {
+          _id: {
+            player: "$players.player",
+          },
+          totalGames: { $sum: 1 },
+          highScore: { $max: "$players.score" },
+        },
+      },
+
+      //get player info from reference
+      {
+        $lookup: {
+          from: "users",
+          localField: "_id.player",
+          foreignField: "_id",
+          as: "player",
+        },
+      },
+      //the final data
+      {
+        $project: {
+          _id: 0,
+          topic: currentTopic.topic,
+          id: { $arrayElemAt: ["$player._id", 0] },
+          name: { $arrayElemAt: ["$player.name", 0] },
+          rank: { $arrayElemAt: ["$player.rank", 0] },
+          avatar: { $arrayElemAt: ["$player.avatar", 0] },
+          gamesplayed: "$totalGames",
+          highscore: "$highScore",
+        },
+      },
+      { $sort: { highscore: -1 } },
+    ]);
+    return luckstats;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+//press your luck last week winner
+const questLastWeekWinners = async () => {
+  try {
+    let lastWeeksTopic = "";
+    let results = [];
+
+    //date stuff
+    var lastWeek = new Date();
+    lastWeek.setDate(lastWeek.getDate() - 16);
+
+    //find last week's topic
+    const allPreviousWinners = await User.find({
+      questhighscores: { $exists: true, $ne: [] },
+    }).sort({ "questhighscores.date": -1 });
+
+    if (allPreviousWinners.length) {
+      lastWeeksTopic =
+        allPreviousWinners[0].questhighscores[
+          allPreviousWinners[0].questhighscores.length - 1
+        ].topic;
+    }
+    //only get last week's topic winners from previous week
+    const winners = await User.find({
+      "questhighscores.topic": { $eq: lastWeeksTopic },
+      "questhighscores.date": { $gte: lastWeek },
+    }).sort({ "questhighscores.date": -1 });
+
+    //return results
+    if (winners.length) {
+      results = winners.map((winner) => {
+        const lasthighscore =
+          winner.questhighscores[winner.questhighscores.length - 1];
+        return {
+          topic: lasthighscore.topic,
+          id: winner._id,
+          name: winner.name,
+          rank: winner.rank,
+          avatar: winner.avatar,
+          highscore: lasthighscore.score,
+        };
+      });
+    }
+
+    return results;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+//press your luck all time winners
+const questAllTimeWinners = async () => {
+  try {
+    let results = [];
+    const winners = await User.find({
+      "questhighscores.date": { $exists: true },
+    });
+    if (winners.length) {
+      results = winners.map((winner) => {
+        return {
+          id: winner._id,
+          name: winner.name,
+          rank: winner.rank,
+          avatar: winner.avatar,
+          wins: winner.questhighscores.length,
         };
       });
 
@@ -653,5 +813,8 @@ module.exports = {
   siegeGameStats,
   pressLuckGameStats,
   pressLuckLastWeekWinners,
-  pressLuckAllTimeWinners
+  pressLuckAllTimeWinners,
+  questGameStats,
+  questLastWeekWinners,
+  questAllTimeWinners,
 };

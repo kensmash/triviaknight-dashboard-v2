@@ -74,6 +74,33 @@ const typeDef = gql`
     wins: Int
   }
 
+  type QuestGameStats {
+    topic: String
+    id: ID
+    name: String
+    rank: String
+    avatar: String
+    gamesplayed: Int
+    highscore: Int
+  }
+
+  type QuestPrevWeekWinners {
+    topic: String
+    id: ID
+    name: String
+    rank: String
+    avatar: String
+    highscore: Int
+  }
+
+  type QuestAllTimeWinners {
+    id: ID
+    name: String
+    rank: String
+    avatar: String
+    wins: Int
+  }
+
   extend type Query {
     gamestats: [GameStats]
     categorystats: [CategoryStats]
@@ -82,9 +109,12 @@ const typeDef = gql`
     pressluckgamestats: [PressLuckGameStats]
     presslucklastweekwinners: [PressLuckPrevWeekWinners]
     pressluckalltimewinners: [PressLuckAllTimeWinners]
+    questgamestats: [QuestGameStats]
+    questlastweekwinners: [QuestPrevWeekWinners]
+    questalltimewinners: [QuestAllTimeWinners]
   }
 `;
 
 module.exports = {
-  typeDef
+  typeDef,
 };

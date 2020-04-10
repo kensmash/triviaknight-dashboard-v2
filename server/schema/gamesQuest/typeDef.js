@@ -1,7 +1,7 @@
 const { gql } = require("apollo-server-express");
 
 const typeDef = gql`
-  type GamePressYourLuck {
+  type GameQuest {
     _id: ID!
     type: String
     topictype: String
@@ -16,7 +16,7 @@ const typeDef = gql`
     updatedAt: String
   }
 
-  type PlayerPressYourLuck {
+  type PlayerQuest {
     player: User!
     score: Int
     timedout: Boolean
@@ -24,7 +24,7 @@ const typeDef = gql`
     roundresults: [RoundResults]
   }
 
-  input createPressLuckGameInput {
+  input createQuestGameInput {
     topictype: String!
     topic: String!
     cattype: ID
@@ -33,44 +33,37 @@ const typeDef = gql`
   }
 
   extend type Query {
-    currentpresslucktopic: PressLuckTopicResponse
-    currentpressluckgame(id: ID!): GamePressYourLuck
-    pressluckgamepage(
+    currentquesttopic: PressLuckTopicResponse
+    currentquestgame(id: ID!): GamePressYourLuck
+    questgamepage(
       limit: Int!
       offset: Int!
       player: ID
       gameover: Boolean
-    ): PressLuckGamePageResponse
+    ): QuestGamePageResponse
   }
 
-  type PressLuckGamePageResponse {
+  type QuestGamePageResponse {
     pages: Int!
     totalrecords: Int!
-    pressluckgames: [GamePressYourLuck]
+    questgames: [GameQuest]
   }
 
-  type PressLuckTopicResponse {
+  type QuestTopicResponse {
     id: ID
     type: String
     topic: String
   }
 
   extend type Mutation {
-    createpressluckgame(input: createPressLuckGameInput!): GamePressYourLuck
-    enterpressluckanswer(
-      gameid: ID!
-      roundresults: RoundResultsInput!
-      advance: Boolean!
-    ): GamePressYourLuck
-    endpressluckgame(gameid: ID!, points: Int!): GamePressYourLuck
-    enterpressluckanswerandadvance(
+    createquestgame(input: createQuestGameInput!): GameQuest
+    enterquestanswer(
       gameid: ID!
       roundresults: RoundResultsInput!
       endgame: Boolean!
-    ): GamePressYourLuck
-    pressluckresultsseen(gameid: ID!): GamePressYourLuck
-    expirepressluckgame(gameid: ID!): GamePressYourLuck
-    deletepressluckgame(gameid: ID!): GamePressYourLuck
+    ): GameQuest
+    expirequestgame(gameid: ID!): GameQuest
+    deletequestame(gameid: ID!): GameQuest
   }
 `;
 
