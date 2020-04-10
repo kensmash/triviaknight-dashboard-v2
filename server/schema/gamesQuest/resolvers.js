@@ -134,6 +134,7 @@ const resolvers = {
 
           if (endgame) {
             //figure out score
+            const player = updatedGame.players[0];
             let points = player.roundresults
               .map((results) => results.points)
               .reduce((a, b) => a + b, 0);

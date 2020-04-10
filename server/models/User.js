@@ -20,6 +20,7 @@ const userSchema = new Schema(
       trim: true,
     },
     avatar: String,
+    avatarBackgroundColor: String,
     isAdmin: { type: Boolean, default: false },
     overEighteen: { type: Boolean, default: false },
     hasCompletedSignUpFlow: { type: Boolean, default: false },

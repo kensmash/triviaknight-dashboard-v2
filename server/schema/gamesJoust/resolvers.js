@@ -129,8 +129,9 @@ const resolvers = {
         try {
           const updatedGame = await GameJoust.findOneAndUpdate(
             { _id: gameid, "players.player": user.id },
-            { $set: { "players.$.joined": true, accepted: true } }
-          );
+            { $set: { "players.$.joined": true, accepted: true } },
+            { new: true }
+          ).populate("players.player");
           return updatedGame;
         } catch (error) {
           console.error(error);
