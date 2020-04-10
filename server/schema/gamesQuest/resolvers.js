@@ -68,7 +68,7 @@ const resolvers = {
       }
     ),
 
-    currentquestopic: requiresAuth.createResolver(async (parent, { args }) => {
+    currentquesttopic: requiresAuth.createResolver(async (parent, { args }) => {
       const results = await currentQuestTopic();
       return results;
     }),

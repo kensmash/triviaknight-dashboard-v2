@@ -2,6 +2,7 @@ const User = require("../../models/User");
 const GameJoust = require("../../models/GameJoust");
 const GameSolo = require("../../models/GameSolo");
 const GamePressYourLuck = require("../../models/GamePressYourLuck");
+const GameQuest = require("../../models/GameQuest");
 const ExpoPushTicket = require("../../models/ExpoPushTicket");
 const { Expo } = require("expo-server-sdk");
 //auth helpers
@@ -458,6 +459,28 @@ const resolvers = {
             .limit(10);
 
           return recentpressluckgames;
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    ),
+
+    recentquestgames: requiresAuth.createResolver(
+      async (parent, args, { user }) => {
+        try {
+          const recentquestgames = await GameQuest.find({
+            "players.player": user.id,
+          })
+            .populate("players.player")
+            .populate({
+              path: "categories",
+              populate: { path: "type" },
+            })
+            .populate("questions")
+            .sort({ updatedAt: -1 })
+            .limit(10);
+
+          return recentquestgames;
         } catch (error) {
           console.error(error);
         }

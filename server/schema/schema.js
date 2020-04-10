@@ -59,6 +59,7 @@ module.exports = {
     gamesJoust.resolvers,
     gamesSiege.resolvers,
     gamesPressYourLuck.resolvers,
+    gamesQuest.resolvers,
     stats.resolvers,
     expoPushNotifications.resolvers,
     supportRequests.resolvers,

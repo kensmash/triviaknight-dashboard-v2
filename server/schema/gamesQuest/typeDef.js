@@ -33,8 +33,8 @@ const typeDef = gql`
   }
 
   extend type Query {
-    currentquesttopic: PressLuckTopicResponse
-    currentquestgame(id: ID!): GamePressYourLuck
+    currentquesttopic: QuestTopicResponse
+    currentquestgame(id: ID!): GameQuest
     questgamepage(
       limit: Int!
       offset: Int!
@@ -63,7 +63,7 @@ const typeDef = gql`
       endgame: Boolean!
     ): GameQuest
     expirequestgame(gameid: ID!): GameQuest
-    deletequestame(gameid: ID!): GameQuest
+    deletequestgame(gameid: ID!): GameQuest
   }
 `;
 
