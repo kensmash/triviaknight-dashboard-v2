@@ -536,10 +536,10 @@ const questQuestions = async (topictype, topicid) => {
             genres: { $eq: mongoose.Types.ObjectId(topicid) },
           },
         },
-        { $sample: { size: 8 } },
+        { $sample: { size: 10 } },
       ]);
-      if (categories.length < 8) {
-        const catsToGet = 8 - categories.length;
+      if (categories.length < 10) {
+        const catsToGet = 10 - categories.length;
         const newCategories = await Category.aggregate([
           {
             $match: {
@@ -605,10 +605,10 @@ const questQuestions = async (topictype, topicid) => {
             type: { $eq: mongoose.Types.ObjectId(topicid) },
           },
         },
-        { $sample: { size: 8 } },
+        { $sample: { size: 10 } },
       ]);
-      if (categories.length < 8) {
-        const catsToGet = 12 - categories.length;
+      if (categories.length < 10) {
+        const catsToGet = 10 - categories.length;
         const newCategories = await Category.aggregate([
           {
             $match: {

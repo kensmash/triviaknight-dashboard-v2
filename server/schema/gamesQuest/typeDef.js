@@ -6,7 +6,7 @@ const typeDef = gql`
     type: String
     topictype: String
     topic: String
-    players: [PlayerPressYourLuck]!
+    players: [PlayerQuest]!
     rounds: Int
     categories: [Category]
     questions: [Question]
