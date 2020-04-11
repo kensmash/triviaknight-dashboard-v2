@@ -11,6 +11,7 @@ const typeDef = gql`
     isAdmin: Boolean
     rank: String
     avatar: String
+    avatarBackgroundColor: String
     categories: [Category]
     friends: [User]
     blockedusers: [User]
@@ -147,6 +148,7 @@ const typeDef = gql`
     resetpasswordcode(email: String!, code: Int!): Boolean
     updatepassword(email: String!, password: String!): Boolean
     updateusername(name: String!): UserNameChangeResponse
+    updateavatarandcolor(avatar: String!, color: String!): User
     updatesignupflow: User
     changeemail(email: String!): User
     changerank: Boolean

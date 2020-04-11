@@ -677,7 +677,7 @@ const questGameStats = async () => {
     thisWeek.getDate() - currentDay + (currentDay == 0 ? -6 : 1)
   );
   try {
-    const luckstats = await GameQuest.aggregate([
+    const queststats = await GameQuest.aggregate([
       //find all games of genre within past week
       {
         $match: {
@@ -724,7 +724,7 @@ const questGameStats = async () => {
       },
       { $sort: { highscore: -1 } },
     ]);
-    return luckstats;
+    return queststats;
   } catch (error) {
     console.error(error);
   }

@@ -584,6 +584,21 @@ const resolvers = {
       }
     ),
 
+    updateavatarandcolor: requiresAuth.createResolver(
+      async (parent, { avatar, color }, { user }) => {
+        try {
+          const editedUser = await User.findOneAndUpdate(
+            { _id: user.id },
+            { $set: { avatar, avatarBackgroundColor: color } },
+            { new: true }
+          );
+          return editedUser;
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    ),
+
     addusercategory: requiresAuth.createResolver(
       async (parent, { catid }, { user }) => {
         const categoryid = catid;

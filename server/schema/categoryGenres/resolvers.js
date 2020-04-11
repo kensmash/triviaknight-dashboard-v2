@@ -5,7 +5,7 @@ const Category = require("../../models/Category");
 //auth helpers
 const {
   requiresAuth,
-  requiresAdmin
+  requiresAdmin,
 } = require("../_helpers/helper-permissions");
 //press luck helpers
 const { currentPressLuckTopic } = require("../_helpers/helper-gamespressluck");
@@ -13,12 +13,12 @@ const { savePressLuckHighScore } = require("../_helpers/helper-gamespressluck");
 
 const resolvers = {
   Query: {
-    categoryGenres: requiresAuth.createResolver((parent, args) => {
+    categoryGenres: (parent, args) => {
       return CategoryGenre.find({})
         .sort({ name: 1 })
         .populate("categorytypes")
         .populate("categories");
-    }),
+    },
 
     categoryGenresPage: requiresAuth.createResolver(
       async (parent, { offset, limit, name, categorytypes }) => {
@@ -39,14 +39,14 @@ const resolvers = {
               .skip(offset)
               .limit(limit)
               .populate("categorytypes"),
-            CategoryGenre.countDocuments(queryBuilder(name, categorytypes))
+            CategoryGenre.countDocuments(queryBuilder(name, categorytypes)),
           ]);
           const categoryGenreResults = categorygenres[0];
           const categoryGenreCount = categorygenres[1];
           return {
             pages: Math.ceil(categoryGenreCount / limit),
             totalrecords: categoryGenreCount,
-            categorygenres: categoryGenreResults
+            categorygenres: categoryGenreResults,
           };
         } catch (error) {
           console.error(error);
@@ -60,7 +60,7 @@ const resolvers = {
 
     pressYourLuckGenre: requiresAuth.createResolver((parent, { args }) => {
       return CategoryGenre.findOne({ pressluckactive: { $eq: true } });
-    })
+    }),
   },
 
   Mutation: {
@@ -73,18 +73,18 @@ const resolvers = {
             await savePressLuckHighScore(currentTopic.topic, expo);
             //then reset press luck active on other types
             await CategoryGenre.updateMany({
-              $set: { pressluckactive: false }
+              $set: { pressluckactive: false },
             });
             await CategoryType.updateMany({
-              $set: { pressluckactive: false }
+              $set: { pressluckactive: false },
             });
             await Category.updateMany({
-              $set: { pressluckactive: false }
+              $set: { pressluckactive: false },
             });
           }
           const upsertedCategoryGenre = await CategoryGenre.findOneAndUpdate(
             {
-              _id: mongoose.Types.ObjectId(input.id)
+              _id: mongoose.Types.ObjectId(input.id),
             },
             input,
             { upsert: true, new: true }
@@ -101,17 +101,17 @@ const resolvers = {
       async (parent, { id }) => {
         try {
           const deletedCategoryGenre = await CategoryGenre.deleteOne({
-            _id: id
+            _id: id,
           });
           return deletedCategoryGenre;
         } catch (error) {
           console.error(error);
         }
       }
-    )
-  }
+    ),
+  },
 };
 
 module.exports = {
-  resolvers
+  resolvers,
 };

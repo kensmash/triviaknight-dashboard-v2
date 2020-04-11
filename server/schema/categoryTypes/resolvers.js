@@ -5,7 +5,7 @@ const CategoryGenre = require("../../models/CategoryGenre");
 //auth helpers
 const {
   requiresAuth,
-  requiresAdmin
+  requiresAdmin,
 } = require("../_helpers/helper-permissions");
 //press luck helpers
 const { currentPressLuckTopic } = require("../_helpers/helper-gamespressluck");
@@ -13,11 +13,9 @@ const { savePressLuckHighScore } = require("../_helpers/helper-gamespressluck");
 
 const resolvers = {
   Query: {
-    categoryTypes: requiresAuth.createResolver((parent, args) => {
-      return CategoryType.find({})
-        .populate("categories")
-        .sort({ name: 1 });
-    }),
+    categoryTypes: (parent, args) => {
+      return CategoryType.find({}).populate("categories").sort({ name: 1 });
+    },
 
     categoryTypesPage: requiresAuth.createResolver(
       async (parent, { offset, limit, name, hasgenres }) => {
@@ -36,21 +34,21 @@ const resolvers = {
             .sort({ name: 1 })
             .skip(offset)
             .limit(limit),
-          CategoryType.countDocuments(queryBuilder(name, hasgenres))
+          CategoryType.countDocuments(queryBuilder(name, hasgenres)),
         ]);
         const categoryTypeResults = categorytypes[0];
         const categoryTypeCount = categorytypes[1];
         return {
           pages: Math.ceil(categoryTypeCount / limit),
           totalrecords: categoryTypeCount,
-          categorytypes: categoryTypeResults
+          categorytypes: categoryTypeResults,
         };
       }
     ),
 
     categoryType: requiresAdmin.createResolver((parent, { id }) => {
       return CategoryType.findOne({ _id: id });
-    })
+    }),
   },
 
   Mutation: {
@@ -64,18 +62,18 @@ const resolvers = {
             //then reset press luck active on other genres
             //then reset press luck active on other types
             await CategoryGenre.updateMany({
-              $set: { pressluckactive: false }
+              $set: { pressluckactive: false },
             });
             await CategoryType.updateMany({
-              $set: { pressluckactive: false }
+              $set: { pressluckactive: false },
             });
             await Category.updateMany({
-              $set: { pressluckactive: false }
+              $set: { pressluckactive: false },
             });
           }
           const upsertedCategoryType = await CategoryType.findOneAndUpdate(
             {
-              _id: mongoose.Types.ObjectId(input.id)
+              _id: mongoose.Types.ObjectId(input.id),
             },
             input,
             { upsert: true, new: true }
@@ -91,16 +89,16 @@ const resolvers = {
     deletecategorytype: requiresAdmin.createResolver(async (parent, { id }) => {
       try {
         const deletedCategoryType = await CategoryType.deleteOne({
-          _id: id
+          _id: id,
         });
         return deletedCategoryType;
       } catch (error) {
         console.error(error);
       }
-    })
-  }
+    }),
+  },
 };
 
 module.exports = {
-  resolvers
+  resolvers,
 };
