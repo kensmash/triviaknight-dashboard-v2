@@ -17,30 +17,24 @@ const keys = require("./config/keys");
 const schema = require("./schema/schema");
 //scheduled jobs
 const { newCategories } = require("./jobs/jobs-categories");
-const { weeklyPressLuckGenre } = require("./jobs/jobs-pressluck");
+const { weeklyQuestTopic } = require("./jobs/jobs-quest");
 const {
   deleteDeclinedJoustGames,
   timeOutJoustGames,
   deleteTimedOutJoustGames,
-  runningOutOfTime
+  runningOutOfTime,
 } = require("./jobs/jobs-joustgames");
-const {
-  deleteDeclinedSiegeGames,
-  timeOutSiegeGames,
-  deleteTimedOutSiegeGames,
-  runningOutOfSiegeTime
-} = require("./jobs/jobs-siegegames");
 const {
   checkPushReceipts,
   deletePushTickets,
-  pushTicketErrorCheck
+  pushTicketErrorCheck,
 } = require("./jobs/jobs-pushnotifications");
 
 mongoose.connect(keys.mongoURI, {
   useUnifiedTopology: true,
   useFindAndModify: false,
   useNewUrlParser: true,
-  useCreateIndex: true
+  useCreateIndex: true,
 });
 
 const PORT = process.env.PORT || 4000;
@@ -55,9 +49,9 @@ const server = new ApolloServer({
       req: req,
       redisclient: redisclient,
       user: req.session.user,
-      expo
+      expo,
     };
-  }
+  },
 });
 
 const app = express();
@@ -71,7 +65,7 @@ if (process.env.NODE_ENV === "production") {
 //and holy geez https://blog.padpiper.com/a-guide-to-inbound-parse-with-sendgrid-nodejs-382a266f8c3f
 //and https://sendgrid.com/blog/how-we-use-inbound-parse-on-the-community-development-team/
 const upload = multer();
-app.post("/parse", upload.array(), async function(req, res) {
+app.post("/parse", upload.array(), async function (req, res) {
   const from = req.body.from;
   const to = req.body.to;
   const text = req.body.text;
@@ -83,7 +77,7 @@ app.post("/parse", upload.array(), async function(req, res) {
       const newrequest = new SupportRequest({
         from,
         text,
-        subject
+        subject,
       });
       await newrequest.save();
     } catch (error) {
@@ -103,8 +97,8 @@ app.use(
     proxy: true,
     cookie: {
       secure: process.env.NODE_ENV === "production",
-      maxAge: 365 * 24 * 60 * 60 * 1000 // 1 year
-    }
+      maxAge: 365 * 24 * 60 * 60 * 1000, // 1 year
+    },
   })
 );
 
@@ -113,14 +107,14 @@ app.use(express.static(path.resolve(__dirname, "../client/build")));
 
 // non-api requests return the React app, so it can handle routing.
 if (process.env.NODE_ENV === "production") {
-  app.get("*", function(request, response) {
+  app.get("*", function (request, response) {
     response.sendFile(path.resolve(__dirname, "../client/build", "index.html"));
   });
 }
 
 server.applyMiddleware({
   app,
-  path: "/"
+  path: "/",
 });
 
 const httpServer = http.createServer(app);
@@ -129,12 +123,12 @@ httpServer
   .listen({ port: PORT }, () =>
     console.log(`🚀 Server ready at ${PORT}${server.graphqlPath}`)
   )
-  .on("error", function(err) {
+  .on("error", function (err) {
     console.log("on error handler");
     console.log(err);
   });
 
-process.on("uncaughtException", function(err) {
+process.on("uncaughtException", function (err) {
   console.log("process.on handler");
   console.log(err);
 });

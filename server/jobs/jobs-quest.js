@@ -1,27 +1,17 @@
 const schedule = require("node-schedule");
-const Category = require("../models/Category");
 const User = require("../models/User");
+const { currentQuestTopic } = require("../schema/_helpers/helper-gamesquest");
 const ExpoPushTicket = require("../models/ExpoPushTicket");
 const { Expo } = require("expo-server-sdk");
 
-//send notification for new categories
-const newCategories = schedule.scheduleJob(
-  "0 18 * * 0", // run Mondays after noon
-  //"0 16 * * 0", // run Sundays at noon
+//send notification for weekly Quest topic
+const weeklyQuestTopic = schedule.scheduleJob(
+  "0 18 * * 1", // run Mondays after noon
   //"*/5 * * * *", //every 5 minutes
   async () => {
-    const categories = await Category.find({
-      published: { $eq: true },
-      partycategory: { $eq: false },
-      showasnew: { $eq: true },
-      updatedAt: {
-        $gt: new Date(new Date() - 7 * 60 * 60 * 24 * 1000),
-      },
-    }).sort({ updatedAt: -1 });
-
-    if (categories.length) {
-      const trimmedcats = categories.slice(0, 5);
-      const catnames = trimmedcats.map((cat) => cat.name).join(", ");
+    const currentTopic = await currentQuestTopic();
+    const topic = currentTopic.topic;
+    if (topic) {
       //find users in database
       const users = await User.find({});
       //get their expoPushTokens
@@ -34,11 +24,8 @@ const newCategories = schedule.scheduleJob(
         //send them a push notification
         const expo = new Expo();
         let messages = [];
-        const pushMessage =
-          categories.length > 1
-            ? `New categories added! Trivia Knight has added ${catnames}. Check them out!`
-            : `New category added! Trivia Knight has added ${catnames}. Check it out!`;
-
+        const pushMessage = `This week’s Press Your Luck topic is ${topic}! Play and compare your score!`;
+        console.log("push message", pushMessage);
         for (let pushToken of pushTokens) {
           // Check that all your push tokens appear to be valid Expo push tokens
           if (!Expo.isExpoPushToken(pushToken)) {
@@ -72,7 +59,7 @@ const newCategories = schedule.scheduleJob(
             }
             //add types
             const ticketsWithTypes = tickets.map((ticket) => ({
-              type: "New Categories",
+              type: "New Quest Topic",
               ...ticket,
             }));
             //save tickets to database for later retrieval
@@ -92,5 +79,5 @@ const newCategories = schedule.scheduleJob(
 );
 
 module.exports = {
-  newCategories,
+  weeklyQuestTopic,
 };

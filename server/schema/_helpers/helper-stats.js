@@ -732,7 +732,7 @@ const questGameStats = async () => {
   }
 };
 
-//press your luck last week winner
+//quest last week winner
 const questLastWeekWinners = async () => {
   try {
     let lastWeeksTopic = "";

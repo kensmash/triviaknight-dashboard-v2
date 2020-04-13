@@ -169,7 +169,7 @@ const saveQuestHighScore = async (topic, expo) => {
             }
             //add types
             const ticketsWithTypes = tickets.map((ticket) => ({
-              type: "Press Luck Winner",
+              type: "Quest Winner",
               ...ticket,
             }));
             //save tickets to database for later retrieval
