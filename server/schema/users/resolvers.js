@@ -90,7 +90,11 @@ const resolvers = {
         fortyFiveDaysAgo.setDate(fortyFiveDaysAgo.getDate() - 45);
 
         let recentUsers = await User.countDocuments({
-          _id: { $ne: user.id, $nin: daUser.blockedusers },
+          _id: {
+            $ne: user.id,
+            $nin: daUser.blockedusers,
+            $nin: daUser.friends,
+          },
           roles: { $nin: ["reviewer"] },
           access: { $eq: "paid" },
           blockedusers: { $nin: [user.id] },
@@ -102,8 +106,13 @@ const resolvers = {
         const randomNumber = Math.floor(Math.random() * recentUsers);
 
         const selectedUser = await User.find({
-          _id: { $ne: user.id },
+          _id: {
+            $ne: user.id,
+            $nin: daUser.blockedusers,
+            $nin: daUser.friends,
+          },
           roles: { $nin: ["reviewer"] },
+          access: { $eq: "paid" },
           blockedusers: { $nin: [user.id] },
           updatedAt: {
             $gte: fortyFiveDaysAgo,
