@@ -674,17 +674,13 @@ const pressLuckAllTimeWinners = async () => {
 //tracks quest games
 const questGameStats = async () => {
   const currentTopic = await currentQuestTopic();
-  let thisWeek = new Date();
-  const currentDay = thisWeek.getDay();
-  thisWeek.setDate(
-    thisWeek.getDate() - currentDay + (currentDay == 0 ? -6 : 1)
-  );
+
   try {
     const queststats = await GameQuest.aggregate([
       //find all games of genre within past week
       {
         $match: {
-          createdAt: { $gt: thisWeek },
+          createdAt: { $gte: new Date(new Date() - 7 * 60 * 60 * 24 * 1000) },
           topic: { $eq: currentTopic.topic },
           gameover: true,
           timedout: false,

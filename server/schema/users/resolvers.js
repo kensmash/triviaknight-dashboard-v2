@@ -167,14 +167,8 @@ const resolvers = {
           populate: { path: "players.player" },
         });
 
-        //let sevenDaysAgo = new Date();
-        //sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-        let thisWeek = new Date();
-        const currentDay = thisWeek.getDay();
+        const thisWeek = new Date(new Date() - 7 * 60 * 60 * 24 * 1000);
 
-        thisWeek.setDate(
-          thisWeek.getDate() - currentDay + (currentDay == 0 ? -6 : 1)
-        );
         const playersArray = joustplayers.map((player) => ({
           player: {
             id: player.id,
@@ -185,7 +179,7 @@ const resolvers = {
           },
           finishedgames: player.joustgames.filter(
             (game) =>
-              game.gameover && !game.declined && game.updatedAt > thisWeek
+              game.gameover && !game.declined && game.updatedAt >= thisWeek
           ),
         }));
 
