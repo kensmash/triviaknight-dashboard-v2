@@ -666,11 +666,12 @@ const questQuestions = async (topictype, topicid) => {
     //Category
     try {
       const category = await Category.findOne({ _id: topicid });
+
       const firstQuestions = await Question.aggregate([
         {
           $match: {
             published: { $eq: true },
-            category: { $eq: mongoose.Types.ObjectId(category) },
+            category: { $eq: mongoose.Types.ObjectId(category._id) },
             difficulty: { $eq: "Normal" },
           },
         },
@@ -681,7 +682,7 @@ const questQuestions = async (topictype, topicid) => {
         {
           $match: {
             published: { $eq: true },
-            category: { $eq: mongoose.Types.ObjectId(category) },
+            category: { $eq: mongoose.Types.ObjectId(category._id) },
             difficulty: { $eq: "Hard" },
           },
         },

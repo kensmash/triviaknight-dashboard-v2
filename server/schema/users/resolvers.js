@@ -130,6 +130,7 @@ const resolvers = {
           name: player.name,
           rank: player.rank,
           avatar: player.avatar,
+          avatarBackgroundColor: player.avatarBackgroundColor,
         },
         finishedgames: player.joustgames.filter(
           (game) => game.gameover && !game.declined
@@ -145,6 +146,7 @@ const resolvers = {
         name: player.player.name,
         rank: player.player.rank,
         avatar: player.player.avatar,
+        avatarBackgroundColor: player.player.avatarBackgroundColor,
         gamesplayed: player.finishedgames.length,
         wins: player.finishedgames.filter((game) =>
           game.players.some(
@@ -179,6 +181,7 @@ const resolvers = {
             name: player.name,
             rank: player.rank,
             avatar: player.avatar,
+            avatarBackgroundColor: player.avatarBackgroundColor,
           },
           finishedgames: player.joustgames.filter(
             (game) =>
@@ -195,6 +198,7 @@ const resolvers = {
           name: player.player.name,
           rank: player.player.rank,
           avatar: player.player.avatar,
+          avatarBackgroundColor: player.player.avatarBackgroundColor,
           gamesplayed: player.finishedgames.length,
           wins: player.finishedgames.filter((game) =>
             game.players.some(
