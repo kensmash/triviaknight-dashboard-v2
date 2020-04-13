@@ -9,8 +9,10 @@ const {
   requiresAdmin,
 } = require("../_helpers/helper-permissions");
 //press luck helpers
-const { currentPressLuckTopic } = require("../_helpers/helper-gamespressluck");
-const { savePressLuckHighScore } = require("../_helpers/helper-gamespressluck");
+const {
+  currentQuestTopic,
+  saveQuestHighScore,
+} = require("../_helpers/helper-gamesquest");
 
 const resolvers = {
   Query: {
@@ -133,8 +135,8 @@ const resolvers = {
         try {
           if (input.pressluckactive) {
             //first, save player high score from previous week
-            const currentTopic = await currentPressLuckTopic();
-            await savePressLuckHighScore(currentTopic.topic, expo);
+            const currentTopic = await currentQuestTopic();
+            await saveQuestHighScore(currentTopic.topic, expo);
             //then reset press luck active on other types
             await CategoryGenre.updateMany({
               $set: { pressluckactive: false },
