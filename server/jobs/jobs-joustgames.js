@@ -15,10 +15,10 @@ const deleteDeclinedJoustGames = schedule.scheduleJob(
       {
         declined: { $eq: true },
         updatedAt: {
-          $lte: deadline
-        }
+          $lte: deadline,
+        },
       },
-      function(err) {
+      function (err) {
         if (err) return console.error(err);
       }
     );
@@ -30,27 +30,17 @@ const timeOutJoustGames = schedule.scheduleJob("0 0 * * *", () => {
   console.log("joust game time out function called");
   var tenDaysAgo = new Date();
   tenDaysAgo.setDate(tenDaysAgo.getDate() - 10);
-  GameJoust.update(
+  GameJoust.updateMany(
     {
       updatedAt: {
-        $lte: tenDaysAgo
+        $lte: tenDaysAgo,
       },
       gameover: false,
-      timedout: false
+      timedout: false,
     }, // conditions
     {
       timedout: true,
-      gameover: true
-    },
-    {
-      multi: true // options
-    },
-    function(err, count) {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log("what did joust time out function find", count);
-      }
+      gameover: true,
     }
   );
 });
@@ -63,9 +53,9 @@ const deleteTimedOutJoustGames = schedule.scheduleJob(
     console.log("joust game delete timed out function called");
     GameJoust.deleteMany(
       {
-        timedout: { $eq: true }
+        timedout: { $eq: true },
       },
-      function(err) {
+      function (err) {
         if (err) return console.error(err);
       }
     );
@@ -81,16 +71,16 @@ const runningOutOfTime = schedule.scheduleJob(
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
     const games = await GameJoust.find({
       updatedAt: {
-        $lte: sevenDaysAgo
+        $lte: sevenDaysAgo,
       },
       gameover: false,
-      timedoutwarningsent: false
+      timedoutwarningsent: false,
     }).populate("players.player");
     if (games.length) {
       //get players whose turn it is
-      const playerids = games.map(game => {
+      const playerids = games.map((game) => {
         const players = game.players;
-        const turn = players.filter(player => player.turn);
+        const turn = players.filter((player) => player.turn);
         return turn[0].player._id;
       });
       //find users in database
@@ -99,7 +89,7 @@ const runningOutOfTime = schedule.scheduleJob(
       if (users.length) {
         let pushTokens = [];
         users.forEach(
-          user => (pushTokens = pushTokens.concat(user.expoPushTokens))
+          (user) => (pushTokens = pushTokens.concat(user.expoPushTokens))
         );
         console.log("did we get timing out player tokens", pushTokens);
         //send them a push notification
@@ -121,9 +111,9 @@ const runningOutOfTime = schedule.scheduleJob(
             data: {
               title: "It’s your turn in a Joust!",
               text: pushMessage,
-              type: "Joust Time Running Out"
+              type: "Joust Time Running Out",
             },
-            channelId: "game-messages"
+            channelId: "game-messages",
           });
         }
         //send push notifications in chunks
@@ -139,15 +129,15 @@ const runningOutOfTime = schedule.scheduleJob(
               console.error(error);
             }
             //add types
-            const ticketsWithTypes = tickets.map(ticket => ({
+            const ticketsWithTypes = tickets.map((ticket) => ({
               type: "Joust Time Running Out",
-              ...ticket
+              ...ticket,
             }));
             //save tickets to database for later retrieval
             for (let ticket of ticketsWithTypes) {
               try {
                 const newticket = new ExpoPushTicket(ticket);
-                const savedTicket = await newticket.save();
+                await newticket.save();
               } catch (error) {
                 console.error(error);
               }
@@ -155,26 +145,15 @@ const runningOutOfTime = schedule.scheduleJob(
           }
         })();
         //update the games so we don't send push notifications every day
-        GameJoust.update(
+
+        GameJoust.updateMany(
           {
             updatedAt: {
-              $lte: sevenDaysAgo
+              $lte: sevenDaysAgo,
             },
-            gameover: false,
-            timedoutwarningsent: false
           }, // conditions
           {
-            timedoutwarningsent: true
-          },
-          {
-            multi: true // options
-          },
-          function(err, count) {
-            if (err) {
-              console.log(err);
-            } else {
-              console.log("what did joust running out function find", count);
-            }
+            timedoutwarningsent: true,
           }
         );
       }
@@ -186,5 +165,5 @@ module.exports = {
   deleteDeclinedJoustGames,
   timeOutJoustGames,
   deleteTimedOutJoustGames,
-  runningOutOfTime
+  runningOutOfTime,
 };

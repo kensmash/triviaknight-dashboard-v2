@@ -6,8 +6,8 @@ const { Expo } = require("expo-server-sdk");
 
 //send notification for new categories
 const newCategories = schedule.scheduleJob(
-  "0 18 * * 0", // run Mondays after noon
-  //"0 16 * * 0", // run Sundays at noon
+  //"0 18 * * 0", // run Mondays after noon
+  "0 16 * * 0", // run Sundays at noon
   //"*/5 * * * *", //every 5 minutes
   async () => {
     const categories = await Category.find({
@@ -89,7 +89,7 @@ const newCategories = schedule.scheduleJob(
         })();
       }
 
-      Category.update(
+      await Category.updateMany(
         {
           published: { $eq: true },
           partycategory: { $eq: false },
@@ -101,16 +101,6 @@ const newCategories = schedule.scheduleJob(
         }, // conditions
         {
           updatedpushsent: true,
-        },
-        {
-          multi: true, // options
-        },
-        function (err, count) {
-          if (err) {
-            console.log(err);
-          } else {
-            console.log("what did new category function find", count);
-          }
         }
       );
     }
