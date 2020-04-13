@@ -31,6 +31,7 @@ const typeDef = gql`
     opponentid: ID
     opponentname: String
     opponentavatar: String
+    opponentAvatarBackgroundColor: String
     gamesplayed: Int
     wins: Int
     losses: Int
@@ -80,6 +81,7 @@ const typeDef = gql`
     name: String
     rank: String
     avatar: String
+    avatarBackgroundColor: String
     gamesplayed: Int
     highscore: Int
   }
@@ -90,6 +92,7 @@ const typeDef = gql`
     name: String
     rank: String
     avatar: String
+    avatarBackgroundColor: String
     highscore: Int
   }
 
@@ -98,6 +101,7 @@ const typeDef = gql`
     name: String
     rank: String
     avatar: String
+    avatarBackgroundColor: String
     wins: Int
   }
 

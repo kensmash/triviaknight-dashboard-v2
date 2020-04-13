@@ -589,7 +589,13 @@ const resolvers = {
         try {
           const editedUser = await User.findOneAndUpdate(
             { _id: user.id },
-            { $set: { avatar, avatarBackgroundColor: color } },
+            {
+              $set: {
+                avatar,
+                avatarBackgroundColor: color,
+                hasCompletedSignUpFlow: true,
+              },
+            },
             { new: true }
           );
           return editedUser;

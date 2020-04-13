@@ -514,6 +514,9 @@ const joustGameStats = async (userId) => {
           opponentid: { $arrayElemAt: ["$opponent._id", 0] },
           opponentname: { $arrayElemAt: ["$opponent.name", 0] },
           opponentavatar: { $arrayElemAt: ["$opponent.avatar", 0] },
+          opponentAvatarBackgroundColor: {
+            $arrayElemAt: ["$opponent.avatarBackgroundColor", 0],
+          },
           gamesplayed: "$totalGames",
           wins: "$wins",
           losses: "$losses",
@@ -718,6 +721,9 @@ const questGameStats = async () => {
           name: { $arrayElemAt: ["$player.name", 0] },
           rank: { $arrayElemAt: ["$player.rank", 0] },
           avatar: { $arrayElemAt: ["$player.avatar", 0] },
+          avatarBackGroundColor: {
+            $arrayElemAt: ["$player.avatarBackGroundColor", 0],
+          },
           gamesplayed: "$totalGames",
           highscore: "$highScore",
         },
@@ -768,6 +774,7 @@ const questLastWeekWinners = async () => {
           name: winner.name,
           rank: winner.rank,
           avatar: winner.avatar,
+          avatarBackGroundColor: winner.avatarBackGroundColor,
           highscore: lasthighscore.score,
         };
       });
@@ -793,6 +800,7 @@ const questAllTimeWinners = async () => {
           name: winner.name,
           rank: winner.rank,
           avatar: winner.avatar,
+          avatarBackGroundColor: winner.avatarBackGroundColor,
           wins: winner.questhighscores.length,
         };
       });

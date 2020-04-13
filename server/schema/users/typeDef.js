@@ -49,6 +49,7 @@ const typeDef = gql`
     name: String!
     rank: String!
     avatar: String!
+    avatarBackgroundColor: String!
     gamesplayed: Int!
     wins: Int!
   }
@@ -67,6 +68,7 @@ const typeDef = gql`
     name: String!
     rank: String!
     avatar: String!
+    avatarBackgroundColor: String!
     gamesplayed: Int!
     wins: Int!
   }
@@ -94,6 +96,7 @@ const typeDef = gql`
     name: String!
     rank: String!
     avatar: String!
+    avatarBackgroundColor: String!
     gamesplayed: Int!
     highscore: Int
   }
