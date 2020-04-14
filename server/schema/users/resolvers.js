@@ -89,39 +89,26 @@ const resolvers = {
         var fortyFiveDaysAgo = new Date();
         fortyFiveDaysAgo.setDate(fortyFiveDaysAgo.getDate() - 45);
 
-        let recentUsers = await User.countDocuments({
-          _id: {
-            $ne: user.id,
-            $nin: daUser.blockedusers,
-            $nin: daUser.friends,
+        const randomOpponent = await User.aggregate([
+          {
+            $match: {
+              _id: {
+                $ne: user.id,
+                $nin: daUser.blockedusers,
+                $nin: daUser.friends,
+              },
+              roles: { $nin: ["reviewer"] },
+              access: { $eq: "paid" },
+              blockedusers: { $nin: [user.id] },
+              updatedAt: {
+                $gte: fortyFiveDaysAgo,
+              },
+            },
           },
-          roles: { $nin: ["reviewer"] },
-          access: { $eq: "paid" },
-          blockedusers: { $nin: [user.id] },
-          updatedAt: {
-            $gte: fortyFiveDaysAgo,
-          },
-        });
+          { $sample: { size: 1 } },
+        ]);
 
-        const randomNumber = Math.floor(Math.random() * recentUsers);
-
-        const selectedUser = await User.find({
-          _id: {
-            $ne: user.id,
-            $nin: daUser.blockedusers,
-            $nin: daUser.friends,
-          },
-          roles: { $nin: ["reviewer"] },
-          access: { $eq: "paid" },
-          blockedusers: { $nin: [user.id] },
-          updatedAt: {
-            $gte: fortyFiveDaysAgo,
-          },
-        })
-          .skip(randomNumber)
-          .limit(1);
-
-        return selectedUser[0];
+        return randomOpponent[0];
       }
     ),
 
