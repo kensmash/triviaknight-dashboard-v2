@@ -93,7 +93,7 @@ const resolvers = {
           {
             $match: {
               _id: {
-                $ne: user.id,
+                $ne: daUser._id,
                 $nin: daUser.blockedusers,
                 $nin: daUser.friends,
               },
