@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { Card, Form, Radio } from "semantic-ui-react";
 import FormErrorMessage from "../../../../components/FormMessage/FormErrorMessage";
 
-const QuestionType = props => (
+const QuestionType = (props) => (
   <Card fluid>
     <Card.Content>Type</Card.Content>
     <Card.Content>
@@ -29,10 +29,6 @@ const QuestionType = props => (
           }
         />
       </Form.Field>
-      <FormErrorMessage
-        reveal={props.errormessage !== ""}
-        errormessage={props.errormessage}
-      />
     </Card.Content>
   </Card>
 );
@@ -40,7 +36,7 @@ const QuestionType = props => (
 QuestionType.propTypes = {
   questionTypeSelectHandler: PropTypes.func,
   selectedQuestionType: PropTypes.string,
-  errormessage: PropTypes.string
+  errormessage: PropTypes.string,
 };
 
 export default QuestionType;
