@@ -97,7 +97,7 @@ const resolvers = {
     ),
 
     selectsoloreward: requiresAuth.createResolver(
-      async (parent, { reward, gems }, { user }) => {
+      async (parent, { gameid, reward, gems }, { user }) => {
         try {
           //first update user
           await User.findOneAndUpdate(

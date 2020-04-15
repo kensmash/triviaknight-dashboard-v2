@@ -86,7 +86,7 @@ const typeDef = gql`
     createjoustgame(input: createJoustGameInput!): GameJoust
     joinjoustgame(gameid: ID!): GameJoust
     declinejoustgame(gameid: ID!): GameJoust
-    selectjoustreward(reward: String!, gems: Int!): GameJoust
+    selectjoustreward(gameid: ID!, reward: String!, gems: Int!): GameJoust
     enterjoustanswerandadvance(
       gameid: ID!
       roundresults: RoundResultsInput!
