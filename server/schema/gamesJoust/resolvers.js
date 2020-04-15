@@ -165,6 +165,7 @@ const resolvers = {
             { _id: gameid, "players.player": user.id },
             {
               $addToSet: { "players.$.roundresults": { ...roundresults } },
+              $set: { "players.$.advantages": [] },
             },
             { new: true }
           ).populate("players.player");

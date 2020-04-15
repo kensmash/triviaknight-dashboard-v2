@@ -96,8 +96,8 @@ const resolvers = {
       }
     ),
 
-    selectsoloreward: requiresAuth.createResolver(
-      async (parent, { gameid, reward, gems }, { user }) => {
+    selectsoloadvantage: requiresAuth.createResolver(
+      async (parent, { gameid, advantage, gems }, { user }) => {
         try {
           //first update user
           await User.findOneAndUpdate(
@@ -109,7 +109,7 @@ const resolvers = {
           let updatedGame = await GameSolo.findOneAndUpdate(
             { _id: gameid, "players.player": user.id },
             {
-              $addToSet: { "players.$.reward": reward },
+              $addToSet: { "players.$.advantages": advantage },
             },
             { new: true }
           );
@@ -129,6 +129,7 @@ const resolvers = {
             { _id: gameid, "players.player": user.id },
             {
               $addToSet: { "players.$.roundresults": { ...roundresults } },
+              $set: { "players.$.advantages": [] },
             },
             { new: true }
           );
