@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 const RoundResultsSchema = require("./RoundResults");
-const PlayerRewardsSchema = require("./PlayerRewards");
 
 const PlayerQuestSchema = new Schema(
   {
@@ -10,7 +9,7 @@ const PlayerQuestSchema = new Schema(
     resultsseen: { type: Boolean, default: false },
     roundresults: [RoundResultsSchema],
     score: { type: Number, default: 0 },
-    rewards: PlayerRewardsSchema,
+    rewards: [String],
   },
   { _id: false }
 );

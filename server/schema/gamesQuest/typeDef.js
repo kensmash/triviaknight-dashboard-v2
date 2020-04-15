@@ -22,7 +22,7 @@ const typeDef = gql`
     timedout: Boolean
     resultsseen: Boolean
     roundresults: [RoundResults]
-    rewards: PlayerRewards
+    rewards: [String]
   }
 
   input createQuestGameInput {
@@ -58,6 +58,7 @@ const typeDef = gql`
 
   extend type Mutation {
     createquestgame(input: createQuestGameInput!): GameQuest
+    selectquestreward(reward: String!, gems: Int!): GameQuest
     enterquestanswer(
       gameid: ID!
       roundresults: RoundResultsInput!

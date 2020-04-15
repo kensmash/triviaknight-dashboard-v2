@@ -20,7 +20,7 @@ const typeDef = gql`
     answered: Boolean
     resultsseen: Boolean
     roundresults: [RoundResults]
-    rewards: PlayerRewards
+    rewards: [String]
   }
 
   type RoundResults {
@@ -68,6 +68,7 @@ const typeDef = gql`
 
   extend type Mutation {
     createsologame(typeid: ID!, typename: String!): GameSolo
+    selectsoloreward(reward: String!, gems: Int!): GameSolo
     entersoloanswer(
       gameid: ID!
       roundresults: RoundResultsInput!

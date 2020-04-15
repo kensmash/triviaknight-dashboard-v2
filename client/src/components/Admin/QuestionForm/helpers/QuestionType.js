@@ -1,7 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Card, Form, Radio } from "semantic-ui-react";
-import FormErrorMessage from "../../../../components/FormMessage/FormErrorMessage";
 
 const QuestionType = (props) => (
   <Card fluid>

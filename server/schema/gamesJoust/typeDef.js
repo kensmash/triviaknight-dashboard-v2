@@ -26,7 +26,7 @@ const typeDef = gql`
     timedout: Boolean
     resultsseen: Boolean
     roundresults: [RoundResults]
-    rewards: PlayerRewards
+    rewards: [String]
   }
 
   input JoustResultsInput {
@@ -86,6 +86,7 @@ const typeDef = gql`
     createjoustgame(input: createJoustGameInput!): GameJoust
     joinjoustgame(gameid: ID!): GameJoust
     declinejoustgame(gameid: ID!): GameJoust
+    selectjoustreward(reward: String!, gems: Int!): GameJoust
     enterjoustanswerandadvance(
       gameid: ID!
       roundresults: RoundResultsInput!

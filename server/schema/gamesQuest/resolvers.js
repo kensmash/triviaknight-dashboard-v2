@@ -99,7 +99,7 @@ const resolvers = {
             createdby: user.id,
             topictype: input.topictype,
             topic: input.topic,
-            players: [{ player: user.id, rewards: { addtotimer: 0 } }],
+            players: [{ player: user.id }],
             categories: catsAndQuestions.categories,
             questions: catsAndQuestions.questions,
           });

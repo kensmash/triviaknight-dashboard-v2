@@ -73,7 +73,7 @@ const resolvers = {
           const catsAndQuestions = await soloQuestions(typeid);
 
           const newgame = new GameSolo({
-            players: [{ player: user.id, rewards: { addtotimer: 0 } }],
+            players: [{ player: user.id }],
             categoriestype: typename,
             categories: catsAndQuestions.categories,
             questions: catsAndQuestions.questions,
@@ -90,6 +90,31 @@ const resolvers = {
             })
             .populate("questions");
           return returnedGame;
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    ),
+
+    selectsoloreward: requiresAuth.createResolver(
+      async (parent, { reward, gems }, { user }) => {
+        try {
+          //first update user
+          await User.findOneAndUpdate(
+            { _id: user.id },
+            { $inc: { gems } },
+            { new: true }
+          );
+          //then update gem
+          let updatedGame = await GameSolo.findOneAndUpdate(
+            { _id: gameid, "players.player": user.id },
+            {
+              $addToSet: { "players.$.reward": reward },
+            },
+            { new: true }
+          );
+
+          return updatedGame;
         } catch (error) {
           console.error(error);
         }

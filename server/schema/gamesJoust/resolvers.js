@@ -131,11 +131,7 @@ const resolvers = {
           const updatedGame = await GameJoust.findOneAndUpdate(
             { _id: gameid, "players.player": user.id },
             {
-              $set: {
-                "players.$.joined": true,
-                "players.$.rewards": { addtotimer: 0 },
-                accepted: true,
-              },
+              $set: { "players.$.joined": true, accepted: true },
             },
             { new: true }
           ).populate("players.player");
