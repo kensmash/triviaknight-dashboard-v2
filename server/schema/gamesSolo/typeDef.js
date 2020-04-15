@@ -20,6 +20,7 @@ const typeDef = gql`
     answered: Boolean
     resultsseen: Boolean
     roundresults: [RoundResults]
+    rewards: PlayerRewards
   }
 
   type RoundResults {
@@ -30,6 +31,15 @@ const typeDef = gql`
     correct: Boolean
     points: Int
     answertype: String
+  }
+
+  type PlayerRewards {
+    differentquestion: Int
+    secondguess: Int
+    addtotimer: Int
+    removewronganswer: Int
+    changehardtoeasy: Int
+    addpoints: Int
   }
 
   input RoundResultsInput {

@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 const bcrypt = require("bcrypt");
-const PlayerRewardsSchema = require("./PlayerRewards");
 const PlayerPressLuckHighScoresSchema = require("./PlayerPressLuckHighScores");
 const PlayerQuestHighScoresSchema = require("./PlayerQuestHighScores");
 
@@ -41,8 +40,6 @@ const userSchema = new Schema(
     pressluckhighscores: [PlayerPressLuckHighScoresSchema],
     questhighscores: [PlayerQuestHighScoresSchema],
     gems: { type: Number, default: 20 },
-    questiontimer: { type: Number, default: 25000 },
-    rewards: PlayerRewardsSchema,
   },
   { timestamps: true }
 );

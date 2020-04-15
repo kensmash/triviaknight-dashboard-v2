@@ -26,6 +26,7 @@ const typeDef = gql`
     timedout: Boolean
     resultsseen: Boolean
     roundresults: [RoundResults]
+    rewards: PlayerRewards
   }
 
   input JoustResultsInput {
@@ -98,5 +99,5 @@ const typeDef = gql`
 `;
 
 module.exports = {
-  typeDef
+  typeDef,
 };

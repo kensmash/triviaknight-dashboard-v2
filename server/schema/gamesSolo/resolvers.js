@@ -73,7 +73,7 @@ const resolvers = {
           const catsAndQuestions = await soloQuestions(typeid);
 
           const newgame = new GameSolo({
-            players: [{ player: user.id }],
+            players: [{ player: user.id, rewards: { addtotimer: 0 } }],
             categoriestype: typename,
             categories: catsAndQuestions.categories,
             questions: catsAndQuestions.questions,

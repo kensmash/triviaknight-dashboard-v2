@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 const RoundResultsSchema = require("./RoundResults");
+const PlayerRewardsSchema = require("./PlayerRewards");
 
 const PlayerJoustSchema = new Schema(
   {
@@ -11,7 +12,8 @@ const PlayerJoustSchema = new Schema(
     winner: { type: Boolean, default: false },
     timedout: { type: Boolean, default: false },
     resultsseen: { type: Boolean, default: false },
-    roundresults: [RoundResultsSchema]
+    roundresults: [RoundResultsSchema],
+    rewards: PlayerRewardsSchema,
   },
   { _id: false }
 );

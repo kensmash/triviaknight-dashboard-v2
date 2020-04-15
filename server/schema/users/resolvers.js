@@ -99,7 +99,7 @@ const resolvers = {
               },
               roles: { $nin: ["reviewer"] },
               access: { $eq: "paid" },
-              blockedusers: { $nin: [user.id] },
+              blockedusers: { $nin: [daUser._id] },
               updatedAt: {
                 $gte: fortyFiveDaysAgo,
               },
@@ -608,6 +608,27 @@ const resolvers = {
             { $push: { categories: categoryid } },
             { new: true }
           ).populate("categories");
+
+          return editedUser;
+        } catch (err) {
+          return err;
+        }
+      }
+    ),
+
+    changegems: requiresAuth.createResolver(
+      async (parent, { add, amount }, { user }) => {
+        let gems = amount;
+        if (!add) {
+          gems = -amount;
+        }
+
+        try {
+          const editedUser = User.findOneAndUpdate(
+            { _id: user.id },
+            { $inc: { gems } },
+            { new: true }
+          );
 
           return editedUser;
         } catch (err) {

@@ -21,6 +21,7 @@ const typeDef = gql`
     pressluckgames: [GamePressYourLuck]
     questgames: [GameQuest]
     expoPushTokens: [String]
+    gems: Int
   }
 
   type UserPageResponse {
@@ -152,6 +153,8 @@ const typeDef = gql`
     updatepassword(email: String!, password: String!): Boolean
     updateusername(name: String!): UserNameChangeResponse
     updateavatarandcolor(avatar: String!, color: String!): User
+    buyreward(reward: String!, amount: Int!): User
+    changegems(add: Boolean!, amount: Int!): User
     updatesignupflow: User
     changeemail(email: String!): User
     changerank: Boolean
