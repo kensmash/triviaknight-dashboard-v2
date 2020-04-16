@@ -21,6 +21,12 @@ const gameQuestSchema = new Schema(
         ref: "question",
       },
     ],
+    replacedquestions: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "question",
+      },
+    ],
     timedout: { type: Boolean, default: false },
     gameover: { type: Boolean, default: false },
   },

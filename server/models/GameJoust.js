@@ -10,20 +10,26 @@ const gameJoustSchema = new Schema(
     rounds: { type: Number, default: 7 },
     category: {
       type: Schema.Types.ObjectId,
-      ref: "category"
+      ref: "category",
     },
     questions: [
       {
         type: Schema.Types.ObjectId,
-        ref: "question"
-      }
+        ref: "question",
+      },
+    ],
+    replacedquestions: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "question",
+      },
     ],
     accepted: { type: Boolean, default: false },
     declined: { type: Boolean, default: false },
     resigned: { type: Boolean, default: false },
     timedoutwarningsent: { type: Boolean, default: false },
     timedout: { type: Boolean, default: false },
-    gameover: { type: Boolean, default: false }
+    gameover: { type: Boolean, default: false },
   },
   { timestamps: true, collection: "gamesjoust" }
 );
