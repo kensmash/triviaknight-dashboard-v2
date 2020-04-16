@@ -144,6 +144,7 @@ const resolvers = {
             { _id: gameid },
             {
               $set: { questions: updatedQuestions },
+              $addToSet: { replacedquestions: currentquestions[questionindex] },
             },
             { new: true }
           );

@@ -9,6 +9,7 @@ const typeDef = gql`
     rounds: Int
     category: Category
     questions: [Question]
+    replacedquestions: [Question]
     gameover: Boolean
     accepted: Boolean
     declined: Boolean

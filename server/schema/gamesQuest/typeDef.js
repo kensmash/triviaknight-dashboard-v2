@@ -10,6 +10,7 @@ const typeDef = gql`
     rounds: Int
     categories: [Category]
     questions: [Question]
+    replacedquestions: [Question]
     gameover: Boolean
     timedout: Boolean
     createdAt: String
