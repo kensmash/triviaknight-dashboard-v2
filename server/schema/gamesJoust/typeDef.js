@@ -27,8 +27,7 @@ const typeDef = gql`
     timedout: Boolean
     resultsseen: Boolean
     roundresults: [RoundResults]
-    boosts: [String]
-    advantages: [String]
+    timer: Int
   }
 
   input JoustResultsInput {

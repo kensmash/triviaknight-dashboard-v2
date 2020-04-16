@@ -26,7 +26,6 @@ const gameSoloSchema = new Schema(
         ref: "question",
       },
     ],
-
     timedout: { type: Boolean, default: false },
     gameover: { type: Boolean, default: false },
   },

@@ -22,8 +22,7 @@ const typeDef = gql`
     answered: Boolean
     resultsseen: Boolean
     roundresults: [RoundResults]
-    boosts: [String]
-    advantages: [String]
+    timer: Int
   }
 
   type RoundResults {
