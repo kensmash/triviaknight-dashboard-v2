@@ -129,7 +129,6 @@ const resolvers = {
         try {
           //get new question
           const newQuestion = await differentQuestion(
-            input.gameid,
             input.category,
             input.currentquestions
           );

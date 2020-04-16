@@ -700,6 +700,7 @@ const questQuestions = async (topictype, topicid) => {
 
 //quest games
 const differentQuestion = async (catid, currentquestions) => {
+  console.log("current questions", currentquestions);
   try {
     const question = await Question.aggregate([
       {
@@ -707,7 +708,7 @@ const differentQuestion = async (catid, currentquestions) => {
           published: { $eq: true },
           category: { $eq: mongoose.Types.ObjectId(catid) },
           difficulty: { $eq: "Normal" },
-          $nin: currentquestions,
+          _id: { $nin: currentquestions },
         },
       },
       { $sample: { size: 1 } },
