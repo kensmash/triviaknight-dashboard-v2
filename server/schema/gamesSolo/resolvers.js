@@ -126,11 +126,14 @@ const resolvers = {
 
     changesoloquestion: requiresAuth.createResolver(
       async (parent, { input }) => {
-        let questions = input.currentquestions;
+        let questions = [];
 
         if (input.replacedquestions.length) {
-          questions = questions.concat(input.replacedquestions);
+          questions = input.currentquestions.concat(input.replacedquestions);
+        } else {
+          questions = input.currentquestions;
         }
+
         try {
           //get new question
           const newQuestion = await differentQuestion(
