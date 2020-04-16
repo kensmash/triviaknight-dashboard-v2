@@ -700,7 +700,6 @@ const questQuestions = async (topictype, topicid) => {
 
 //quest games
 const differentQuestion = async (catid, currentquestions) => {
-  console.log("current questions", currentquestions);
   try {
     const question = await Question.aggregate([
       {

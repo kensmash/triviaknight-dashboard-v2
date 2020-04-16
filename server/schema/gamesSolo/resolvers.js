@@ -57,7 +57,7 @@ const resolvers = {
               path: "currentcategory",
               populate: { path: "type" },
             })
-            .populate("currentquestion")
+
             .populate("selectedcategories")
             .populate("selectedquestions");
 
@@ -126,12 +126,19 @@ const resolvers = {
 
     changesoloquestion: requiresAuth.createResolver(
       async (parent, { input }) => {
+        let questions = input.currentquestions;
+
+        if (input.replacedquestions.length) {
+          questions = questions.concat(input.replacedquestions);
+        }
         try {
           //get new question
           const newQuestion = await differentQuestion(
             input.category,
-            input.currentquestions
+            questions
           );
+
+          console.log("newQuestion", newQuestion);
           //update current questions array
           const updatedQuestions = input.currentquestions.splice(
             input.questionindex,
@@ -149,6 +156,8 @@ const resolvers = {
           )
             .populate("questions")
             .populate("replacedquestions");
+
+          console.log(updatedGame.questions);
 
           return updatedGame;
         } catch (error) {

@@ -58,6 +58,7 @@ const typeDef = gql`
     questionindex: Int!
     questionid: ID!
     currentquestions: [ID!]
+    replacedquestions: [ID]
   }
 
   extend type Query {
