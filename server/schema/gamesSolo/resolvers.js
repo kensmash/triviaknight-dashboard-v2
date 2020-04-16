@@ -125,26 +125,26 @@ const resolvers = {
     ),
 
     changesoloquestion: requiresAuth.createResolver(
-      async (parent, { gameid, category, questionindex, currentquestions }) => {
+      async (parent, { input }) => {
         try {
           //get new question
           const newQuestion = await differentQuestion(
-            gameid,
-            category,
-            currentquestions
+            input.gameid,
+            input.category,
+            input.currentquestions
           );
           //update current questions array
-          const updatedQuestions = currentquestions.splice(
-            questionindex,
+          const updatedQuestions = input.currentquestions.splice(
+            input.questionindex,
             0,
             newQuestion._id
           );
           //update game
           let updatedGame = await GameSolo.findOneAndUpdate(
-            { _id: gameid },
+            { _id: input.gameid },
             {
               $set: { questions: updatedQuestions },
-              $addToSet: { replacedquestions: currentquestions[questionindex] },
+              $addToSet: { replacedquestions: input.questionid },
             },
             { new: true }
           );

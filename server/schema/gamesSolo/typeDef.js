@@ -52,6 +52,14 @@ const typeDef = gql`
     points: Int
   }
 
+  input ReplaceQuestionInput {
+    gameid: ID!
+    category: ID!
+    questionindex: Int!
+    questionid: ID!
+    currentquestions: [ID!]
+  }
+
   extend type Query {
     solotopics: [CategoryType]
     allsologames: [GameSolo]
@@ -71,12 +79,7 @@ const typeDef = gql`
   extend type Mutation {
     createsologame(typeid: ID!, typename: String!): GameSolo
     selectsoloboosts(gameid: ID!, boosts: [String!], gems: Int!): GameSolo
-    changesoloquestion(
-      gameid: ID!
-      category: ID!
-      questionindex: Int!
-      currentquestions: [ID!]
-    ): GameSolo
+    changesoloquestion(input: ReplaceQuestionInput!): GameSolo
     entersoloanswer(
       gameid: ID!
       roundresults: RoundResultsInput!
