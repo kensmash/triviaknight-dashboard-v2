@@ -102,7 +102,7 @@ const resolvers = {
                 joined: true,
                 turn: true,
               },
-              { player: input.opponentid },
+              { player: input.opponentid, timer: input.timer },
             ],
             category: input.category,
             questions,
@@ -126,12 +126,16 @@ const resolvers = {
     ),
 
     joinjoustgame: requiresAuth.createResolver(
-      async (parent, { gameid }, { user }) => {
+      async (parent, { gameid, timer }, { user }) => {
         try {
           const updatedGame = await GameJoust.findOneAndUpdate(
             { _id: gameid, "players.player": user.id },
             {
-              $set: { "players.$.joined": true, accepted: true },
+              $set: {
+                "players.$.joined": true,
+                "players.$.timer": timer,
+                accepted: true,
+              },
             },
             { new: true }
           ).populate("players.player");

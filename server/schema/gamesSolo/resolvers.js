@@ -71,12 +71,12 @@ const resolvers = {
 
   Mutation: {
     createsologame: requiresAuth.createResolver(
-      async (parent, { typeid, typename }, { user }) => {
+      async (parent, { typeid, typename, timer }, { user }) => {
         try {
           const catsAndQuestions = await soloQuestions(typeid);
 
           const newgame = new GameSolo({
-            players: [{ player: user.id }],
+            players: [{ player: user.id, timer }],
             categoriestype: typename,
             categories: catsAndQuestions.categories,
             questions: catsAndQuestions.questions,
@@ -93,31 +93,6 @@ const resolvers = {
             })
             .populate("questions");
           return returnedGame;
-        } catch (error) {
-          console.error(error);
-        }
-      }
-    ),
-
-    selectsoloboosts: requiresAuth.createResolver(
-      async (parent, { gameid, boosts, gems }, { user }) => {
-        try {
-          //first update user
-          await User.findOneAndUpdate(
-            { _id: user.id },
-            { $inc: { gems } },
-            { new: true }
-          );
-          //then update gem
-          let updatedGame = await GameSolo.findOneAndUpdate(
-            { _id: gameid, "players.player": user.id },
-            {
-              $addToSet: { "players.$.gameboosts": boosts },
-            },
-            { new: true }
-          );
-
-          return updatedGame;
         } catch (error) {
           console.error(error);
         }

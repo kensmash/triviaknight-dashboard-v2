@@ -9,7 +9,7 @@ const PlayerQuestSchema = new Schema(
     resultsseen: { type: Boolean, default: false },
     roundresults: [RoundResultsSchema],
     score: { type: Number, default: 0 },
-    gameboosts: [String],
+    timer: { type: Number, default: 30000 },
   },
   { _id: false }
 );
