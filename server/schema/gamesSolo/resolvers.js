@@ -147,7 +147,9 @@ const resolvers = {
               $addToSet: { replacedquestions: input.questionid },
             },
             { new: true }
-          );
+          )
+            .populate("questions")
+            .populate("replacedquestions");
 
           return updatedGame;
         } catch (error) {
