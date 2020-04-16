@@ -138,26 +138,22 @@ const resolvers = {
             questions
           );
 
-          console.log("newQuestion", newQuestion);
+          let slicedQuestions = input.currentquestions.slice();
+
           //update current questions array
-          const updatedQuestions = input.currentquestions.splice(
-            input.questionindex,
-            0,
-            newQuestion._id
-          );
+          slicedQuestions.splice(input.questionindex, 1, newQuestion._id);
+
           //update game
           let updatedGame = await GameSolo.findOneAndUpdate(
             { _id: input.gameid },
             {
-              $set: { questions: updatedQuestions },
+              $set: { questions: slicedQuestions },
               $addToSet: { replacedquestions: input.questionid },
             },
             { new: true }
           )
             .populate("questions")
             .populate("replacedquestions");
-
-          console.log(updatedGame.questions);
 
           return updatedGame;
         } catch (error) {
