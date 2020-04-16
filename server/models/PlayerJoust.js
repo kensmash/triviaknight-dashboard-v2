@@ -12,7 +12,7 @@ const PlayerJoustSchema = new Schema(
     timedout: { type: Boolean, default: false },
     resultsseen: { type: Boolean, default: false },
     roundresults: [RoundResultsSchema],
-    rewards: [String],
+    gameboosts: [String],
   },
   { _id: false }
 );

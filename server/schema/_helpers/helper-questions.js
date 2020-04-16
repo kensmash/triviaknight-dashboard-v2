@@ -698,6 +698,27 @@ const questQuestions = async (topictype, topicid) => {
   }
 };
 
+//quest games
+const differentQuestion = async (catid, currentquestions) => {
+  try {
+    const question = await Question.aggregate([
+      {
+        $match: {
+          published: { $eq: true },
+          category: { $eq: mongoose.Types.ObjectId(catid) },
+          difficulty: { $eq: "Normal" },
+          $nin: currentquestions,
+        },
+      },
+      { $sample: { size: 1 } },
+    ]);
+
+    return question[0];
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 module.exports = {
   randomCategoriesQuestions,
   userCategoriesQuestions,
@@ -708,4 +729,5 @@ module.exports = {
   pressLuckQuestions,
   questQuestions,
   soloQuestions,
+  differentQuestion,
 };

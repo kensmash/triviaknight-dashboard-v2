@@ -69,8 +69,13 @@ const typeDef = gql`
 
   extend type Mutation {
     createsologame(typeid: ID!, typename: String!): GameSolo
-    selectsoloboost(gameid: ID!, boost: String!, gems: Int!): GameSolo
-    selectsoloadvantage(gameid: ID!, advantage: String!, gems: Int!): GameSolo
+    selectsoloboosts(gameid: ID!, boosts: [String!], gems: Int!): GameSolo
+    changesoloquestion(
+      gameid: ID!
+      category: ID!
+      questionindex: Int!
+      currentquestions: [ID!]
+    ): GameSolo
     entersoloanswer(
       gameid: ID!
       roundresults: RoundResultsInput!

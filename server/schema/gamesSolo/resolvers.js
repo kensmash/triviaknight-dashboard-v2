@@ -4,7 +4,10 @@ const CategoryType = require("../../models/CategoryType");
 const { requiresAuth } = require("../_helpers/helper-permissions");
 const { userCategoriesQuestions } = require("../_helpers/helper-questions");
 //questions helper
-const { soloQuestions } = require("../_helpers/helper-questions");
+const {
+  soloQuestions,
+  differentQuestion,
+} = require("../_helpers/helper-questions");
 
 const resolvers = {
   Query: {
@@ -96,8 +99,8 @@ const resolvers = {
       }
     ),
 
-    selectsoloadvantage: requiresAuth.createResolver(
-      async (parent, { gameid, advantage, gems }, { user }) => {
+    selectsoloboosts: requiresAuth.createResolver(
+      async (parent, { gameid, boosts, gems }, { user }) => {
         try {
           //first update user
           await User.findOneAndUpdate(
@@ -109,7 +112,38 @@ const resolvers = {
           let updatedGame = await GameSolo.findOneAndUpdate(
             { _id: gameid, "players.player": user.id },
             {
-              $addToSet: { "players.$.advantages": advantage },
+              $addToSet: { "players.$.gameboosts": boosts },
+            },
+            { new: true }
+          );
+
+          return updatedGame;
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    ),
+
+    changesoloquestion: requiresAuth.createResolver(
+      async (parent, { gameid, category, questionindex, currentquestions }) => {
+        try {
+          //get new question
+          const newQuestion = await differentQuestion(
+            gameid,
+            category,
+            currentquestions
+          );
+          //update current questions array
+          const updatedQuestions = currentquestions.splice(
+            questionindex,
+            0,
+            newQuestion._id
+          );
+          //update game
+          let updatedGame = await GameSolo.findOneAndUpdate(
+            { _id: gameid },
+            {
+              $set: { questions: updatedQuestions },
             },
             { new: true }
           );
@@ -129,7 +163,6 @@ const resolvers = {
             { _id: gameid, "players.player": user.id },
             {
               $addToSet: { "players.$.roundresults": { ...roundresults } },
-              $set: { "players.$.advantages": [] },
             },
             { new: true }
           );

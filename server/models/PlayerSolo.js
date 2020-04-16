@@ -8,7 +8,7 @@ const PlayerSoloSchema = new Schema(
     score: { type: Number, default: 0 },
     resultsseen: { type: Boolean, default: false },
     roundresults: [RoundResultsSchema],
-    rewards: [String],
+    gameboosts: [String],
   },
   { _id: false }
 );
