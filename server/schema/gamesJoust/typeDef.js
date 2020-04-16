@@ -43,6 +43,7 @@ const typeDef = gql`
   input createJoustGameInput {
     opponentid: ID!
     category: ID!
+    boosts: [String]
   }
 
   input completeJoustGameInput {

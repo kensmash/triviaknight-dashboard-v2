@@ -33,6 +33,7 @@ const typeDef = gql`
     cattype: ID
     category: ID
     genre: ID
+    boosts: [String]
   }
 
   extend type Query {

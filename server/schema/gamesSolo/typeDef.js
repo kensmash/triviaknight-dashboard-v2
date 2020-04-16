@@ -78,7 +78,7 @@ const typeDef = gql`
   }
 
   extend type Mutation {
-    createsologame(typeid: ID!, typename: String!): GameSolo
+    createsologame(typeid: ID!, typename: String!, boosts: [String]): GameSolo
     selectsoloboosts(gameid: ID!, boosts: [String!], gems: Int!): GameSolo
     changesoloquestion(input: ReplaceQuestionInput!): GameSolo
     entersoloanswer(
