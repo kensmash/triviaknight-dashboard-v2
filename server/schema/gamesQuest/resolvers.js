@@ -123,7 +123,16 @@ const resolvers = {
     enterquestanswer: requiresAuth.createResolver(
       async (parent, { gameid, roundresults, endgame }, { user }) => {
         try {
-          //first add round results
+          //give user some gems
+          if (roundresults.points > 0) {
+            let gems = 10;
+            if (roundresults.difficulty === "Hard") {
+              gems = 20;
+            }
+            await User.findOneAndUpdate({ _id: user.id }, { $inc: { gems } });
+          }
+
+          //add round results
           let updatedGame = await GameQuest.findOneAndUpdate(
             { _id: gameid, "players.player": user.id },
             {

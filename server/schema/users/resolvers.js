@@ -624,7 +624,7 @@ const resolvers = {
         }
 
         try {
-          const editedUser = User.findOneAndUpdate(
+          const editedUser = await User.findOneAndUpdate(
             { _id: user.id },
             { $inc: { gems } },
             { new: true }
