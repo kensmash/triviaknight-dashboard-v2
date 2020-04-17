@@ -21,6 +21,7 @@ export default gql`
         partycategory
         showasnew
         showaspopular
+        showasupdated
         joustexclusive
         pressluckactive
         questions {

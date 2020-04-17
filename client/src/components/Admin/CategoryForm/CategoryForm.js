@@ -13,7 +13,7 @@ import QUERY_CATEGORIES from "../../../apollo/queries/categories";
 import QUERY_CATEGORIESPAGE from "../../../apollo/queries/categoriesPage";
 import QUERY_CLIENTCATEGORYSEARCH from "../../../apollo/queries/client-categorySearchCriteria";
 
-const CategoryForm = props => {
+const CategoryForm = (props) => {
   const [submittedCategoryName, setSubmittedCategoryName] = useState("");
 
   const initialState = {
@@ -27,7 +27,7 @@ const CategoryForm = props => {
     showasupdated: false,
     showaspopular: false,
     joustexclusive: false,
-    pressluckactive: false
+    pressluckactive: false,
   };
 
   const [fields, setFields] = useState(initialState);
@@ -35,7 +35,7 @@ const CategoryForm = props => {
   const [fieldErrors, setFieldErrors] = useState({
     categoryname: "",
     type: "",
-    categorydescription: ""
+    categorydescription: "",
   });
 
   const { data: { categorySearchCriteria } = {} } = useQuery(
@@ -50,7 +50,7 @@ const CategoryForm = props => {
       setFields({
         categoryname: category.name,
         categorytype: category.type._id,
-        categorygenres: category.genres.map(genre => genre._id),
+        categorygenres: category.genres.map((genre) => genre._id),
         categorydescription: category.description,
         published: category.published,
         partycategory: category.partycategory || false,
@@ -58,12 +58,12 @@ const CategoryForm = props => {
         showasupdated: category.showasupdated || false,
         showaspopular: category.showaspopular || false,
         joustexclusive: category.joustexclusive || false,
-        pressluckactive: category.pressluckactive || false
+        pressluckactive: category.pressluckactive || false,
       });
     }
   }, [props]);
 
-  const inputChangedHandler = event => {
+  const inputChangedHandler = (event) => {
     setFields({ ...fields, [event.target.id]: event.target.value });
     setFieldErrors({ ...fieldErrors, [event.target.id]: "" });
   };
@@ -71,7 +71,7 @@ const CategoryForm = props => {
   const catTypeSelectHandler = (_e, data) => {
     setFields({
       ...fields,
-      categorytype: data.value
+      categorytype: data.value,
     });
 
     setFieldErrors({ ...fieldErrors, type: "" });
@@ -97,11 +97,11 @@ const CategoryForm = props => {
     }
   };
 
-  const popularCheckboxHandler = (_event, data) => {
+  const updatedCheckboxHandler = (_event, data) => {
     if (data.checked) {
-      setFields({ ...fields, showaspopular: true });
+      setFields({ ...fields, showasupdated: true });
     } else {
-      setFields({ ...fields, showaspopular: false });
+      setFields({ ...fields, showasupdated: false });
     }
   };
 
@@ -140,7 +140,7 @@ const CategoryForm = props => {
     //check if category already exists
     if (
       props.pageType === "question" &&
-      props.allCategories.categories.some(category => category.name === name)
+      props.allCategories.categories.some((category) => category.name === name)
     )
       errors.categoryname = "That category already exists!";
     if (description.length < 8)
@@ -149,7 +149,7 @@ const CategoryForm = props => {
     return errors;
   };
 
-  const formSubmitHandler = async event => {
+  const formSubmitHandler = async (event) => {
     event.preventDefault();
     //first, do form validation
     const errors = formValidateHandler(
@@ -173,9 +173,10 @@ const CategoryForm = props => {
           partycategory: fields.partycategory,
           showasnew: fields.showasnew,
           showaspopular: fields.showaspopular,
+          showasupdated: fields.showasupdated,
           joustexclusive: fields.joustexclusive,
-          pressluckactive: fields.pressluckactive
-        }
+          pressluckactive: fields.pressluckactive,
+        },
       },
       refetchQueries: [
         {
@@ -190,12 +191,12 @@ const CategoryForm = props => {
               name: categorySearchCriteria.name,
               type: categorySearchCriteria.type,
               genres: categorySearchCriteria.genres,
-              partycategory: categorySearchCriteria.partycategory === "true"
-            }
-          }
+              partycategory: categorySearchCriteria.partycategory === "true",
+            },
+          },
         },
-        { query: QUERY_CATEGORIES }
-      ]
+        { query: QUERY_CATEGORIES },
+      ],
     });
     setSubmittedCategoryName(graphqlResponse.data.upsertcategory.name);
   };
@@ -214,7 +215,7 @@ const CategoryForm = props => {
           id="categoryname"
           placeholder="Enter name..."
           value={fields.categoryname}
-          onChange={event => inputChangedHandler(event)}
+          onChange={(event) => inputChangedHandler(event)}
         />
         <FormErrorMessage
           reveal={fieldErrors.categoryname !== ""}
@@ -253,7 +254,7 @@ const CategoryForm = props => {
           label="Description"
           placeholder="Enter description..."
           value={fields.categorydescription}
-          onChange={event => inputChangedHandler(event)}
+          onChange={(event) => inputChangedHandler(event)}
         />
         <FormErrorMessage
           reveal={fieldErrors.categorydescription !== ""}
@@ -311,9 +312,9 @@ const CategoryForm = props => {
 
       <Form.Field>
         <Checkbox
-          label="Show as Popular"
-          checked={fields.showaspopular}
-          onChange={(event, data) => popularCheckboxHandler(event, data)}
+          label="Show as Updated"
+          checked={fields.showasupdated}
+          onChange={(event, data) => updatedCheckboxHandler(event, data)}
         />
       </Form.Field>
 
@@ -363,7 +364,7 @@ const MUTATION_UPSERTCATEGORY = gql`
 CategoryForm.propTypes = {
   pageType: PropTypes.string,
   category: PropTypes.object,
-  history: PropTypes.object
+  history: PropTypes.object,
 };
 
 export default CategoryForm;
