@@ -9,7 +9,10 @@ const {
   changeJoustTurn,
   endJoustGame,
 } = require("../_helpers/helper-gamesjoust");
-const { joustQuestions } = require("../_helpers/helper-questions");
+const {
+  joustQuestions,
+  differentQuestion,
+} = require("../_helpers/helper-questions");
 
 const resolvers = {
   Query: {
@@ -154,6 +157,47 @@ const resolvers = {
             { $set: { declined: true, gameover: true } },
             { new: true }
           );
+          return updatedGame;
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    ),
+
+    changejoustquestion: requiresAuth.createResolver(
+      async (parent, { input }) => {
+        let questions = [];
+
+        if (input.replacedquestions.length) {
+          questions = input.currentquestions.concat(input.replacedquestions);
+        } else {
+          questions = input.currentquestions;
+        }
+
+        try {
+          //get new question
+          const newQuestion = await differentQuestion(
+            input.category,
+            questions
+          );
+
+          let slicedQuestions = input.currentquestions.slice();
+
+          //update current questions array
+          slicedQuestions.splice(input.questionindex, 1, newQuestion._id);
+
+          //update game
+          let updatedGame = await GameJoust.findOneAndUpdate(
+            { _id: input.gameid },
+            {
+              $set: { questions: slicedQuestions },
+              $addToSet: { replacedquestions: input.questionid },
+            },
+            { new: true }
+          )
+            .populate("questions")
+            .populate("replacedquestions");
+
           return updatedGame;
         } catch (error) {
           console.error(error);

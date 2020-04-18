@@ -60,7 +60,7 @@ const typeDef = gql`
 
   extend type Mutation {
     createquestgame(input: createQuestGameInput!): GameQuest
-    selectquestadvantage(gameid: ID!, advantage: String!, gems: Int!): GameQuest
+    changequestquestion(input: ReplaceQuestionInput!): GameQuest
     enterquestanswer(
       gameid: ID!
       roundresults: RoundResultsInput!

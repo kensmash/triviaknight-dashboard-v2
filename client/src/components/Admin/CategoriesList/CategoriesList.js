@@ -7,7 +7,7 @@ import {
   Icon,
   Grid,
   Label,
-  Pagination
+  Pagination,
 } from "semantic-ui-react";
 //components
 import CatGameTypeSelect from "../CatGameTypeSelect/CatGameTypeSelect";
@@ -19,7 +19,7 @@ import { useQuery, useMutation } from "@apollo/react-hooks";
 import QUERY_CATEGORIESPAGE from "../../../apollo/queries/categoriesPage";
 import QUERY_CLIENTCATEGORYSEARCH from "../../../apollo/queries/client-categorySearchCriteria";
 
-const CategoriesList = props => {
+const CategoriesList = (props) => {
   const { data: { categorySearchCriteria } = {} } = useQuery(
     QUERY_CLIENTCATEGORYSEARCH
   );
@@ -34,8 +34,8 @@ const CategoriesList = props => {
       name: categorySearchCriteria.name,
       type: categorySearchCriteria.type,
       genres: categorySearchCriteria.genres,
-      partycategory: categorySearchCriteria.partycategory
-    }
+      partycategory: categorySearchCriteria.partycategory,
+    },
   };
 
   const { loading, data: { categoriespage } = {}, fetchMore } = useQuery(
@@ -43,7 +43,7 @@ const CategoriesList = props => {
     {
       variables,
       fetchPolicy: "network-only",
-      onCompleted: data => {
+      onCompleted: (data) => {
         //change currently selected page when no records for page greater than 1
         if (
           !data.categoriespage.categories.length &&
@@ -52,11 +52,11 @@ const CategoriesList = props => {
           updateCategorySearch({
             variables: {
               ...categorySearchCriteria,
-              activePage: 1
-            }
+              activePage: 1,
+            },
           });
         }
-      }
+      },
     }
   );
 
@@ -66,8 +66,8 @@ const CategoriesList = props => {
     updateCategorySearch({
       variables: {
         ...categorySearchCriteria,
-        type: data.value === "" ? null : data.value
-      }
+        type: data.value === "" ? null : data.value,
+      },
     });
   };
 
@@ -76,8 +76,8 @@ const CategoriesList = props => {
     updateCategorySearch({
       variables: {
         ...categorySearchCriteria,
-        partycategory: data.value === "" ? null : data.value
-      }
+        partycategory: data.value === "" ? null : data.value,
+      },
     });
   };
 
@@ -85,8 +85,8 @@ const CategoriesList = props => {
     updateCategorySearch({
       variables: {
         ...categorySearchCriteria,
-        genres: data.value
-      }
+        genres: data.value,
+      },
     });
   };
 
@@ -150,7 +150,7 @@ const CategoriesList = props => {
           <>
             <Table.Body>
               {categoriespage.categories.length ? (
-                categoriespage.categories.map(cat => (
+                categoriespage.categories.map((cat) => (
                   <Table.Row key={cat._id}>
                     <Table.Cell>
                       {cat.partycategory && (
@@ -163,9 +163,9 @@ const CategoriesList = props => {
                           New
                         </Label>
                       )}
-                      {cat.showaspopular && (
+                      {cat.showasupdated && (
                         <Label as="a" color="blue" horizontal>
-                          Popular
+                          Updated
                         </Label>
                       )}
                       <Link to={`${match.url}/${cat._id}`}>{cat.name}</Link>
@@ -188,7 +188,7 @@ const CategoriesList = props => {
 
                     <Table.Cell>
                       {cat.genres.length
-                        ? cat.genres.map(genre => genre.name).join(", ")
+                        ? cat.genres.map((genre) => genre.name).join(", ")
                         : null}
                     </Table.Cell>
                     <Table.Cell collapsing>
@@ -232,8 +232,8 @@ const CategoriesList = props => {
                             updateCategorySearch({
                               variables: {
                                 ...categorySearchCriteria,
-                                activePage
-                              }
+                                activePage,
+                              },
                             }).then(() =>
                               fetchMore({
                                 variables: {
@@ -242,13 +242,13 @@ const CategoriesList = props => {
                                     offset:
                                       categorySearchCriteria.limit *
                                         parseInt(activePage, 10) -
-                                      categorySearchCriteria.limit
-                                  }
+                                      categorySearchCriteria.limit,
+                                  },
                                 },
                                 updateQuery: (prev, { fetchMoreResult }) => {
                                   if (!fetchMoreResult) return prev;
                                   return fetchMoreResult;
-                                }
+                                },
                               })
                             )
                           }
@@ -294,7 +294,7 @@ const MUTATION_UPDATECATEGORYSEARCH = gql`
 
 CategoriesList.propTypes = {
   history: PropTypes.object.isRequired,
-  match: PropTypes.object.isRequired
+  match: PropTypes.object.isRequired,
 };
 
 export default CategoriesList;

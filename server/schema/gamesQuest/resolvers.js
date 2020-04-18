@@ -6,7 +6,10 @@ const {
 } = require("../_helpers/helper-permissions");
 //query helpers
 const { currentQuestTopic } = require("../_helpers/helper-gamesquest");
-const { questQuestions } = require("../_helpers/helper-questions");
+const {
+  questQuestions,
+  differentQuestion,
+} = require("../_helpers/helper-questions");
 
 const resolvers = {
   Query: {
@@ -120,14 +123,55 @@ const resolvers = {
       }
     ),
 
+    changequestquestion: requiresAuth.createResolver(
+      async (parent, { input }) => {
+        let questions = [];
+
+        if (input.replacedquestions.length) {
+          questions = input.currentquestions.concat(input.replacedquestions);
+        } else {
+          questions = input.currentquestions;
+        }
+
+        try {
+          //get new question
+          const newQuestion = await differentQuestion(
+            input.category,
+            questions
+          );
+
+          let slicedQuestions = input.currentquestions.slice();
+
+          //update current questions array
+          slicedQuestions.splice(input.questionindex, 1, newQuestion._id);
+
+          //update game
+          let updatedGame = await GameQuest.findOneAndUpdate(
+            { _id: input.gameid },
+            {
+              $set: { questions: slicedQuestions },
+              $addToSet: { replacedquestions: input.questionid },
+            },
+            { new: true }
+          )
+            .populate("questions")
+            .populate("replacedquestions");
+
+          return updatedGame;
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    ),
+
     enterquestanswer: requiresAuth.createResolver(
       async (parent, { gameid, roundresults, endgame }, { user }) => {
         try {
           //give user some gems
           if (roundresults.points > 0) {
-            let gems = 10;
+            let gems = 5;
             if (roundresults.difficulty === "Hard") {
-              gems = 20;
+              gems = 10;
             }
             await User.findOneAndUpdate({ _id: user.id }, { $inc: { gems } });
           }
