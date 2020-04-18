@@ -24,6 +24,7 @@ const typeDef = gql`
     resultsseen: Boolean
     roundresults: [RoundResults]
     timer: Int
+    gems: Int
   }
 
   input createQuestGameInput {

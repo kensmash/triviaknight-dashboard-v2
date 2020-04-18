@@ -1,4 +1,5 @@
 const GameJoust = require("../../models/GameJoust");
+const User = require("../../models/User");
 //auth helpers
 const {
   requiresAuth,
@@ -95,6 +96,17 @@ const resolvers = {
     createjoustgame: requiresAuth.createResolver(
       async (parent, { input }, { user }) => {
         try {
+          //deduct gems for time boost
+          if (input.timer > 30000) {
+            let gems = 0;
+            if (input.timer === 45000) {
+              gems = -5;
+            }
+            if (input.timer === 60000) {
+              gems = -10;
+            }
+            await User.findOneAndUpdate({ _id: user.id }, { $inc: { gems } });
+          }
           const questions = await joustQuestions(input.category);
           const newgame = new GameJoust({
             createdby: user.id,
@@ -131,6 +143,17 @@ const resolvers = {
     joinjoustgame: requiresAuth.createResolver(
       async (parent, { gameid, timer }, { user }) => {
         try {
+          //deduct gems for time boost
+          if (timer > 30000) {
+            let gems = 0;
+            if (timer === 45000) {
+              gems = -5;
+            }
+            if (timer === 60000) {
+              gems = -10;
+            }
+            await User.findOneAndUpdate({ _id: user.id }, { $inc: { gems } });
+          }
           const updatedGame = await GameJoust.findOneAndUpdate(
             { _id: gameid, "players.player": user.id },
             {

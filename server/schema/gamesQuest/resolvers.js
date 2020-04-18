@@ -81,6 +81,17 @@ const resolvers = {
   Mutation: {
     createquestgame: requiresAuth.createResolver(
       async (parent, { input }, { user }) => {
+        //deduct gems for time boost
+        if (input.timer > 30000) {
+          let gems = 0;
+          if (input.timer === 45000) {
+            gems = -5;
+          }
+          if (input.timer === 60000) {
+            gems = -10;
+          }
+          await User.findOneAndUpdate({ _id: user.id }, { $inc: { gems } });
+        }
         try {
           let catsAndQuestions;
           if (input.topictype === "Category Type") {
@@ -169,8 +180,9 @@ const resolvers = {
       async (parent, { gameid, roundresults, endgame }, { user }) => {
         try {
           //give user some gems
+          let gems = 0;
           if (roundresults.points > 0) {
-            let gems = 5;
+            gems = 5;
             if (roundresults.difficulty === "Hard") {
               gems = 10;
             }

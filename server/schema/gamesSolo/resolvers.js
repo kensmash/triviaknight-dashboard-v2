@@ -73,6 +73,17 @@ const resolvers = {
     createsologame: requiresAuth.createResolver(
       async (parent, { typeid, typename, timer }, { user }) => {
         try {
+          //deduct gems for time boost
+          if (input.timer > 30000) {
+            let gems = 0;
+            if (input.timer === 45000) {
+              gems = -5;
+            }
+            if (input.timer === 60000) {
+              gems = -10;
+            }
+            await User.findOneAndUpdate({ _id: user.id }, { $inc: { gems } });
+          }
           const catsAndQuestions = await soloQuestions(typeid);
 
           const newgame = new GameSolo({
