@@ -86,7 +86,7 @@ const typeDef = gql`
 
   extend type Mutation {
     createjoustgame(input: createJoustGameInput!): GameJoust
-    joinjoustgame(gameid: ID!): GameJoust
+    joinjoustgame(gameid: ID!, timer: Int): GameJoust
     declinejoustgame(gameid: ID!): GameJoust
     changejoustquestion(input: ReplaceQuestionInput!): GameJoust
     enterjoustanswerandadvance(

@@ -27,12 +27,12 @@ const typeDef = gql`
   }
 
   input createQuestGameInput {
+    timer: Int
     topictype: String!
     topic: String!
     cattype: ID
     category: ID
     genre: ID
-    timer: Int
   }
 
   extend type Query {

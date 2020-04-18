@@ -1,4 +1,5 @@
 const GameQuest = require("../../models/GameQuest");
+const User = require("../../models/User");
 //auth helpers
 const {
   requiresAuth,
@@ -181,6 +182,7 @@ const resolvers = {
             { _id: gameid, "players.player": user.id },
             {
               $addToSet: { "players.$.roundresults": { ...roundresults } },
+              $inc: { "players.$.gems": gems },
             },
             { new: true }
           ).populate("players.player");
