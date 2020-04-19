@@ -1,5 +1,5 @@
-const User = require("../../models/User");
 const GameJoust = require("../../models/GameJoust");
+const User = require("../../models/User");
 const ExpoPushTicket = require("../../models/ExpoPushTicket");
 const { Expo } = require("expo-server-sdk");
 
@@ -9,16 +9,16 @@ const changeJoustTurn = async (gameid, player, opponent, expo) => {
       { _id: gameid, "players.player": opponent.player._id },
       {
         $set: {
-          "players.$.turn": true
-        }
+          "players.$.turn": true,
+        },
       }
     );
     const updatedGame = await GameJoust.findOneAndUpdate(
       { _id: gameid, "players.player": player.player._id },
       {
         $set: {
-          "players.$.turn": false
-        }
+          "players.$.turn": false,
+        },
       },
       { new: true }
     ).populate("players.player");
@@ -48,9 +48,9 @@ const changeJoustTurn = async (gameid, player, opponent, expo) => {
           title: pushTitle,
           text: pushMessage,
           type: pushType,
-          gameid: updatedGame._id
+          gameid: updatedGame._id,
         },
-        channelId: "game-messages"
+        channelId: "game-messages",
       });
     }
     //send push notifications in chunks
@@ -66,9 +66,9 @@ const changeJoustTurn = async (gameid, player, opponent, expo) => {
           console.error(error);
         }
         //add types
-        const ticketsWithTypes = tickets.map(ticket => ({
+        const ticketsWithTypes = tickets.map((ticket) => ({
           type: "Joust Challenge",
-          ...ticket
+          ...ticket,
         }));
         //save tickets to database for later retrieval
         for (let ticket of ticketsWithTypes) {
@@ -92,11 +92,11 @@ const endJoustGame = async (gameid, player, opponent, expo) => {
   //enter player results
   try {
     const playerScore = player.roundresults
-      .map(results => results.points)
+      .map((results) => results.points)
       .reduce((a, b) => a + b, 0);
 
     const opponentScore = opponent.roundresults
-      .map(results => results.points)
+      .map((results) => results.points)
       .reduce((a, b) => a + b, 0);
 
     let winningplayer = "";
@@ -113,7 +113,7 @@ const endJoustGame = async (gameid, player, opponent, expo) => {
         await GameJoust.findOneAndUpdate(
           { _id: gameid },
           {
-            $set: { "players.$[].tied": true }
+            $set: { "players.$[].tied": true },
           }
         );
       } catch (error) {
@@ -121,10 +121,14 @@ const endJoustGame = async (gameid, player, opponent, expo) => {
       }
     } else {
       try {
+        await User.findOneAndUpdate(
+          { _id: winningplayer },
+          { $inc: { gems: 5 } }
+        );
         await GameJoust.findOneAndUpdate(
           { _id: gameid, "players.player": winningplayer },
           {
-            $set: { "players.$.winner": true }
+            $set: { "players.$.winner": true },
           }
         );
       } catch (error) {
@@ -135,7 +139,7 @@ const endJoustGame = async (gameid, player, opponent, expo) => {
     const endedGame = await GameJoust.findOneAndUpdate(
       { _id: gameid, "players.player": player.player._id },
       {
-        $set: { gameover: true, "players.$.resultsseen": true }
+        $set: { gameover: true, "players.$.resultsseen": true },
       },
       { new: true }
     ).populate("players.player");
@@ -165,9 +169,9 @@ const endJoustGame = async (gameid, player, opponent, expo) => {
           title: pushTitle,
           text: pushMessage,
           type: pushType,
-          gameid: endedGame._id
+          gameid: endedGame._id,
         },
-        channelId: "game-messages"
+        channelId: "game-messages",
       });
     }
     //send push notifications in chunks
@@ -183,9 +187,9 @@ const endJoustGame = async (gameid, player, opponent, expo) => {
           console.error(error);
         }
         //add types
-        const ticketsWithTypes = tickets.map(ticket => ({
+        const ticketsWithTypes = tickets.map((ticket) => ({
           type: "Joust Ended",
-          ...ticket
+          ...ticket,
         }));
         //save tickets to database for later retrieval
         for (let ticket of ticketsWithTypes) {
@@ -207,5 +211,5 @@ const endJoustGame = async (gameid, player, opponent, expo) => {
 
 module.exports = {
   changeJoustTurn,
-  endJoustGame
+  endJoustGame,
 };

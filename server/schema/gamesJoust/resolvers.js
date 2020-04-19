@@ -113,7 +113,6 @@ const resolvers = {
             players: [
               {
                 player: user.id,
-                rewards: { addtotimer: 0 },
                 joined: true,
                 turn: true,
                 timer: input.timer,
