@@ -21,7 +21,10 @@ const changeJoustTurn = async (gameid, player, opponent, expo) => {
         },
       },
       { new: true }
-    ).populate("players.player");
+    )
+      .populate("players.player")
+      .populate("players.questions")
+      .populate("players.replacedquestions");
 
     const opponentInfo = await User.findOne({ _id: opponent.player._id });
     const pushTokens = opponentInfo.expoPushTokens;
@@ -142,7 +145,10 @@ const endJoustGame = async (gameid, player, opponent, expo) => {
         $set: { gameover: true, "players.$.resultsseen": true },
       },
       { new: true }
-    ).populate("players.player");
+    )
+      .populate("players.player")
+      .populate("players.questions")
+      .populate("players.replacedquestions");
 
     //push notifications
     let messages = [];
