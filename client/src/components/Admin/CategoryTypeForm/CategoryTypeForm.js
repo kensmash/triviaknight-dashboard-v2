@@ -12,7 +12,7 @@ import { useQuery, useMutation } from "@apollo/react-hooks";
 import QUERY_CATEGORYTYPES from "../../../apollo/queries/categoryTypes";
 import QUERY_CATEGORYTYPESPAGE from "../../../apollo/queries/categoryTypesPage";
 
-const CategoryTypeForm = props => {
+const CategoryTypeForm = (props) => {
   const [submittedCategoryTypeName, setSubmittedCategoryTypeName] = useState(
     ""
   );
@@ -25,14 +25,14 @@ const CategoryTypeForm = props => {
     iconset: "Ionicons",
     hasgenres: true,
     playable: false,
-    pressluckactive: false
+    pressluckactive: false,
   };
 
   const [fields, setFields] = useState(initialState);
 
   const [fieldErrors, setFieldErrors] = useState({
     name: "",
-    iconname: ""
+    iconname: "",
   });
 
   const [upsertCategoryType] = useMutation(MUTATION_UPSERTCATEGORYTYPE);
@@ -46,12 +46,12 @@ const CategoryTypeForm = props => {
         iconset: categorytype.iconset ? categorytype.iconset : "Ionicons",
         hasgenres: categorytype.hasgenres,
         playable: categorytype.playable,
-        pressluckactive: categorytype.pressluckactive
+        pressluckactive: categorytype.pressluckactive,
       });
     }
   }, [props]);
 
-  const inputChangedHandler = event => {
+  const inputChangedHandler = (event) => {
     setFields({ ...fields, [event.target.id]: event.target.value });
     setFieldErrors({ ...fieldErrors, [event.target.id]: "" });
   };
@@ -93,13 +93,13 @@ const CategoryTypeForm = props => {
     //check if type already exists
     if (
       props.pageType !== "edit" &&
-      categoryTypes.some(type => type.name === name)
+      categoryTypes.some((type) => type.name === name)
     )
       errors.name = "That category type already exists!";
     return errors;
   };
 
-  const formSubmitHandler = async event => {
+  const formSubmitHandler = async (event) => {
     event.preventDefault();
     const errors = formValidateHandler(fields.name, fields.iconname);
     if (Object.keys(errors).length)
@@ -114,7 +114,7 @@ const CategoryTypeForm = props => {
       iconset,
       hasgenres,
       playable,
-      pressluckactive
+      pressluckactive,
     } = fields;
     //add category
     const graphqlResponse = await upsertCategoryType({
@@ -126,8 +126,8 @@ const CategoryTypeForm = props => {
           iconset,
           hasgenres,
           playable,
-          pressluckactive
-        }
+          pressluckactive,
+        },
       },
       refetchQueries: [
         {
@@ -136,11 +136,11 @@ const CategoryTypeForm = props => {
             offset: 15 * parseInt(1, 10) - 15,
             limit: 15,
             name: "",
-            hasgenres: ""
-          }
+            hasgenres: "",
+          },
         },
-        { query: QUERY_CATEGORYTYPES }
-      ]
+        { query: QUERY_CATEGORYTYPES },
+      ],
     });
     setSubmittedCategoryTypeName(graphqlResponse.data.upsertcategorytype.name);
   };
@@ -158,7 +158,7 @@ const CategoryTypeForm = props => {
           id="name"
           placeholder="Enter name..."
           value={fields.name}
-          onChange={event => inputChangedHandler(event)}
+          onChange={(event) => inputChangedHandler(event)}
         />
         <FormErrorMessage
           reveal={fieldErrors.name !== ""}
@@ -171,7 +171,7 @@ const CategoryTypeForm = props => {
           id="iconname"
           placeholder="Enter icon name..."
           value={fields.iconname}
-          onChange={event => inputChangedHandler(event)}
+          onChange={(event) => inputChangedHandler(event)}
         />
         <Label
           pointing
@@ -217,7 +217,7 @@ const CategoryTypeForm = props => {
 
       <Form.Field>
         <Checkbox
-          label="Active Press Your Luck Topic"
+          label="Active Quest Topic"
           checked={fields.pressluckactive}
           onChange={(event, data) => pressLuckCheckboxHandler(event, data)}
         />
@@ -278,7 +278,7 @@ const MUTATION_UPSERTCATEGORYTYPE = gql`
 CategoryTypeForm.propTypes = {
   pageType: PropTypes.string,
   categorytype: PropTypes.object,
-  history: PropTypes.object
+  history: PropTypes.object,
 };
 
 export default CategoryTypeForm;

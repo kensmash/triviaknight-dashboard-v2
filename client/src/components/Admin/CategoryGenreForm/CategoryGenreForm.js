@@ -12,7 +12,7 @@ import QUERY_CATEGORYGENRES from "../../../apollo/queries/categoryGenres";
 import QUERY_CATEGORYGENRESPAGE from "../../../apollo/queries/categoryGenresPage";
 import QUERY_CLIENTCATEGORYGENRESSEARCH from "../../../apollo/queries/client-categoryGenreSearchCriteria";
 
-const CategoryGenreForm = props => {
+const CategoryGenreForm = (props) => {
   const [submittedCategoryGenreName, setSubmittedCategoryGenreName] = useState(
     ""
   );
@@ -27,14 +27,14 @@ const CategoryGenreForm = props => {
     name: "",
     categorytypes: [],
     playable: false,
-    pressluckactive: false
+    pressluckactive: false,
   };
 
   const [fields, setFields] = useState(initialState);
 
   const [fieldErrors, setFieldErrors] = useState({
     name: "",
-    categorytypes: ""
+    categorytypes: "",
   });
 
   const [upsertCategoryGenre] = useMutation(MUTATION_UPSERTCATEGORYGENRE);
@@ -45,15 +45,15 @@ const CategoryGenreForm = props => {
       setFields({
         name: categorygenre.name,
         categorytypes: categorygenre.categorytypes
-          ? categorygenre.categorytypes.map(type => type._id)
+          ? categorygenre.categorytypes.map((type) => type._id)
           : [],
         playable: categorygenre.playable,
-        pressluckactive: categorygenre.pressluckactive
+        pressluckactive: categorygenre.pressluckactive,
       });
     }
   }, [props]);
 
-  const inputChangedHandler = event => {
+  const inputChangedHandler = (event) => {
     setFields({ ...fields, [event.target.id]: event.target.value });
     setFieldErrors({ ...fieldErrors, [event.target.id]: "" });
   };
@@ -88,13 +88,13 @@ const CategoryGenreForm = props => {
     //check if genre already exists
     if (
       props.pageType !== "edit" &&
-      categoryGenres.some(genre => genre.name === name)
+      categoryGenres.some((genre) => genre.name === name)
     )
       errors.name = "That genre already exists!";
     return errors;
   };
 
-  const formSubmitHandler = async event => {
+  const formSubmitHandler = async (event) => {
     event.preventDefault();
     const errors = formValidateHandler(fields.name, fields.categorytypes);
     if (Object.keys(errors).length)
@@ -111,8 +111,8 @@ const CategoryGenreForm = props => {
           name: fields.name,
           categorytypes: fields.categorytypes,
           playable: fields.playable,
-          pressluckactive: fields.pressluckactive
-        }
+          pressluckactive: fields.pressluckactive,
+        },
       },
       refetchQueries: [
         {
@@ -125,12 +125,12 @@ const CategoryGenreForm = props => {
             limit: categoryGenreSearchCriteria.limit,
             name: categoryGenreSearchCriteria.name,
             categorytypes: categoryGenreSearchCriteria.types.length
-              ? categoryGenreSearchCriteria.types.map(item => item.value)
-              : []
-          }
+              ? categoryGenreSearchCriteria.types.map((item) => item.value)
+              : [],
+          },
         },
-        { query: QUERY_CATEGORYGENRES }
-      ]
+        { query: QUERY_CATEGORYGENRES },
+      ],
     });
     setSubmittedCategoryGenreName(
       graphqlResponse.data.upsertcategorygenre.name
@@ -150,7 +150,7 @@ const CategoryGenreForm = props => {
           placeholder="Enter Category Genre name..."
           id="name"
           value={fields.name}
-          onChange={event => inputChangedHandler(event)}
+          onChange={(event) => inputChangedHandler(event)}
         />
         <FormErrorMessage
           reveal={fieldErrors.name !== ""}
@@ -183,7 +183,7 @@ const CategoryGenreForm = props => {
 
       <Form.Field>
         <Checkbox
-          label="Active Press Your Luck Topic"
+          label="Active Quest Topic"
           checked={fields.pressluckactive}
           onChange={(event, data) => pressLuckCheckboxHandler(event, data)}
         />
@@ -244,7 +244,7 @@ const MUTATION_UPSERTCATEGORYGENRE = gql`
 CategoryGenreForm.propTypes = {
   pageType: PropTypes.string,
   categorygenre: PropTypes.object,
-  history: PropTypes.object
+  history: PropTypes.object,
 };
 
 export default CategoryGenreForm;

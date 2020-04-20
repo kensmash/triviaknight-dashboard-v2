@@ -320,7 +320,7 @@ const CategoryForm = (props) => {
 
       <Form.Field>
         <Checkbox
-          label="Active Press Your Luck Topic"
+          label="Active Quest Topic"
           checked={fields.pressluckactive}
           onChange={(event, data) => pressLuckCheckboxHandler(event, data)}
         />

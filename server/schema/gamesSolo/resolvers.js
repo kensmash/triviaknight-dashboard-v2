@@ -1,4 +1,5 @@
 const GameSolo = require("../../models/GameSolo");
+const User = require("../../models/User");
 const CategoryType = require("../../models/CategoryType");
 //auth helpers
 const { requiresAuth } = require("../_helpers/helper-permissions");
@@ -74,12 +75,12 @@ const resolvers = {
       async (parent, { typeid, typename, timer }, { user }) => {
         try {
           //deduct gems for time boost
-          if (input.timer > 30000) {
+          if (timer > 30000) {
             let gems = 0;
-            if (input.timer === 45000) {
+            if (timer === 45000) {
               gems = -5;
             }
-            if (input.timer === 60000) {
+            if (timer === 60000) {
               gems = -10;
             }
             await User.findOneAndUpdate({ _id: user.id }, { $inc: { gems } });
