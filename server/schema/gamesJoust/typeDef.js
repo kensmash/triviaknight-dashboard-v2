@@ -28,6 +28,8 @@ const typeDef = gql`
     resultsseen: Boolean
     roundresults: [RoundResults]
     timer: Int
+    questions: [Question]
+    replacedquestions: [Question]
   }
 
   input JoustResultsInput {

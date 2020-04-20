@@ -75,10 +75,6 @@ const resolvers = {
         .populate({
           path: "joustgames",
           populate: { path: "players.player" },
-        })
-        .populate({
-          path: "siegegames",
-          populate: { path: "players.player" },
         });
     }),
 
@@ -426,8 +422,9 @@ const resolvers = {
         })
           .populate("createdby")
           .populate("players.player")
+          .populate("players.questions")
+          .populate("players.replacedquestions")
           .populate("category")
-          .populate("questions")
           .sort({ updatedAt: -1 })
           .limit(25);
 
@@ -752,33 +749,28 @@ const resolvers = {
             populate: { path: "players.player" },
           })
           .populate({
-            path: "siegegames",
+            path: "questgames",
             populate: { path: "players.player" },
           });
 
         const sologames = player.sologames;
         const joustgames = player.joustgames;
-        const siegegames = player.siegegames;
+        const questgames = player.questgames;
 
         //calculate questions player has answered
-        const soloquestionsanswered = sologames.length * 6;
+        const soloquestionsanswered = sologames.length * 7;
         const joustquestionsanswered = joustgames
           .map((game) => {
             return game.players.find((player) => player.player._id == user.id)
               .roundresults.length;
           })
           .reduce((a, b) => a + b, 0);
-        const siegequestionsanswered = siegegames
-          .map((game) => {
-            return game.players.find((player) => player.player._id == user.id)
-              .roundresults.length;
-          })
-          .reduce((a, b) => a + b, 0);
+        const questquestionsanswered = questgames.length * 7;
 
         const totalquestionsanswered =
           soloquestionsanswered +
           joustquestionsanswered +
-          siegequestionsanswered;
+          questquestionsanswered;
 
         let newRank;
         let rankChanged = false;

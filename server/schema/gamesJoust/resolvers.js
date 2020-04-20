@@ -116,11 +116,11 @@ const resolvers = {
                 joined: true,
                 turn: true,
                 timer: input.timer,
+                questions,
               },
-              { player: input.opponentid },
+              { player: input.opponentid, questions },
             ],
             category: input.category,
-            questions,
           });
           const newGame = await newgame.save();
           const returnedGame = await GameJoust.findOne({
@@ -132,7 +132,8 @@ const resolvers = {
               path: "category",
               populate: { path: "type" },
             })
-            .populate("questions");
+            .populate("players.questions")
+            .populate("players.replacedquestions");
           return returnedGame;
         } catch (error) {
           console.error(error);
@@ -164,7 +165,10 @@ const resolvers = {
               },
             },
             { new: true }
-          ).populate("players.player");
+          )
+            .populate("players.player")
+            .populate("players.questions")
+            .populate("players.replacedquestions");
           return updatedGame;
         } catch (error) {
           console.error(error);
@@ -188,7 +192,7 @@ const resolvers = {
     ),
 
     changejoustquestion: requiresAuth.createResolver(
-      async (parent, { input }) => {
+      async (parent, { input }, { user }) => {
         let questions = [];
 
         if (input.replacedquestions.length) {
@@ -211,15 +215,16 @@ const resolvers = {
 
           //update game
           let updatedGame = await GameJoust.findOneAndUpdate(
-            { _id: input.gameid },
+            { _id: input.gameid, "players.player": user.id },
             {
-              $set: { questions: slicedQuestions },
-              $addToSet: { replacedquestions: input.questionid },
+              $set: { "players.$.questions": slicedQuestions },
+              $addToSet: { "players.$.replacedquestions": input.questionid },
             },
             { new: true }
           )
-            .populate("questions")
-            .populate("replacedquestions");
+            .populate("players.player")
+            .populate("players.questions")
+            .populate("players.replacedquestions");
 
           return updatedGame;
         } catch (error) {
@@ -238,7 +243,10 @@ const resolvers = {
               $addToSet: { "players.$.roundresults": { ...roundresults } },
             },
             { new: true }
-          ).populate("players.player");
+          )
+            .populate("players.player")
+            .populate("players.questions")
+            .populate("players.replacedquestions");
 
           if (advance) {
             const player = updatedGame.players.find(
