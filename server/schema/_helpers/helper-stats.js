@@ -717,8 +717,8 @@ const questGameStats = async () => {
           name: { $arrayElemAt: ["$player.name", 0] },
           rank: { $arrayElemAt: ["$player.rank", 0] },
           avatar: { $arrayElemAt: ["$player.avatar", 0] },
-          avatarBackGroundColor: {
-            $arrayElemAt: ["$player.avatarBackGroundColor", 0],
+          avatarBackgroundColor: {
+            $arrayElemAt: ["$player.avatarBackgroundColor", 0],
           },
           gamesplayed: "$totalGames",
           highscore: "$highScore",
@@ -770,7 +770,7 @@ const questLastWeekWinners = async () => {
           name: winner.name,
           rank: winner.rank,
           avatar: winner.avatar,
-          avatarBackGroundColor: winner.avatarBackGroundColor,
+          avatarBackgroundColor: winner.avatarBackgroundColor,
           highscore: lasthighscore.score,
         };
       });
@@ -796,7 +796,7 @@ const questAllTimeWinners = async () => {
           name: winner.name,
           rank: winner.rank,
           avatar: winner.avatar,
-          avatarBackGroundColor: winner.avatarBackGroundColor,
+          avatarBackgroundColor: winner.avatarBackgroundColor,
           wins: winner.questhighscores.length,
         };
       });
