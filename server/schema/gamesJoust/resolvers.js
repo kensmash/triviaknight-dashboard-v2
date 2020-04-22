@@ -285,11 +285,13 @@ const resolvers = {
     resignjoustgame: requiresAuth.createResolver(
       async (parent, { gameid }, { user, expo }) => {
         try {
-          //first add round results
-          let updatedGame = await GameJoust.findOneAndUpdate(
+          const updatedGame = await GameJoust.findOneAndUpdate(
             { _id: gameid, "players.player": user.id },
             {
-              $set: { "players.$.resultsseen": true },
+              $set: {
+                "players.$.resultsseen": true,
+                "players.$.resigned": true,
+              },
             },
             { new: true }
           ).populate("players.player");
@@ -302,14 +304,14 @@ const resolvers = {
             (player) => player.player._id != user.id
           );
 
-          updatedGame = await endJoustGame(
+          const endedGame = await endJoustGame(
             updatedGame._id,
             player,
             opponent,
             expo
           );
 
-          return updatedGame;
+          return endedGame;
         } catch (error) {
           console.error(error);
         }

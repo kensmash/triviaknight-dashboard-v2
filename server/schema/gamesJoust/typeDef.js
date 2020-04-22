@@ -25,6 +25,7 @@ const typeDef = gql`
     tied: Boolean
     winner: Boolean
     timedout: Boolean
+    resigned: Boolean
     resultsseen: Boolean
     roundresults: [RoundResults]
     timer: Int

@@ -9,6 +9,7 @@ const PlayerJoustSchema = new Schema(
     turn: { type: Boolean, default: false },
     tied: { type: Boolean, default: false },
     winner: { type: Boolean, default: false },
+    resigned: { type: Boolean, default: false },
     timedout: { type: Boolean, default: false },
     resultsseen: { type: Boolean, default: false },
     roundresults: [RoundResultsSchema],

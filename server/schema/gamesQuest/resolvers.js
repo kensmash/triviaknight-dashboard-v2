@@ -182,9 +182,9 @@ const resolvers = {
           //give user some gems
           let gems = 0;
           if (roundresults.points > 0) {
-            gems = 5;
+            gems = 2;
             if (roundresults.difficulty === "Hard") {
-              gems = 10;
+              gems = 5;
             }
             await User.findOneAndUpdate({ _id: user.id }, { $inc: { gems } });
           }

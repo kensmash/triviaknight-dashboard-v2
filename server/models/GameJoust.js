@@ -26,7 +26,6 @@ const gameJoustSchema = new Schema(
     ],
     accepted: { type: Boolean, default: false },
     declined: { type: Boolean, default: false },
-    resigned: { type: Boolean, default: false },
     timedoutwarningsent: { type: Boolean, default: false },
     timedout: { type: Boolean, default: false },
     gameover: { type: Boolean, default: false },
