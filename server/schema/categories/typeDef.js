@@ -6,6 +6,7 @@ const typeDef = gql`
     name: String
     description: String
     type: CategoryType
+    iconname: String
     genres: [CategoryGenre]
     questions: [Question]
     followers: [User]
@@ -51,6 +52,7 @@ const typeDef = gql`
     id: ID
     name: String!
     imageurl: String
+    iconname: String
     description: String
     type: ID!
     genres: [ID]
@@ -80,5 +82,5 @@ const typeDef = gql`
 `;
 
 module.exports = {
-  typeDef
+  typeDef,
 };

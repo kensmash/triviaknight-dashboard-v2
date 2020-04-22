@@ -9,6 +9,7 @@ export default gql`
         _id
         name
         description
+        iconname
         type {
           _id
           name

@@ -8,10 +8,11 @@ const categorySchema = new Schema(
       required: true,
       minlength: 2,
       maxlength: 60,
-      trim: true
+      trim: true,
     },
     imageurl: String,
     description: String,
+    iconname: { type: String, trim: true },
     type: { type: Schema.Types.ObjectId, ref: "categorytype", required: true },
     genres: [{ type: Schema.Types.ObjectId, ref: "categorygenres" }],
     partycategory: { type: Boolean, default: false },
@@ -24,12 +25,12 @@ const categorySchema = new Schema(
     showasupdated: { type: Boolean, default: false },
     updatedpushsent: { type: Boolean, default: false },
     showaspopular: { type: Boolean, default: false },
-    publishedAt: Date
+    publishedAt: Date,
   },
   {
     toObject: { virtuals: true },
     toJSON: { virtuals: true },
-    timestamps: true
+    timestamps: true,
   }
 );
 
@@ -38,13 +39,13 @@ const categorySchema = new Schema(
 categorySchema.virtual("questions", {
   ref: "question", // The model to use
   localField: "_id", // Find questions where `localField`
-  foreignField: "category" // contains `foreignField`
+  foreignField: "category", // contains `foreignField`
 });
 
 categorySchema.virtual("followers", {
   ref: "user", // The model to use
   localField: "_id", // Find questions where `localField`
-  foreignField: "categories" // contains `foreignField`
+  foreignField: "categories", // contains `foreignField`
 });
 
 //Create the model class

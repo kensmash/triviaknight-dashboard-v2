@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { Form, Button, Checkbox } from "semantic-ui-react";
+import { Form, Button, Label, Checkbox } from "semantic-ui-react";
 //components
 import CatTypeSelect from "../CatTypeSelect/CatTypeSelect";
 import CatGenreSelect from "../CatGenreSelect/CatGenreSelect";
@@ -20,6 +20,7 @@ const CategoryForm = (props) => {
     categoryname: "",
     categorytype: "",
     categorygenres: [],
+    iconname: "",
     categorydescription: "",
     published: false,
     partycategory: false,
@@ -51,6 +52,7 @@ const CategoryForm = (props) => {
         categoryname: category.name,
         categorytype: category.type._id,
         categorygenres: category.genres.map((genre) => genre._id),
+        iconname: category.iconname || "",
         categorydescription: category.description,
         published: category.published,
         partycategory: category.partycategory || false,
@@ -168,6 +170,7 @@ const CategoryForm = (props) => {
           name: fields.categoryname,
           type: fields.categorytype,
           genres: fields.categorygenres,
+          iconname: fields.iconname,
           description: fields.categorydescription,
           published: fields.published,
           partycategory: fields.partycategory,
@@ -246,6 +249,24 @@ const CategoryForm = (props) => {
           catGenreSelectHandler(event, data)
         }
       />
+
+      <Form.Field>
+        <label>Icon Name</label>
+        <input
+          id="iconname"
+          placeholder="Enter icon name..."
+          value={fields.iconname}
+          onChange={(event) => inputChangedHandler(event)}
+        />
+        <Label
+          pointing
+          as="a"
+          href="https://oblador.github.io/react-native-vector-icons/"
+          target="_blank"
+        >
+          Enter an icon name from react native vector icons.
+        </Label>
+      </Form.Field>
 
       <Form.Field>
         <Form.TextArea

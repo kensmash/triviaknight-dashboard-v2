@@ -9,5 +9,5 @@ module.exports = {
   //SendGrid
   SendGridKey: process.env.SENDGRID_API_KEY,
   //Apollo Engine
-  EngineAPI: process.env.ENGINE_API_KEY
+  EngineAPI: process.env.ENGINE_API_KEY,
 };
