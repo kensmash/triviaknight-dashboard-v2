@@ -584,6 +584,24 @@ const resolvers = {
               $set: {
                 avatar,
                 avatarBackgroundColor: color,
+              },
+            },
+            { new: true }
+          );
+          return editedUser;
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    ),
+
+    completesignupflow: requiresAuth.createResolver(
+      async (parent, args, { user }) => {
+        try {
+          const editedUser = await User.findOneAndUpdate(
+            { _id: user.id },
+            {
+              $set: {
                 hasCompletedSignUpFlow: true,
               },
             },

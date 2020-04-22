@@ -153,6 +153,7 @@ const typeDef = gql`
     updatepassword(email: String!, password: String!): Boolean
     updateusername(name: String!): UserNameChangeResponse
     updateavatarandcolor(avatar: String!, color: String!): User
+    completesignupflow: User
     buyreward(reward: String!, amount: Int!): User
     changegems(add: Boolean!, amount: Int!): User
     updatesignupflow: User
