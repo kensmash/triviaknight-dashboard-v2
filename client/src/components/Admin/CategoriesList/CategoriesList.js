@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import {
+  Input,
   Table,
   Button,
   Icon,
@@ -62,6 +63,24 @@ const CategoriesList = (props) => {
 
   const [updateCategorySearch] = useMutation(MUTATION_UPDATECATEGORYSEARCH);
 
+  const inputChangedHandler = (event) => {
+    updateCategorySearch({
+      variables: {
+        ...categorySearchCriteria,
+        name: event.target.value,
+      },
+    });
+  };
+
+  const clearCategorySearchHandler = () => {
+    updateCategorySearch({
+      variables: {
+        ...categorySearchCriteria,
+        name: "",
+      },
+    });
+  };
+
   const catTypeSelectHandler = (_e, data) => {
     updateCategorySearch({
       variables: {
@@ -72,7 +91,6 @@ const CategoriesList = (props) => {
   };
 
   const catGameTypeSelectHandler = (_e, data) => {
-    console.log(data.value);
     updateCategorySearch({
       variables: {
         ...categorySearchCriteria,
@@ -95,8 +113,25 @@ const CategoriesList = (props) => {
   return (
     <>
       <Grid columns="equal" className="searchCriteria">
+        <Grid.Row style={{ paddingBottom: 0 }}>
+          <Grid.Column className="tablePerPageColumn">
+            <Input icon fluid>
+              <input
+                placeholder="Search by Category Name"
+                value={categorySearchCriteria.name}
+                onChange={inputChangedHandler}
+              />
+
+              {categorySearchCriteria.name !== "" ? (
+                <Button icon="x" onClick={() => clearCategorySearchHandler()} />
+              ) : (
+                <Icon name="search" />
+              )}
+            </Input>
+          </Grid.Column>
+        </Grid.Row>
         <Grid.Row>
-          <Grid.Column>
+          <Grid.Column className="tablePerPageColumn">
             <CatGameTypeSelect
               value={categorySearchCriteria.partycategory}
               placeholder="Filter By Game Type"
@@ -114,6 +149,7 @@ const CategoriesList = (props) => {
               }
             />
           </Grid.Column>
+
           <Grid.Column className="tablePerPageColumn">
             <CatGenreSelect
               pagetype="catlist"

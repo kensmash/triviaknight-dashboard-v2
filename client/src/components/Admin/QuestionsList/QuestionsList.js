@@ -10,7 +10,7 @@ import {
   Form,
   Select,
   Input,
-  Pagination
+  Pagination,
 } from "semantic-ui-react";
 //components
 import CategorySelect from "./helpers/CategorySelect";
@@ -24,11 +24,11 @@ import { useQuery, useMutation } from "@apollo/react-hooks";
 import QUERY_QUESTIONSPAGE from "../../../apollo/queries/questionsPage";
 import QUERY_QUESTIONSEARCHCRITERIA from "../../../apollo/queries/client-questionSearchCriteria";
 
-const QuestionsList = props => {
+const QuestionsList = (props) => {
   const [perPageOptions] = useState([
     { value: 10, text: "10" },
     { value: 15, text: "15" },
-    { value: 20, text: "20" }
+    { value: 20, text: "20" },
   ]);
 
   const { data: { questionSearchCriteria } = {} } = useQuery(
@@ -45,7 +45,7 @@ const QuestionsList = props => {
     category: questionSearchCriteria.category,
     difficulty: questionSearchCriteria.difficulty,
     type: questionSearchCriteria.type,
-    published: questionSearchCriteria.publishedstatus
+    published: questionSearchCriteria.publishedstatus,
   };
 
   const { loading, data: { questionspage } = {}, fetchMore } = useQuery(
@@ -53,7 +53,7 @@ const QuestionsList = props => {
     {
       variables,
       fetchPolicy: "cache-and-network",
-      onCompleted: data => {
+      onCompleted: (data) => {
         //change currently selected page when no records for page greated than 1
         if (
           !data.questionspage.questions.length &&
@@ -62,11 +62,11 @@ const QuestionsList = props => {
           this.props.updateQuestionSearch({
             variables: {
               ...questionSearchCriteria,
-              activePage: 1
-            }
+              activePage: 1,
+            },
           });
         }
-      }
+      },
     }
   );
 
@@ -76,17 +76,17 @@ const QuestionsList = props => {
     updateQuestionSearch({
       variables: {
         ...questionSearchCriteria,
-        limit: data.value
-      }
+        limit: data.value,
+      },
     });
   };
 
-  const inputChangedHandler = event => {
+  const inputChangedHandler = (event) => {
     updateQuestionSearch({
       variables: {
         ...questionSearchCriteria,
-        question: event.target.value
-      }
+        question: event.target.value,
+      },
     });
   };
 
@@ -94,8 +94,8 @@ const QuestionsList = props => {
     updateQuestionSearch({
       variables: {
         ...questionSearchCriteria,
-        question: ""
-      }
+        question: "",
+      },
     });
   };
 
@@ -103,8 +103,8 @@ const QuestionsList = props => {
     updateQuestionSearch({
       variables: {
         ...questionSearchCriteria,
-        category: data.value
-      }
+        category: data.value,
+      },
     });
   };
 
@@ -112,8 +112,8 @@ const QuestionsList = props => {
     updateQuestionSearch({
       variables: {
         ...questionSearchCriteria,
-        difficulty: data.value
-      }
+        difficulty: data.value,
+      },
     });
   };
 
@@ -121,8 +121,8 @@ const QuestionsList = props => {
     updateQuestionSearch({
       variables: {
         ...questionSearchCriteria,
-        type: data.value
-      }
+        type: data.value,
+      },
     });
   };
 
@@ -130,8 +130,8 @@ const QuestionsList = props => {
     updateQuestionSearch({
       variables: {
         ...questionSearchCriteria,
-        publishedstatus: data.value === "" ? null : data.value
-      }
+        publishedstatus: data.value === "" ? null : data.value,
+      },
     });
   };
 
@@ -158,7 +158,7 @@ const QuestionsList = props => {
             </Form>
           </Grid.Column>
           <Grid.Column className="tablePerPageColumn">
-            <Input type="text" fluid placeholder="Search..." action>
+            <Input icon fluid>
               <input
                 placeholder="Search by Question"
                 value={questionSearchCriteria.question}
@@ -167,7 +167,9 @@ const QuestionsList = props => {
 
               {questionSearchCriteria.question !== "" ? (
                 <Button icon="x" onClick={() => clearQuestionSearchHandler()} />
-              ) : null}
+              ) : (
+                <Icon name="search" />
+              )}
             </Input>
           </Grid.Column>
         </Grid.Row>
@@ -248,7 +250,7 @@ const QuestionsList = props => {
           <>
             <Table.Body>
               {questionspage.questions.length ? (
-                questionspage.questions.map(ques => (
+                questionspage.questions.map((ques) => (
                   <Table.Row key={ques._id}>
                     <Table.Cell>
                       <Link to={`${match.url}/${ques._id}`}>
@@ -314,20 +316,20 @@ const QuestionsList = props => {
                             updateQuestionSearch({
                               variables: {
                                 ...questionSearchCriteria,
-                                activePage
-                              }
+                                activePage,
+                              },
                             }).then(() =>
                               fetchMore({
                                 variables: {
                                   offset:
                                     questionSearchCriteria.limit *
                                       parseInt(activePage, 10) -
-                                    questionSearchCriteria.limit
+                                    questionSearchCriteria.limit,
                                 },
                                 updateQuery: (prev, { fetchMoreResult }) => {
                                   if (!fetchMoreResult) return prev;
                                   return fetchMoreResult;
-                                }
+                                },
                               })
                             )
                           }
@@ -377,7 +379,7 @@ const MUTATION_UPDATEQUESTIONSEARCH = gql`
 
 QuestionsList.propTypes = {
   history: PropTypes.object.isRequired,
-  match: PropTypes.object.isRequired
+  match: PropTypes.object.isRequired,
 };
 
 export default QuestionsList;
