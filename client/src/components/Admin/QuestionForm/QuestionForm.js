@@ -15,7 +15,7 @@ import { gql } from "apollo-boost";
 import { useQuery, useMutation } from "@apollo/react-hooks";
 import QUERY_CLIENTADDQUESTIONCRITERIA from "../../../apollo/queries/client-addQuestionCriteria";
 
-const QuestionForm = props => {
+const QuestionForm = (props) => {
   const [questionSubmitted, setQuestionSubmitted] = useState(false);
   const [redirect, setRedirect] = useState(false);
   const initialFields = {
@@ -24,7 +24,7 @@ const QuestionForm = props => {
       { answer: "", correct: false },
       { answer: "", correct: false },
       { answer: "", correct: false },
-      { answer: "", correct: false }
+      { answer: "", correct: false },
     ],
     category: "",
     questiontype: "Multiple Choice",
@@ -32,7 +32,7 @@ const QuestionForm = props => {
     imageurl: null,
     videourl: null,
     audiourl: null,
-    published: false
+    published: false,
   };
 
   const initialFieldErrors = {
@@ -43,7 +43,7 @@ const QuestionForm = props => {
     correctanswer: "",
     category: "",
     questiontype: "",
-    questiondifficulty: ""
+    questiondifficulty: "",
   };
 
   const [fields, setFields] = useState(initialFields);
@@ -59,18 +59,18 @@ const QuestionForm = props => {
   );
 
   useEffect(() => {
-    if (props.pageType === "edit" && !questionSubmitted) {
+    if (props.pageType === "edit") {
       const { question } = props;
       updateAddQuestionCriteria({
         variables: {
-          category: question.category._id
-        }
+          category: question.category._id,
+        },
       });
       setFields({
         question: question.question,
-        answers: question.answers.map(question => ({
+        answers: question.answers.map((question) => ({
           answer: question.answer,
-          correct: question.correct
+          correct: question.correct,
         })),
         category: question.category._id,
         questiontype: question.type,
@@ -78,21 +78,21 @@ const QuestionForm = props => {
         imageurl: question.imageurl,
         videourl: question.videourl,
         audiourl: question.audiourl,
-        published: question.published
+        published: question.published,
       });
     }
-  }, [props, questionSubmitted, updateAddQuestionCriteria]);
+  }, [props, updateAddQuestionCriteria]);
 
   const gotoQuestionsPageHandler = () => {
     clearFormHandler();
     setRedirect(true);
   };
 
-  const questionChangedHandler = event => {
+  const questionChangedHandler = (event) => {
     setFields({ ...fields, question: event.target.value });
     setFieldErrors({
       ...fieldErrors,
-      question: ""
+      question: "",
     });
   };
 
@@ -104,14 +104,14 @@ const QuestionForm = props => {
       ...fieldErrors,
       answers: "",
       answer: "",
-      answerindexes: []
+      answerindexes: [],
     });
   };
 
   const correctAnswerHandler = (_event, value, index) => {
     const answers = [...fields.answers];
     if (value.checked) {
-      answers.forEach(answer => (answer.correct = false));
+      answers.forEach((answer) => (answer.correct = false));
       answers[index].correct = true;
     } else {
       answers[index].correct = false;
@@ -119,7 +119,7 @@ const QuestionForm = props => {
     setFields({ ...fields, answers });
     setFieldErrors({
       ...fieldErrors,
-      answers: ""
+      answers: "",
     });
   };
 
@@ -131,11 +131,11 @@ const QuestionForm = props => {
       ...fieldErrors,
       answers: "",
       answer: "",
-      answerindexes: []
+      answerindexes: [],
     });
   };
 
-  const removeAnswerHandler = index => {
+  const removeAnswerHandler = (index) => {
     const answers = [...fields.answers];
     answers.splice(index, 1);
     setFields({ ...fields, answers: answers });
@@ -143,7 +143,7 @@ const QuestionForm = props => {
       ...fieldErrors,
       answers: "",
       answer: "",
-      answerindexes: []
+      answerindexes: [],
     });
   };
 
@@ -155,8 +155,8 @@ const QuestionForm = props => {
   const categorySelectHandler = (_event, data) => {
     updateAddQuestionCriteria({
       variables: {
-        category: data.value
-      }
+        category: data.value,
+      },
     });
     setFields({ ...fields, category: data.value });
     setFieldErrors({ ...fieldErrors, category: "" });
@@ -176,8 +176,10 @@ const QuestionForm = props => {
 
   const formValidateHandler = (question, answers, type, difficulty) => {
     const errors = {};
-    const emptyanswers = fields.answers.filter(answer => answer.answer === "");
-    const allanswers = fields.answers.map(answer => answer.answer);
+    const emptyanswers = fields.answers.filter(
+      (answer) => answer.answer === ""
+    );
+    const allanswers = fields.answers.map((answer) => answer.answer);
     const duplicateanswers = allanswers.some((answer, index) => {
       return allanswers.indexOf(answer) !== index;
     });
@@ -187,7 +189,7 @@ const QuestionForm = props => {
 
     if (
       fields.published &&
-      !fields.answers.filter(answer => answer.correct).length
+      !fields.answers.filter((answer) => answer.correct).length
     )
       errors.answers = "Don't forget to select a correct answer!";
     if (duplicateanswers) {
@@ -205,7 +207,7 @@ const QuestionForm = props => {
       //now get the duplicate answer indexes
       let duplicatesindex = [];
       allanswers.forEach((answer, index) => {
-        if (duplicates.some(duplicate => duplicate === answer)) {
+        if (duplicates.some((duplicate) => duplicate === answer)) {
           duplicatesindex.push(allanswers.indexOf(answer, index));
         }
       });
@@ -244,11 +246,11 @@ const QuestionForm = props => {
       correctanswer: "",
       category: "",
       questiontype: "",
-      questiondifficulty: ""
+      questiondifficulty: "",
     });
   };
 
-  const formSubmitHandler = event => {
+  const formSubmitHandler = (event) => {
     event.preventDefault();
     const errors = formValidateHandler(
       fields.question,
@@ -271,7 +273,7 @@ const QuestionForm = props => {
       imageurl,
       videourl,
       audiourl,
-      published
+      published,
     } = fields;
     //add question
     await upsertQuestion({
@@ -286,9 +288,9 @@ const QuestionForm = props => {
           imageurl,
           videourl,
           audiourl,
-          published
-        }
-      }
+          published,
+        },
+      },
     });
     setQuestionSubmitted(true);
   };
@@ -301,7 +303,7 @@ const QuestionForm = props => {
         { answer: "", correct: false },
         { answer: "", correct: false },
         { answer: "", correct: false },
-        { answer: "", correct: false }
+        { answer: "", correct: false },
       ],
       category: "",
       questiontype: "Multiple Choice",
@@ -309,7 +311,7 @@ const QuestionForm = props => {
       imageurl: null,
       videourl: null,
       audiourl: null,
-      published: false
+      published: false,
     });
   };
 
@@ -329,7 +331,7 @@ const QuestionForm = props => {
                 id="question"
                 placeholder="Enter question..."
                 value={fields.question}
-                onChange={event => questionChangedHandler(event)}
+                onChange={(event) => questionChangedHandler(event)}
               />
               <FormErrorMessage
                 reveal={fieldErrors.question !== ""}
@@ -484,7 +486,7 @@ const MUTATION_UPDATEADDQUESTIONCRITERIA = gql`
 QuestionForm.propTypes = {
   pageType: PropTypes.string,
   category: PropTypes.object,
-  history: PropTypes.object
+  history: PropTypes.object,
 };
 
 export default QuestionForm;

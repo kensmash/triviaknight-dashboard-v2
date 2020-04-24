@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid, Container, Icon, Card } from "semantic-ui-react";
+import { Grid, Container, Card } from "semantic-ui-react";
 import Footer from "../../components/Footer/Footer";
 import logo from "../../images/site-logo.png"; // Tell Webpack this JS file uses this image
 import { gql } from "apollo-boost";
@@ -25,82 +25,100 @@ const Home = () => {
         </section>
         <section className="homepage-middle">
           <h2>Features</h2>
-          <Grid stackable columns={3}>
-            <Grid.Column>
-              <Container>
+          <Grid stackable columns={4}>
+            <Grid.Row>
+              <Grid.Column>
+                <Container>
+                  <Card fluid>
+                    <Card.Content>
+                      <Card.Header>
+                        {categorieswidget.totalcategories} Categories
+                      </Card.Header>
+                      <Card.Description>
+                        Matthew is a musician living in Nashville.
+                      </Card.Description>
+                    </Card.Content>
+                  </Card>
+                </Container>
+              </Grid.Column>
+              <Grid.Column>
+                <Container>
+                  <Card fluid>
+                    <Card.Content>
+                      <Card.Header>
+                        {categorieswidget.totalcategories} Questions
+                      </Card.Header>
+                      <Card.Description>
+                        Matthew is a musician living in Nashville.
+                      </Card.Description>
+                    </Card.Content>
+                  </Card>
+                </Container>
+              </Grid.Column>
+              <Grid.Column>
                 <Card fluid>
                   <Card.Content>
-                    <Card.Header>
-                      {categorieswidget.totalcategories} Categories
-                    </Card.Header>
+                    <Card.Header>Challenge Your Friends</Card.Header>
                     <Card.Description>
                       Matthew is a musician living in Nashville.
                     </Card.Description>
                   </Card.Content>
                 </Card>
-              </Container>
-            </Grid.Column>
-            <Grid.Column>
-              <Card fluid>
-                <Card.Content>
-                  <Card.Header>Challenge Your Friends</Card.Header>
-                  <Card.Description>
-                    Matthew is a musician living in Nashville.
-                  </Card.Description>
-                </Card.Content>
-              </Card>
-            </Grid.Column>
-            <Grid.Column>
-              <Container>
-                <Card fluid>
-                  <Card.Content>
-                    <Card.Header>Track Your Stats</Card.Header>
-                    <Card.Description>
-                      Matthew is a musician living in Nashville.
-                    </Card.Description>
-                  </Card.Content>
-                </Card>
-              </Container>
-            </Grid.Column>
+              </Grid.Column>
+              <Grid.Column>
+                <Container>
+                  <Card fluid>
+                    <Card.Content>
+                      <Card.Header>Track Your Stats</Card.Header>
+                      <Card.Description>
+                        Matthew is a musician living in Nashville.
+                      </Card.Description>
+                    </Card.Content>
+                  </Card>
+                </Container>
+              </Grid.Column>
+            </Grid.Row>
           </Grid>
           <h2>Game Modes</h2>
 
-          <Card fluid>
-            <Card.Content>
-              <Card.Header>Solo</Card.Header>
-              <Card.Description>
-                Matthew is a musician living in Nashville.
-              </Card.Description>
-            </Card.Content>
-          </Card>
-
-          <Card fluid>
-            <Card.Content>
-              <Icon circular name="users" />
-              <Card.Header>Joust</Card.Header>
-              <Card.Description>
-                Matthew is a musician living in Nashville.
-              </Card.Description>
-            </Card.Content>
-          </Card>
-
-          <Card fluid>
-            <Card.Content>
-              <Card.Header>Siege</Card.Header>
-              <Card.Description>
-                Matthew is a musician living in Nashville.
-              </Card.Description>
-            </Card.Content>
-          </Card>
-
-          <Card fluid>
-            <Card.Content>
-              <Card.Header>Press Your Luck</Card.Header>
-              <Card.Description>
-                Matthew is a musician living in Nashville.
-              </Card.Description>
-            </Card.Content>
-          </Card>
+          <Grid stackable columns={3}>
+            <Grid.Row>
+              <Grid.Column>
+                <Container>
+                  <Card fluid>
+                    <Card.Content>
+                      <Card.Header>Solo</Card.Header>
+                      <Card.Description>
+                        Matthew is a musician living in Nashville.
+                      </Card.Description>
+                    </Card.Content>
+                  </Card>
+                </Container>
+              </Grid.Column>
+              <Grid.Column>
+                <Card fluid>
+                  <Card.Content>
+                    <Card.Header>Joust</Card.Header>
+                    <Card.Description>
+                      Matthew is a musician living in Nashville.
+                    </Card.Description>
+                  </Card.Content>
+                </Card>
+              </Grid.Column>
+              <Grid.Column>
+                <Container>
+                  <Card fluid>
+                    <Card.Content>
+                      <Card.Header>Quest</Card.Header>
+                      <Card.Description>
+                        Matthew is a musician living in Nashville.
+                      </Card.Description>
+                    </Card.Content>
+                  </Card>
+                </Container>
+              </Grid.Column>
+            </Grid.Row>
+          </Grid>
         </section>
         <section className="homepage-bottom">
           <Footer />
