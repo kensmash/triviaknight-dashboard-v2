@@ -80,7 +80,7 @@ const resolvers = {
       };
     }),
 
-    categorieswidget: requiresAdmin.createResolver(async (parent, args) => {
+    categorieswidget: async (parent, args) => {
       try {
         const widget = await Promise.all([
           Category.estimatedDocumentCount(),
@@ -97,7 +97,7 @@ const resolvers = {
       } catch (error) {
         console.error(error);
       }
-    }),
+    },
 
     tkgamecategories: requiresAuth.createResolver(
       (parent, { args }, { user }) => {

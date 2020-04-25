@@ -59,28 +59,31 @@ const QuestionForm = (props) => {
   );
 
   useEffect(() => {
-    if (props.pageType === "edit") {
-      const { question } = props;
-      updateAddQuestionCriteria({
-        variables: {
+    const setInitialFieldsHandler = () => {
+      if (props.pageType === "edit") {
+        const { question } = props;
+        updateAddQuestionCriteria({
+          variables: {
+            category: question.category._id,
+          },
+        });
+        setFields({
+          question: question.question,
+          answers: question.answers.map((question) => ({
+            answer: question.answer,
+            correct: question.correct,
+          })),
           category: question.category._id,
-        },
-      });
-      setFields({
-        question: question.question,
-        answers: question.answers.map((question) => ({
-          answer: question.answer,
-          correct: question.correct,
-        })),
-        category: question.category._id,
-        questiontype: question.type,
-        questiondifficulty: question.difficulty,
-        imageurl: question.imageurl,
-        videourl: question.videourl,
-        audiourl: question.audiourl,
-        published: question.published,
-      });
-    }
+          questiontype: question.type,
+          questiondifficulty: question.difficulty,
+          imageurl: question.imageurl,
+          videourl: question.videourl,
+          audiourl: question.audiourl,
+          published: question.published,
+        });
+      }
+    };
+    setInitialFieldsHandler();
   }, [props, updateAddQuestionCriteria]);
 
   const gotoQuestionsPageHandler = () => {

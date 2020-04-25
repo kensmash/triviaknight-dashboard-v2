@@ -41,7 +41,7 @@ img {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 3em 8em 0 8em;
+  padding: 0 0 4em 0;
   background: rgba(0, 0, 0, 1);
 }
 
@@ -195,6 +195,9 @@ img {
   }
   .questionCard {
     height: 100%;
+  }
+  .homepage-top {
+    padding: 3em 8em 0 8em;
   }
 }
 
