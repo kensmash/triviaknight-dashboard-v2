@@ -13,12 +13,12 @@ import PushReceiptsWidget from "../../../components/Admin/Dashboard/PushReceipts
 
 const Dashboard = ({ match, history }) => (
   <Fragment>
-    <Card.Group itemsPerRow={3}>
+    <Card.Group stackable itemsPerRow={3}>
       <UsersWidget history={history} />
       <QuestionsWidget history={history} />
       <CategoriesWidget history={history} />
     </Card.Group>
-    <Card.Group itemsPerRow={4}>
+    <Card.Group stackable itemsPerRow={4}>
       <QuestionReportsWidget history={history} />
       <SupportRequestsWidget history={history} />
       <PushTicketsWidget history={history} />
@@ -29,7 +29,7 @@ const Dashboard = ({ match, history }) => (
 
 Dashboard.propTypes = {
   match: PropTypes.object,
-  history: PropTypes.object
+  history: PropTypes.object,
 };
 
 export default Dashboard;

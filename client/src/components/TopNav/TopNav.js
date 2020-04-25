@@ -6,7 +6,7 @@ import { Menu, Dropdown } from "semantic-ui-react";
 import { useQuery, useMutation, useApolloClient } from "@apollo/react-hooks";
 import QUERY_CURRENTUSER from "../../apollo/queries/currentUser";
 
-const TopNav = props => {
+const TopNav = (props) => {
   const [activeItem, setActiveItem] = useState("");
 
   const { data: { currentUser } = {} } = useQuery(QUERY_CURRENTUSER);
@@ -25,7 +25,7 @@ const TopNav = props => {
 
   return (
     <>
-      <Menu inverted>
+      <Menu inverted stackable>
         <Menu.Item
           as={Link}
           to={"/"}
