@@ -12,7 +12,7 @@ const currentQuestTopic = async () => {
     let results = {};
     //look in categories
     const catTopic = await Category.findOne({
-      pressluckactive: { $eq: true },
+      questactive: { $eq: true },
     });
     if (catTopic) {
       results = {
@@ -23,7 +23,7 @@ const currentQuestTopic = async () => {
     }
     //also in category types
     const catTypeTopic = await CategoryType.findOne({
-      pressluckactive: { $eq: true },
+      questactive: { $eq: true },
     });
     if (catTypeTopic) {
       results = {
@@ -34,7 +34,50 @@ const currentQuestTopic = async () => {
     }
     //and in genres
     const catGenreTopic = await CategoryGenre.findOne({
-      pressluckactive: { $eq: true },
+      questactive: { $eq: true },
+    });
+    if (catGenreTopic) {
+      results = {
+        id: catGenreTopic._id,
+        type: "Genre",
+        topic: catGenreTopic.name,
+      };
+    }
+
+    return results;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const nextQuestTopic = async () => {
+  try {
+    let results = {};
+    //look in categories
+    const catTopic = await Category.findOne({
+      nextquestactive: { $eq: true },
+    });
+    if (catTopic) {
+      results = {
+        id: catTopic._id,
+        type: "Category",
+        topic: catTopic.name,
+      };
+    }
+    //also in category types
+    const catTypeTopic = await CategoryType.findOne({
+      nextquestactive: { $eq: true },
+    });
+    if (catTypeTopic) {
+      results = {
+        id: catTypeTopic._id,
+        type: "Category Type",
+        topic: catTypeTopic.name,
+      };
+    }
+    //and in genres
+    const catGenreTopic = await CategoryGenre.findOne({
+      nextquestactive: { $eq: true },
     });
     if (catGenreTopic) {
       results = {
@@ -194,5 +237,6 @@ const saveQuestHighScore = async (topic, expo) => {
 
 module.exports = {
   currentQuestTopic,
+  nextQuestTopic,
   saveQuestHighScore,
 };

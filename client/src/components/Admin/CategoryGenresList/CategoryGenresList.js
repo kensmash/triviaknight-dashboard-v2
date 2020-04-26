@@ -7,7 +7,7 @@ import {
   Button,
   Icon,
   Grid,
-  Pagination
+  Pagination,
 } from "semantic-ui-react";
 //components
 import CatTypeSelect from "../CatTypeSelect/CatTypeSelect";
@@ -18,7 +18,7 @@ import { useQuery, useMutation } from "@apollo/react-hooks";
 import QUERY_CATEGORYGENRESPAGE from "../../../apollo/queries/categoryGenresPage";
 import QUERY_CLIENTCATEGORYGENRESSEARCH from "../../../apollo/queries/client-categoryGenreSearchCriteria";
 
-const CategoryGenresList = props => {
+const CategoryGenresList = (props) => {
   const [name, setName] = useState("");
 
   const { data: { categoryGenreSearchCriteria } = {} } = useQuery(
@@ -33,15 +33,15 @@ const CategoryGenresList = props => {
     limit: categoryGenreSearchCriteria.limit,
     name: categoryGenreSearchCriteria.name,
     categorytypes: categoryGenreSearchCriteria.types.length
-      ? categoryGenreSearchCriteria.types.map(item => item.value)
-      : []
+      ? categoryGenreSearchCriteria.types.map((item) => item.value)
+      : [],
   };
 
   const { loading, data: { categoryGenresPage } = {}, fetchMore } = useQuery(
     QUERY_CATEGORYGENRESPAGE,
     {
       variables,
-      fetchPolicy: "cache-and-network"
+      fetchPolicy: "cache-and-network",
     }
   );
 
@@ -49,7 +49,7 @@ const CategoryGenresList = props => {
     MUTATION_UPDATECATEGORYGENRESEARCH
   );
 
-  const genreNameChangeHandler = event => {
+  const genreNameChangeHandler = (event) => {
     setName(event.target.value);
   };
 
@@ -57,8 +57,8 @@ const CategoryGenresList = props => {
     updateCategoryGenreSearch({
       variables: {
         ...categoryGenreSearchCriteria,
-        name
-      }
+        name,
+      },
     });
   };
 
@@ -66,8 +66,8 @@ const CategoryGenresList = props => {
     updateCategoryGenreSearch({
       variables: {
         ...categoryGenreSearchCriteria,
-        name: ""
-      }
+        name: "",
+      },
     });
     setName("");
   };
@@ -76,8 +76,8 @@ const CategoryGenresList = props => {
     updateCategoryGenreSearch({
       variables: {
         ...categoryGenreSearchCriteria,
-        types: data.value
-      }
+        types: data.value,
+      },
     });
   };
 
@@ -94,7 +94,7 @@ const CategoryGenresList = props => {
                   <input
                     placeholder="Search by Name"
                     value={name}
-                    onChange={event => genreNameChangeHandler(event)}
+                    onChange={(event) => genreNameChangeHandler(event)}
                   />
                   <Button icon="search" onClick={genreNameSearchHandler} />
                   {categoryGenreSearchCriteria.name !== "" ? (
@@ -122,7 +122,7 @@ const CategoryGenresList = props => {
           <Table.Row>
             <Table.HeaderCell>Name</Table.HeaderCell>
             <Table.HeaderCell>Siege Playable</Table.HeaderCell>
-            <Table.HeaderCell>Press Luck Active</Table.HeaderCell>
+            <Table.HeaderCell>Quest Active</Table.HeaderCell>
             <Table.HeaderCell>Category Types</Table.HeaderCell>
             <Table.HeaderCell>Actions</Table.HeaderCell>
           </Table.Row>
@@ -137,16 +137,16 @@ const CategoryGenresList = props => {
           <>
             <Table.Body>
               {categoryGenresPage.categorygenres.length ? (
-                categoryGenresPage.categorygenres.map(genre => (
+                categoryGenresPage.categorygenres.map((genre) => (
                   <Table.Row key={genre._id}>
                     <Table.Cell>{genre.name}</Table.Cell>
                     <Table.Cell>{genre.playable ? "Yes" : "No"}</Table.Cell>
-                    <Table.Cell>
-                      {genre.pressluckactive ? "Yes" : "No"}
-                    </Table.Cell>
+                    <Table.Cell>{genre.questactive ? "Yes" : "No"}</Table.Cell>
                     <Table.Cell>
                       {genre.categorytypes.length
-                        ? genre.categorytypes.map(type => type.name).join(", ")
+                        ? genre.categorytypes
+                            .map((type) => type.name)
+                            .join(", ")
                         : null}
                     </Table.Cell>
                     <Table.Cell collapsing>
@@ -199,20 +199,20 @@ const CategoryGenresList = props => {
                             updateCategoryGenreSearch({
                               variables: {
                                 ...categoryGenreSearchCriteria,
-                                activePage
-                              }
+                                activePage,
+                              },
                             }).then(() =>
                               fetchMore({
                                 variables: {
                                   offset:
                                     categoryGenreSearchCriteria.limit *
                                       parseInt(activePage, 10) -
-                                    categoryGenreSearchCriteria.limit
+                                    categoryGenreSearchCriteria.limit,
                                 },
                                 updateQuery: (prev, { fetchMoreResult }) => {
                                   if (!fetchMoreResult) return prev;
                                   return fetchMoreResult;
-                                }
+                                },
                               })
                             )
                           }
@@ -253,7 +253,7 @@ const MUTATION_UPDATECATEGORYGENRESEARCH = gql`
 
 CategoryGenresList.propTypes = {
   history: PropTypes.object.isRequired,
-  match: PropTypes.object.isRequired
+  match: PropTypes.object.isRequired,
 };
 
 export default CategoryGenresList;

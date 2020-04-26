@@ -57,20 +57,19 @@ const resolvers = {
     upsertcategorytype: requiresAdmin.createResolver(
       async (parent, { input }, { expo }) => {
         try {
-          if (input.pressluckactive) {
+          if (input.nextquestactive) {
             //first, save player high score from previous week
             const currentTopic = await currentQuestTopic();
             await saveQuestHighScore(currentTopic.topic, expo);
             //then reset press luck active on other genres
-            //then reset press luck active on other types
             await CategoryGenre.updateMany({
-              $set: { pressluckactive: false },
+              $set: { nextquestactive: false },
             });
             await CategoryType.updateMany({
-              $set: { pressluckactive: false },
+              $set: { nextquestactive: false },
             });
             await Category.updateMany({
-              $set: { pressluckactive: false },
+              $set: { nextquestactive: false },
             });
           }
           const upsertedCategoryType = await CategoryType.findOneAndUpdate(

@@ -258,7 +258,7 @@ const resolvers = {
               $push: {
                 recentquestions: {
                   $each: [mongoose.Types.ObjectId(roundresults.question)],
-                  $slice: 100,
+                  $slice: 140,
                 },
               },
             }

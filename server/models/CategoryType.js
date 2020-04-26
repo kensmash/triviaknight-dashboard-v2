@@ -8,7 +8,8 @@ const categoryTypeSchema = new Schema(
     iconset: { type: String, trim: true },
     hasgenres: { type: Boolean, required: true, default: true },
     playable: { type: Boolean, default: false },
-    pressluckactive: { type: Boolean, default: false }
+    questactive: { type: Boolean, default: false },
+    nextquestactive: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
@@ -16,7 +17,7 @@ const categoryTypeSchema = new Schema(
 categoryTypeSchema.virtual("categories", {
   ref: "category", // The model to use
   localField: "_id", // Find questions where `localField`
-  foreignField: "type" // contains `foreignField`
+  foreignField: "type", // contains `foreignField`
 });
 
 //Create the model class

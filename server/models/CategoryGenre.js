@@ -5,10 +5,11 @@ const categoryGenreSchema = new Schema(
   {
     name: { type: String, required: true, minlength: 3, trim: true },
     playable: { type: Boolean, default: false },
-    pressluckactive: { type: Boolean, default: false },
+    questactive: { type: Boolean, default: false },
+    nextquestactive: { type: Boolean, default: false },
     categorytypes: [
-      { type: Schema.Types.ObjectId, ref: "categorytype", required: true }
-    ]
+      { type: Schema.Types.ObjectId, ref: "categorytype", required: true },
+    ],
   },
   { timestamps: true }
 );
@@ -16,7 +17,7 @@ const categoryGenreSchema = new Schema(
 categoryGenreSchema.virtual("categories", {
   ref: "category", // The model to use
   localField: "_id", // Find questions where `localField`
-  foreignField: "genres" // contains `foreignField`
+  foreignField: "genres", // contains `foreignField`
 });
 
 //Create the model class

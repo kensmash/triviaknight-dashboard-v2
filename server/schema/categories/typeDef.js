@@ -62,7 +62,7 @@ const typeDef = gql`
     showasupdated: Boolean
     showaspopular: Boolean
     joustexclusive: Boolean
-    pressluckactive: Boolean
+    questactive: Boolean
   }
 
   extend type Query {

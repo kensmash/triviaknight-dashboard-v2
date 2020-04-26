@@ -6,7 +6,7 @@ import DeleteCategoryTypeModal from "./DeleteCategoryTypeModal";
 import { useQuery } from "@apollo/react-hooks";
 import QUERY_CATEGORYTYPESPAGE from "../../../apollo/queries/categoryTypesPage";
 
-const CategoryTypesList = props => {
+const CategoryTypesList = (props) => {
   const [activePage, setActivePage] = useState(1);
   const [limit] = useState(15);
 
@@ -14,28 +14,28 @@ const CategoryTypesList = props => {
     offset: limit * parseInt(activePage, 10) - limit,
     limit,
     name: "",
-    hasgenres: ""
+    hasgenres: "",
   };
 
   const { loading, data: { categoryTypesPage } = {}, fetchMore } = useQuery(
     QUERY_CATEGORYTYPESPAGE,
     {
       variables,
-      fetchPolicy: "cache-and-network"
+      fetchPolicy: "cache-and-network",
     }
   );
 
-  const fetchMoreHandler = activePage => {
+  const fetchMoreHandler = (activePage) => {
     setActivePage(activePage);
     if (activePage > 1) {
       fetchMore({
         variables: {
-          offset: limit * parseInt(activePage, 10) - limit
+          offset: limit * parseInt(activePage, 10) - limit,
         },
         updateQuery: (prev, { fetchMoreResult }) => {
           if (!fetchMoreResult) return prev;
           return fetchMoreResult;
-        }
+        },
       });
     }
   };
@@ -49,7 +49,7 @@ const CategoryTypesList = props => {
           <Table.Row>
             <Table.HeaderCell>Name</Table.HeaderCell>
             <Table.HeaderCell>Playable</Table.HeaderCell>
-            <Table.HeaderCell>Press Luck Active</Table.HeaderCell>
+            <Table.HeaderCell>Quest Active</Table.HeaderCell>
             <Table.HeaderCell>Has Genres</Table.HeaderCell>
             <Table.HeaderCell>Actions</Table.HeaderCell>
           </Table.Row>
@@ -64,14 +64,12 @@ const CategoryTypesList = props => {
           <>
             <Table.Body>
               {categoryTypesPage.categorytypes.length ? (
-                categoryTypesPage.categorytypes.map(type => (
+                categoryTypesPage.categorytypes.map((type) => (
                   <Table.Row key={type._id}>
                     <Table.Cell>{type.name}</Table.Cell>
                     <Table.Cell>{type.playable ? "Yes" : "No"}</Table.Cell>
 
-                    <Table.Cell>
-                      {type.pressluckactive ? "Yes" : "No"}
-                    </Table.Cell>
+                    <Table.Cell>{type.questactive ? "Yes" : "No"}</Table.Cell>
                     <Table.Cell>{type.hasgenres ? "Yes" : "No"}</Table.Cell>
                     <Table.Cell collapsing>
                       <div>
@@ -138,7 +136,7 @@ const CategoryTypesList = props => {
 
 CategoryTypesList.propTypes = {
   history: PropTypes.object.isRequired,
-  match: PropTypes.object.isRequired
+  match: PropTypes.object.isRequired,
 };
 
 export default CategoryTypesList;

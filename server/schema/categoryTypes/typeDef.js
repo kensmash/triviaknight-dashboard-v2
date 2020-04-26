@@ -9,7 +9,7 @@ const typeDef = gql`
     iconset: String
     imageurl: String
     hasgenres: Boolean
-    pressluckactive: Boolean
+    questactive: Boolean
     categories: [Category]
   }
 
@@ -47,5 +47,5 @@ const typeDef = gql`
 `;
 
 module.exports = {
-  typeDef
+  typeDef,
 };

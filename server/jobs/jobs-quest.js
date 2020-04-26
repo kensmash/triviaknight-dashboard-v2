@@ -1,8 +1,59 @@
 const schedule = require("node-schedule");
 const User = require("../models/User");
-const { currentQuestTopic } = require("../schema/_helpers/helper-gamesquest");
+const {
+  currentQuestTopic,
+  nextQuestTopic,
+} = require("../schema/_helpers/helper-gamesquest");
 const ExpoPushTicket = require("../models/ExpoPushTicket");
 const { Expo } = require("expo-server-sdk");
+
+//change Quest topic
+const changeQuestTopic = schedule.scheduleJob(
+  "0 0 * * 0", // run Sundays at midnight
+  //"*/5 * * * *", //every 5 minutes
+  async () => {
+    const expo = new Expo();
+    //take care of previous topic
+    const currentTopic = await currentQuestTopic();
+    await saveQuestHighScore(currentTopic.topic, expo);
+    //now get next topic
+    const nextTopic = await nextQuestTopic();
+    if (nextTopic) {
+      if (nextTopic.type === "category") {
+        await Category.findOneAndUpdate(
+          {
+            _id: mongoose.Types.ObjectId(nextTopic.id),
+          },
+          { $set: { questactive: true } }
+        );
+        await Category.updateMany({
+          $set: { nextquestactive: false },
+        });
+      } else if (nextTopic.type === "genre") {
+        await CategoryGenre.findOneAndUpdate(
+          {
+            _id: mongoose.Types.ObjectId(nextTopic.id),
+          },
+          { $set: { questactive: true } }
+        );
+        await CategoryGenre.updateMany({
+          $set: { nextquestactive: false },
+        });
+      } else {
+        await CategoryType.findOneAndUpdate(
+          {
+            _id: mongoose.Types.ObjectId(nextTopic.id),
+          },
+          { $set: { questactive: true } }
+        );
+        await CategoryType.updateMany({
+          $set: { nextquestactive: false },
+        });
+      }
+    }
+    //TODO: get random category if no next topic!
+  }
+);
 
 //send notification for weekly Quest topic
 const weeklyQuestTopic = schedule.scheduleJob(
@@ -80,4 +131,5 @@ const weeklyQuestTopic = schedule.scheduleJob(
 
 module.exports = {
   weeklyQuestTopic,
+  changeQuestTopic,
 };

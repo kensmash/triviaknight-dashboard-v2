@@ -5,7 +5,7 @@ const typeDef = gql`
     _id: ID
     name: String
     playable: Boolean
-    pressluckactive: Boolean
+    questactive: Boolean
     categorytypes: [CategoryType]
     categories: [Category]
   }
@@ -44,5 +44,5 @@ const typeDef = gql`
 `;
 
 module.exports = {
-  typeDef
+  typeDef,
 };

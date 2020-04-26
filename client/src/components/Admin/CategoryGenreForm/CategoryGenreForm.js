@@ -27,7 +27,7 @@ const CategoryGenreForm = (props) => {
     name: "",
     categorytypes: [],
     playable: false,
-    pressluckactive: false,
+    nextquestactive: false,
   };
 
   const [fields, setFields] = useState(initialState);
@@ -48,7 +48,7 @@ const CategoryGenreForm = (props) => {
           ? categorygenre.categorytypes.map((type) => type._id)
           : [],
         playable: categorygenre.playable,
-        pressluckactive: categorygenre.pressluckactive,
+        nextquestactive: categorygenre.nextquestactive,
       });
     }
   }, [props]);
@@ -73,9 +73,9 @@ const CategoryGenreForm = (props) => {
 
   const pressLuckCheckboxHandler = (_event, data) => {
     if (data.checked) {
-      setFields({ ...fields, pressluckactive: true });
+      setFields({ ...fields, nextquestactive: true });
     } else {
-      setFields({ ...fields, pressluckactive: false });
+      setFields({ ...fields, nextquestactive: false });
     }
   };
 
@@ -111,7 +111,7 @@ const CategoryGenreForm = (props) => {
           name: fields.name,
           categorytypes: fields.categorytypes,
           playable: fields.playable,
-          pressluckactive: fields.pressluckactive,
+          nextquestactive: fields.nextquestactive,
         },
       },
       refetchQueries: [
@@ -183,8 +183,8 @@ const CategoryGenreForm = (props) => {
 
       <Form.Field>
         <Checkbox
-          label="Active Quest Topic"
-          checked={fields.pressluckactive}
+          label="Next Active Quest Topic"
+          checked={fields.nextquestactive}
           onChange={(event, data) => pressLuckCheckboxHandler(event, data)}
         />
       </Form.Field>

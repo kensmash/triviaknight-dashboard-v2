@@ -25,7 +25,7 @@ const CategoryTypeForm = (props) => {
     iconset: "Ionicons",
     hasgenres: true,
     playable: false,
-    pressluckactive: false,
+    nextquestactive: false,
   };
 
   const [fields, setFields] = useState(initialState);
@@ -46,7 +46,7 @@ const CategoryTypeForm = (props) => {
         iconset: categorytype.iconset ? categorytype.iconset : "Ionicons",
         hasgenres: categorytype.hasgenres,
         playable: categorytype.playable,
-        pressluckactive: categorytype.pressluckactive,
+        nextquestactive: categorytype.nextquestactive,
       });
     }
   }, [props]);
@@ -78,9 +78,9 @@ const CategoryTypeForm = (props) => {
 
   const pressLuckCheckboxHandler = (_event, data) => {
     if (data.checked) {
-      setFields({ ...fields, pressluckactive: true });
+      setFields({ ...fields, nextquestactive: true });
     } else {
-      setFields({ ...fields, pressluckactive: false });
+      setFields({ ...fields, nextquestactive: false });
     }
   };
 
@@ -114,7 +114,7 @@ const CategoryTypeForm = (props) => {
       iconset,
       hasgenres,
       playable,
-      pressluckactive,
+      nextquestactive,
     } = fields;
     //add category
     const graphqlResponse = await upsertCategoryType({
@@ -126,7 +126,7 @@ const CategoryTypeForm = (props) => {
           iconset,
           hasgenres,
           playable,
-          pressluckactive,
+          nextquestactive,
         },
       },
       refetchQueries: [
@@ -217,8 +217,8 @@ const CategoryTypeForm = (props) => {
 
       <Form.Field>
         <Checkbox
-          label="Active Quest Topic"
-          checked={fields.pressluckactive}
+          label="Next Active Quest Topic"
+          checked={fields.nextquestactive}
           onChange={(event, data) => pressLuckCheckboxHandler(event, data)}
         />
       </Form.Field>

@@ -28,7 +28,7 @@ const CategoryForm = (props) => {
     showasupdated: false,
     showaspopular: false,
     joustexclusive: false,
-    pressluckactive: false,
+    nextquestactive: false,
   };
 
   const [fields, setFields] = useState(initialState);
@@ -60,7 +60,7 @@ const CategoryForm = (props) => {
         showasupdated: category.showasupdated || false,
         showaspopular: category.showaspopular || false,
         joustexclusive: category.joustexclusive || false,
-        pressluckactive: category.pressluckactive || false,
+        nextquestactive: category.nextquestactive || false,
       });
     }
   }, [props]);
@@ -125,9 +125,9 @@ const CategoryForm = (props) => {
 
   const pressLuckCheckboxHandler = (_event, data) => {
     if (data.checked) {
-      setFields({ ...fields, pressluckactive: true });
+      setFields({ ...fields, nextquestactive: true });
     } else {
-      setFields({ ...fields, pressluckactive: false });
+      setFields({ ...fields, nextquestactive: false });
     }
   };
 
@@ -178,7 +178,7 @@ const CategoryForm = (props) => {
           showaspopular: fields.showaspopular,
           showasupdated: fields.showasupdated,
           joustexclusive: fields.joustexclusive,
-          pressluckactive: fields.pressluckactive,
+          nextquestactive: fields.nextquestactive,
         },
       },
       refetchQueries: [
@@ -341,8 +341,8 @@ const CategoryForm = (props) => {
 
       <Form.Field>
         <Checkbox
-          label="Active Quest Topic"
-          checked={fields.pressluckactive}
+          label="Next Active Quest Topic"
+          checked={fields.nextquestactive}
           onChange={(event, data) => pressLuckCheckboxHandler(event, data)}
         />
       </Form.Field>
