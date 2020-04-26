@@ -15,6 +15,8 @@ const {
   joustQuestions,
   differentQuestion,
 } = require("../_helpers/helper-questions");
+//array helper
+const { arrayUnique } = require("../_helpers/helper-arrays");
 
 const resolvers = {
   Query: {
@@ -108,11 +110,19 @@ const resolvers = {
             }
             await User.findOneAndUpdate({ _id: user.id }, { $inc: { gems } });
           }
+          //try to avoid previous questions for player and opponent
           const player = await User.findOne({ _id: user.id });
+          const opponent = await User.findOne({ _id: input.opponentid });
+          const userquestions = player.recentquestions.slice();
+          const opponentquestions = opponent.recentquestions.slice();
+          const previousquestions = arrayUnique(
+            userquestions.concat(opponentquestions)
+          );
           const questions = await joustQuestions(
             input.category,
-            player.recentquestions
+            previousquestions
           );
+          //create game
           const newgame = new GameJoust({
             createdby: user.id,
             players: [

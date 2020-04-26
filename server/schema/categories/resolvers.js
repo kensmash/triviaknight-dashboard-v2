@@ -8,7 +8,7 @@ const {
   requiresAuth,
   requiresAdmin,
 } = require("../_helpers/helper-permissions");
-//press luck helpers
+//quest helpers
 const {
   currentQuestTopic,
   saveQuestHighScore,

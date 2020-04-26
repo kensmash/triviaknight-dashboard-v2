@@ -61,13 +61,17 @@ const soloQuestions = async (cattype) => {
 
 //joust games
 const joustQuestions = async (category, previousquestions) => {
+  const previousQuestionIds = previousquestions.map((question) =>
+    mongoose.Types.ObjectId(question)
+  );
+
   try {
     let firstQuestions = await Question.aggregate([
       {
         $match: {
           published: { $eq: true },
           category: { $eq: mongoose.Types.ObjectId(category) },
-          _id: { $nin: previousquestions },
+          _id: { $nin: previousQuestionIds },
           difficulty: { $eq: "Normal" },
         },
       },
@@ -92,7 +96,7 @@ const joustQuestions = async (category, previousquestions) => {
         $match: {
           published: { $eq: true },
           category: { $eq: mongoose.Types.ObjectId(category) },
-          _id: { $nin: previousquestions },
+          _id: { $nin: previousQuestionIds },
           difficulty: { $eq: "Hard" },
         },
       },
