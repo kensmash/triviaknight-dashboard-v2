@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const GameJoust = require("../../models/GameJoust");
 const User = require("../../models/User");
 //auth helpers

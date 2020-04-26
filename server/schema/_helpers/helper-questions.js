@@ -320,14 +320,8 @@ const differentQuestion = async (catid, currentquestions) => {
 };
 
 module.exports = {
-  randomCategoriesQuestions,
-  userCategoriesQuestions,
-  joustQuestions,
-  siegeGenreQuestions,
-  siegeCatTypeQuestions,
-  tkGameQuestions,
-  pressLuckQuestions,
-  questQuestions,
   soloQuestions,
+  joustQuestions,
+  questQuestions,
   differentQuestion,
 };
