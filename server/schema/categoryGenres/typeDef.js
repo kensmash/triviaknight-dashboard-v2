@@ -5,9 +5,10 @@ const typeDef = gql`
     _id: ID
     name: String
     playable: Boolean
-    questactive: Boolean
     categorytypes: [CategoryType]
     categories: [Category]
+    questactive: Boolean
+    nextquestactive: Boolean
   }
 
   type CategoryGenrePageResponse {
@@ -34,7 +35,7 @@ const typeDef = gql`
     name: String!
     categorytypes: [ID!]
     playable: Boolean
-    pressluckactive: Boolean
+    nextquestactive: Boolean
   }
 
   extend type Mutation {

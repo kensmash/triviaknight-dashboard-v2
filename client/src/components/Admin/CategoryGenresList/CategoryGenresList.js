@@ -123,6 +123,7 @@ const CategoryGenresList = (props) => {
             <Table.HeaderCell>Name</Table.HeaderCell>
             <Table.HeaderCell>Siege Playable</Table.HeaderCell>
             <Table.HeaderCell>Quest Active</Table.HeaderCell>
+            <Table.HeaderCell>Next Quest Active</Table.HeaderCell>
             <Table.HeaderCell>Category Types</Table.HeaderCell>
             <Table.HeaderCell>Actions</Table.HeaderCell>
           </Table.Row>
@@ -142,6 +143,9 @@ const CategoryGenresList = (props) => {
                     <Table.Cell>{genre.name}</Table.Cell>
                     <Table.Cell>{genre.playable ? "Yes" : "No"}</Table.Cell>
                     <Table.Cell>{genre.questactive ? "Yes" : "No"}</Table.Cell>
+                    <Table.Cell>
+                      {genre.nextquestactive ? "Yes" : "No"}
+                    </Table.Cell>
                     <Table.Cell>
                       {genre.categorytypes.length
                         ? genre.categorytypes
@@ -179,7 +183,7 @@ const CategoryGenresList = (props) => {
             </Table.Body>
             <Table.Footer>
               <Table.Row>
-                <Table.HeaderCell colSpan="6">
+                <Table.HeaderCell colSpan="7">
                   <Grid columns="equal">
                     <Grid.Column width={2}>
                       <div className="tableItemNumbers">

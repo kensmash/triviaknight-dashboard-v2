@@ -19,7 +19,8 @@ export default gql`
         _id
         name
         playable
-        pressluckactive
+        questactive
+        nextquestactive
         categorytypes {
           _id
           name

@@ -22,7 +22,7 @@ export default gql`
       showaspopular
       showasupdated
       joustexclusive
-      pressluckactive
+      nextquestactive
     }
   }
 `;

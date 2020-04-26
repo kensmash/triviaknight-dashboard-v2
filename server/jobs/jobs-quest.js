@@ -1,16 +1,21 @@
+const mongoose = require("mongoose");
 const schedule = require("node-schedule");
 const User = require("../models/User");
+const CategoryGenre = require("../models/CategoryGenre");
+const CategoryType = require("../models/CategoryType");
+const Category = require("../models/Category");
 const {
   currentQuestTopic,
   nextQuestTopic,
+  saveQuestHighScore,
 } = require("../schema/_helpers/helper-gamesquest");
 const ExpoPushTicket = require("../models/ExpoPushTicket");
 const { Expo } = require("expo-server-sdk");
 
 //change Quest topic
 const changeQuestTopic = schedule.scheduleJob(
-  "0 0 * * 0", // run Sundays at midnight
-  //"*/5 * * * *", //every 5 minutes
+  //"0 0 * * 0", // run Sundays at midnight
+  "*/5 * * * *", //every 5 minutes
   async () => {
     const expo = new Expo();
     //take care of previous topic
@@ -18,8 +23,9 @@ const changeQuestTopic = schedule.scheduleJob(
     await saveQuestHighScore(currentTopic.topic, expo);
     //now get next topic
     const nextTopic = await nextQuestTopic();
+    console.log("next topic!", nextTopic);
     if (nextTopic) {
-      if (nextTopic.type === "category") {
+      if (nextTopic.type === "Category") {
         await Category.findOneAndUpdate(
           {
             _id: mongoose.Types.ObjectId(nextTopic.id),
@@ -29,7 +35,7 @@ const changeQuestTopic = schedule.scheduleJob(
         await Category.updateMany({
           $set: { nextquestactive: false },
         });
-      } else if (nextTopic.type === "genre") {
+      } else if (nextTopic.type === "Genre") {
         await CategoryGenre.findOneAndUpdate(
           {
             _id: mongoose.Types.ObjectId(nextTopic.id),

@@ -9,8 +9,9 @@ const typeDef = gql`
     iconset: String
     imageurl: String
     hasgenres: Boolean
-    questactive: Boolean
     categories: [Category]
+    questactive: Boolean
+    nextquestactive: Boolean
   }
 
   type CategoryTypePageResponse {
@@ -37,7 +38,7 @@ const typeDef = gql`
     iconset: String
     hasgenres: Boolean!
     playable: Boolean
-    pressluckactive: Boolean
+    nextquestactive: Boolean
   }
 
   extend type Mutation {

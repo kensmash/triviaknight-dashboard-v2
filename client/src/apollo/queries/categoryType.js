@@ -9,7 +9,7 @@ export default gql`
       iconset
       hasgenres
       playable
-      pressluckactive
+      nextquestactive
     }
   }
 `;

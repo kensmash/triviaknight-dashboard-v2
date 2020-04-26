@@ -17,7 +17,7 @@ const keys = require("./config/keys");
 const schema = require("./schema/schema");
 //scheduled jobs
 const { newCategories } = require("./jobs/jobs-categories");
-const { weeklyQuestTopic } = require("./jobs/jobs-quest");
+const { weeklyQuestTopic, changeQuestTopic } = require("./jobs/jobs-quest");
 const {
   deleteDeclinedJoustGames,
   timeOutJoustGames,

@@ -50,6 +50,7 @@ const CategoryTypesList = (props) => {
             <Table.HeaderCell>Name</Table.HeaderCell>
             <Table.HeaderCell>Playable</Table.HeaderCell>
             <Table.HeaderCell>Quest Active</Table.HeaderCell>
+            <Table.HeaderCell>Next Quest Active</Table.HeaderCell>
             <Table.HeaderCell>Has Genres</Table.HeaderCell>
             <Table.HeaderCell>Actions</Table.HeaderCell>
           </Table.Row>
@@ -70,6 +71,9 @@ const CategoryTypesList = (props) => {
                     <Table.Cell>{type.playable ? "Yes" : "No"}</Table.Cell>
 
                     <Table.Cell>{type.questactive ? "Yes" : "No"}</Table.Cell>
+                    <Table.Cell>
+                      {type.nextquestactive ? "Yes" : "No"}
+                    </Table.Cell>
                     <Table.Cell>{type.hasgenres ? "Yes" : "No"}</Table.Cell>
                     <Table.Cell collapsing>
                       <div>
@@ -101,7 +105,7 @@ const CategoryTypesList = (props) => {
             </Table.Body>
             <Table.Footer>
               <Table.Row>
-                <Table.HeaderCell colSpan="7">
+                <Table.HeaderCell colSpan="8">
                   <Grid columns="equal">
                     <Grid.Column width={2}>
                       <div className="tableItemNumbers">

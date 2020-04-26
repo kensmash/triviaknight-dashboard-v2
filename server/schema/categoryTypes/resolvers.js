@@ -7,11 +7,6 @@ const {
   requiresAuth,
   requiresAdmin,
 } = require("../_helpers/helper-permissions");
-//quest helpers
-const {
-  currentQuestTopic,
-  saveQuestHighScore,
-} = require("../_helpers/helper-gamesquest");
 
 const resolvers = {
   Query: {
@@ -58,10 +53,7 @@ const resolvers = {
       async (parent, { input }, { expo }) => {
         try {
           if (input.nextquestactive) {
-            //first, save player high score from previous week
-            const currentTopic = await currentQuestTopic();
-            await saveQuestHighScore(currentTopic.topic, expo);
-            //then reset press luck active on other genres
+            //then reset next quest active on other genres
             await CategoryGenre.updateMany({
               $set: { nextquestactive: false },
             });

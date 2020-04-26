@@ -171,6 +171,7 @@ const CategoriesList = (props) => {
             <Table.HeaderCell>Status</Table.HeaderCell>
             <Table.HeaderCell>Joust Only</Table.HeaderCell>
             <Table.HeaderCell>Quest Active</Table.HeaderCell>
+            <Table.HeaderCell>Next Quest Active</Table.HeaderCell>
             <Table.HeaderCell>Type</Table.HeaderCell>
             <Table.HeaderCell>Genres</Table.HeaderCell>
             <Table.HeaderCell />
@@ -218,6 +219,10 @@ const CategoriesList = (props) => {
 
                     <Table.Cell>{cat.questactive ? "Yes" : "No"}</Table.Cell>
 
+                    <Table.Cell>
+                      {cat.nextquestactive ? "Yes" : "No"}
+                    </Table.Cell>
+
                     <Table.Cell>{cat.type && cat.type.name}</Table.Cell>
 
                     <Table.Cell>
@@ -246,7 +251,7 @@ const CategoriesList = (props) => {
             </Table.Body>
             <Table.Footer>
               <Table.Row>
-                <Table.HeaderCell colSpan="8">
+                <Table.HeaderCell colSpan="98">
                   <Grid columns="equal">
                     <Grid.Column width={2}>
                       <div className="tableItemNumbers">

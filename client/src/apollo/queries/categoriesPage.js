@@ -24,7 +24,8 @@ export default gql`
         showaspopular
         showasupdated
         joustexclusive
-        pressluckactive
+        questactive
+        nextquestactive
         questions {
           _id
           difficulty
