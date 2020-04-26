@@ -107,7 +107,11 @@ const resolvers = {
             }
             await User.findOneAndUpdate({ _id: user.id }, { $inc: { gems } });
           }
-          const questions = await joustQuestions(input.category);
+          const player = await User.findOne({ _id: user.id });
+          const questions = await joustQuestions(
+            input.category,
+            player.recentquestions
+          );
           const newgame = new GameJoust({
             createdby: user.id,
             players: [
@@ -237,6 +241,17 @@ const resolvers = {
       async (parent, { gameid, roundresults, advance }, { user, expo }) => {
         try {
           //first add round results
+          await User.findOneAndUpdate(
+            { _id: user.id },
+            {
+              $push: {
+                recentquestions: {
+                  $each: [mongoose.Types.ObjectId(roundresults.question)],
+                  $slice: 100,
+                },
+              },
+            }
+          );
           let updatedGame = await GameJoust.findOneAndUpdate(
             { _id: gameid, "players.player": user.id },
             {
