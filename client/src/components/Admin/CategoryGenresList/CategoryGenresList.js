@@ -121,7 +121,7 @@ const CategoryGenresList = (props) => {
         <Table.Header>
           <Table.Row>
             <Table.HeaderCell>Name</Table.HeaderCell>
-            <Table.HeaderCell>Siege Playable</Table.HeaderCell>
+
             <Table.HeaderCell>Quest Active</Table.HeaderCell>
             <Table.HeaderCell>Next Quest Active</Table.HeaderCell>
             <Table.HeaderCell>Category Types</Table.HeaderCell>
@@ -141,7 +141,7 @@ const CategoryGenresList = (props) => {
                 categoryGenresPage.categorygenres.map((genre) => (
                   <Table.Row key={genre._id}>
                     <Table.Cell>{genre.name}</Table.Cell>
-                    <Table.Cell>{genre.playable ? "Yes" : "No"}</Table.Cell>
+
                     <Table.Cell>{genre.questactive ? "Yes" : "No"}</Table.Cell>
                     <Table.Cell>
                       {genre.nextquestactive ? "Yes" : "No"}
@@ -183,7 +183,7 @@ const CategoryGenresList = (props) => {
             </Table.Body>
             <Table.Footer>
               <Table.Row>
-                <Table.HeaderCell colSpan="7">
+                <Table.HeaderCell colSpan="6">
                   <Grid columns="equal">
                     <Grid.Column width={2}>
                       <div className="tableItemNumbers">

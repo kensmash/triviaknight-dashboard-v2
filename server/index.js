@@ -16,8 +16,12 @@ const keys = require("./config/keys");
 //schema
 const schema = require("./schema/schema");
 //scheduled jobs
-const { newCategories } = require("./jobs/jobs-categories");
-const { weeklyQuestTopic, changeQuestTopic } = require("./jobs/jobs-quest");
+//const { newCategories } = require("./jobs/jobs-categories");
+const {
+  weeklyQuestTopicNotification,
+  weeklyHighScoreNotification,
+  changeQuestTopic,
+} = require("./jobs/jobs-quest");
 const {
   deleteDeclinedJoustGames,
   timeOutJoustGames,

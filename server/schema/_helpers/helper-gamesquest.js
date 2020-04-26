@@ -4,8 +4,6 @@ const GameQuest = require("../../models/GameQuest");
 const CategoryType = require("../../models/CategoryType");
 const CategoryGenre = require("../../models/CategoryGenre");
 const Category = require("../../models/Category");
-const ExpoPushTicket = require("../../models/ExpoPushTicket");
-const { Expo } = require("expo-server-sdk");
 
 const currentQuestTopic = async () => {
   try {
@@ -93,7 +91,7 @@ const nextQuestTopic = async () => {
   }
 };
 
-const saveQuestHighScore = async (topic, expo) => {
+const saveQuestHighScore = async (topic) => {
   //first, get all games from previous week with current topic
   try {
     var lastWeek = new Date();
@@ -153,79 +151,6 @@ const saveQuestHighScore = async (topic, expo) => {
             }
           );
         }
-        //Send push notification to winners
-        let pushTokens = [];
-
-        const winningUsers = await User.find({
-          _id: {
-            $in: winningPlayers.map((player) =>
-              mongoose.Types.ObjectId(player.player._id)
-            ),
-          },
-        });
-
-        winningUsers.forEach(
-          (user) => (pushTokens = pushTokens.concat(user.expoPushTokens))
-        );
-
-        //push notifications
-        let messages = [];
-        let pushType = "QuestWinner";
-        let pushTitle = `You won!`;
-        let pushMessage = `Congratulations! You won this past week’s ${topic} Quest with your score of ${winningPlayers[0].score}!`;
-
-        if (winningUsers.length > 1) {
-          pushMessage = `You tied for this past week’s ${topic} Quest with your score of ${winningPlayers[0].score}!`;
-        }
-
-        for (let pushToken of pushTokens) {
-          // Check that all your push tokens appear to be valid Expo push tokens
-          if (!Expo.isExpoPushToken(pushToken)) {
-            console.error(
-              `Push token ${pushToken} is not a valid Expo push token.`
-            );
-            continue;
-          }
-          messages.push({
-            to: pushToken,
-            sound: "default",
-            body: pushMessage,
-            data: {
-              title: pushTitle,
-              text: pushMessage,
-              type: pushType,
-            },
-            channelId: "game-messages",
-          });
-        }
-        //send push notifications in chunks
-        let chunks = expo.chunkPushNotifications(messages);
-        //receive tickets in response
-        let tickets = [];
-        (async () => {
-          for (let chunk of chunks) {
-            try {
-              let ticketChunk = await expo.sendPushNotificationsAsync(chunk);
-              tickets.push(...ticketChunk);
-            } catch (error) {
-              console.error(error);
-            }
-            //add types
-            const ticketsWithTypes = tickets.map((ticket) => ({
-              type: "Quest Winner",
-              ...ticket,
-            }));
-            //save tickets to database for later retrieval
-            for (let ticket of ticketsWithTypes) {
-              try {
-                const newticket = new ExpoPushTicket(ticket);
-                await newticket.save();
-              } catch (error) {
-                console.error(error);
-              }
-            }
-          }
-        })();
       }
     }
 
