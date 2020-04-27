@@ -14,7 +14,7 @@ const { Expo } = require("expo-server-sdk");
 
 //change Quest topic
 const changeQuestTopic = schedule.scheduleJob(
-  "0 0 * * 7", // run sunday at midnight
+  "59 23 * * 7", // run sunday 1 minute before midnight
   //"*/8 * * * *", //every 5 minutes
   async () => {
     console.log("running change quest topic");
