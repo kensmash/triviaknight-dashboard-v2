@@ -55,15 +55,6 @@ const typeDef = gql`
     wins: Int!
   }
 
-  type SiegeLeaderBoardResponse {
-    siegeid: ID!
-    name: String!
-    rank: String!
-    avatar: String!
-    gamesplayed: Int!
-    wins: Int!
-  }
-
   type JoustSevenDayLeaderBoardResponse {
     joustsevendayid: ID!
     name: String!
@@ -72,24 +63,6 @@ const typeDef = gql`
     avatarBackgroundColor: String!
     gamesplayed: Int!
     wins: Int!
-  }
-
-  type SiegeSevenDayLeaderBoardResponse {
-    siegesevendayid: ID!
-    name: String!
-    rank: String!
-    avatar: String!
-    gamesplayed: Int!
-    wins: Int!
-  }
-
-  type PressLuckSevenDayLeaderBoardResponse {
-    id: ID!
-    name: String!
-    rank: String!
-    avatar: String!
-    gamesplayed: Int!
-    highscore: Int
   }
 
   type QuestSevenDayLeaderBoardResponse {
@@ -110,13 +83,9 @@ const typeDef = gql`
     userGames: User
     currentsologames: [GameSolo]
     joustgames: [GameJoust]
-    recentpressluckgames: [GamePressYourLuck]
     recentquestgames: [GameQuest]
     joustleaders: [JoustLeaderBoardResponse]
     joustleaderssevendays: [JoustSevenDayLeaderBoardResponse]
-    siegeleaders: [SiegeLeaderBoardResponse]
-    siegeleaderssevendays: [SiegeSevenDayLeaderBoardResponse]
-    pressluckleaderssevendays: [PressLuckSevenDayLeaderBoardResponse]
     questleaderssevendays: [QuestSevenDayLeaderBoardResponse]
     allusergames: UserGameResponse
     alluserpartygames: UserPartyGameResponse

@@ -20,6 +20,7 @@ export default gql`
         id
         type
         status
+        message
         receiptFetched
         code
         details {

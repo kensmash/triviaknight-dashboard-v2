@@ -116,8 +116,8 @@ const weeklyQuestTopicNotification = schedule.scheduleJob(
         //send them a push notification
         const expo = new Expo();
         let messages = [];
-        const pushMessage = `This week’s Quest topic is ${topic}! Play and compare your score!`;
-        console.log("push message", pushMessage);
+        const pushMessage = `This week’s Quest topic is ${topic}! Play to win gems!`;
+
         for (let pushToken of pushTokens) {
           // Check that all your push tokens appear to be valid Expo push tokens
           if (!Expo.isExpoPushToken(pushToken)) {
