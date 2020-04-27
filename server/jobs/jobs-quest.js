@@ -71,8 +71,28 @@ const changeQuestTopic = schedule.scheduleJob(
           { $set: { questactive: true, nextquestactive: false } }
         );
       }
+    } else {
+      //get random category if no next topic!
+      const newCat = await Category.aggregate([
+        {
+          $match: {
+            published: { $eq: true },
+            partycategory: { $eq: false },
+            joustexclusive: { $eq: false },
+            _id: { $ne: mongoose.Types.ObjectId(currentTopic.id) },
+          },
+        },
+        { $sample: { size: 1 } },
+      ]);
+      if (newCat) {
+        await Category.findOneAndUpdate(
+          {
+            _id: mongoose.Types.ObjectId(newCat._id),
+          },
+          { $set: { questactive: true, nextquestactive: false } }
+        );
+      }
     }
-    //TODO: get random category if no next topic!
   }
 );
 
