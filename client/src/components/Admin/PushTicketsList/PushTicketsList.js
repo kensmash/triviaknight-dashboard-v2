@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Table, Grid, Pagination } from "semantic-ui-react";
 //graphql
 import { useQuery } from "@apollo/react-hooks";
 import QUERY_PUSHTICKETSPAGE from "../../../apollo/queries/pushTicketsPage";
 
-const PushTicketsList = (props) => {
+const PushTicketsList = () => {
   const [activePage, setActivePage] = useState(1);
   const [limit] = useState(15);
 
@@ -22,8 +22,7 @@ const PushTicketsList = (props) => {
     }
   );
 
-  const fetchMoreHandler = (activePage) => {
-    setActivePage(activePage);
+  useEffect(() => {
     if (activePage > 1) {
       fetchMore({
         variables: {
@@ -31,16 +30,11 @@ const PushTicketsList = (props) => {
         },
         updateQuery: (prev, { fetchMoreResult }) => {
           if (!fetchMoreResult) return prev;
-          return Object.assign({}, prev, {
-            pushTicketsPage: [
-              ...prev.pushTicketsPage,
-              ...fetchMoreResult.pushTicketsPage,
-            ],
-          });
+          return fetchMoreResult;
         },
       });
     }
-  };
+  }, [activePage, fetchMore, limit]);
 
   return (
     <>
@@ -108,7 +102,7 @@ const PushTicketsList = (props) => {
                           activePage={activePage}
                           totalPages={pushTicketsPage.pages}
                           onPageChange={(e, { activePage }) =>
-                            fetchMoreHandler({ activePage })
+                            setActivePage(activePage)
                           }
                         />
                       ) : null}

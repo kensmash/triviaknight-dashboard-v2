@@ -1,41 +1,40 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Table, Grid, Pagination } from "semantic-ui-react";
 //graphql
 import { useQuery } from "@apollo/react-hooks";
 import QUERY_PUSHRECEIPTSPAGE from "../../../apollo/queries/pushReceiptsPage";
 
-const PushReceiptsList = props => {
+const PushReceiptsList = () => {
   const [activePage, setActivePage] = useState(1);
   const [limit] = useState(15);
 
   const variables = {
     offset: limit * parseInt(activePage, 10) - limit,
-    limit
+    limit,
   };
 
   const { loading, data: { pushReceiptsPage } = {}, fetchMore } = useQuery(
     QUERY_PUSHRECEIPTSPAGE,
     {
       variables,
-      fetchPolicy: "cache-and-network"
+      fetchPolicy: "cache-and-network",
     }
   );
 
-  const fetchMoreHandler = activePage => {
-    setActivePage(activePage);
+  useEffect(() => {
     if (activePage > 1) {
       fetchMore({
         variables: {
-          offset: limit * parseInt(activePage, 10) - limit
+          offset: limit * parseInt(activePage, 10) - limit,
         },
         updateQuery: (prev, { fetchMoreResult }) => {
           if (!fetchMoreResult) return prev;
           return fetchMoreResult;
-        }
+        },
       });
     }
-  };
+  }, [activePage, fetchMore, limit]);
 
   return (
     <>
@@ -57,7 +56,7 @@ const PushReceiptsList = props => {
           <>
             <Table.Body>
               {pushReceiptsPage.receipts.length ? (
-                pushReceiptsPage.receipts.map(receipt => (
+                pushReceiptsPage.receipts.map((receipt) => (
                   <Table.Row key={receipt._id}>
                     <Table.Cell>{receipt.id ? receipt.id : "no id"}</Table.Cell>
                     <Table.Cell>
@@ -95,7 +94,7 @@ const PushReceiptsList = props => {
                           activePage={activePage}
                           totalPages={pushReceiptsPage.pages}
                           onPageChange={(e, { activePage }) =>
-                            fetchMoreHandler({ activePage })
+                            setActivePage(activePage)
                           }
                         />
                       ) : null}
@@ -113,7 +112,7 @@ const PushReceiptsList = props => {
 
 PushReceiptsList.propTypes = {
   history: PropTypes.object.isRequired,
-  match: PropTypes.object.isRequired
+  match: PropTypes.object.isRequired,
 };
 
 export default PushReceiptsList;
