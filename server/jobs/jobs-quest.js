@@ -17,6 +17,7 @@ const changeQuestTopic = schedule.scheduleJob(
   //"0 0 * * 0", //run Sundays at midnight
   "*/8 * * * *", //every 5 minutes
   async () => {
+    console.log("running change quest topic");
     //take care of previous topic
     const currentTopic = await currentQuestTopic();
     await saveQuestHighScore(currentTopic.topic);
