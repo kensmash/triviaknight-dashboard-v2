@@ -5,34 +5,39 @@ import { Table, Grid, Pagination } from "semantic-ui-react";
 import { useQuery } from "@apollo/react-hooks";
 import QUERY_PUSHTICKETSPAGE from "../../../apollo/queries/pushTicketsPage";
 
-const PushTicketsList = props => {
+const PushTicketsList = (props) => {
   const [activePage, setActivePage] = useState(1);
   const [limit] = useState(15);
 
   const variables = {
     offset: limit * parseInt(activePage, 10) - limit,
-    limit
+    limit,
   };
 
   const { loading, data: { pushTicketsPage } = {}, fetchMore } = useQuery(
     QUERY_PUSHTICKETSPAGE,
     {
       variables,
-      fetchPolicy: "cache-and-network"
+      fetchPolicy: "cache-and-network",
     }
   );
 
-  const fetchMoreHandler = activePage => {
+  const fetchMoreHandler = (activePage) => {
     setActivePage(activePage);
     if (activePage > 1) {
       fetchMore({
         variables: {
-          offset: limit * parseInt(activePage, 10) - limit
+          offset: limit * parseInt(activePage, 10) - limit,
         },
         updateQuery: (prev, { fetchMoreResult }) => {
           if (!fetchMoreResult) return prev;
-          return fetchMoreResult;
-        }
+          return Object.assign({}, prev, {
+            pushTicketsPage: [
+              ...prev.pushTicketsPage,
+              ...fetchMoreResult.pushTicketsPage,
+            ],
+          });
+        },
       });
     }
   };
@@ -59,7 +64,7 @@ const PushTicketsList = props => {
           <>
             <Table.Body>
               {pushTicketsPage.tickets.length ? (
-                pushTicketsPage.tickets.map(ticket => (
+                pushTicketsPage.tickets.map((ticket) => (
                   <Table.Row key={ticket._id}>
                     <Table.Cell>
                       {ticket.type ? ticket.type : "No type"}
@@ -121,7 +126,7 @@ const PushTicketsList = props => {
 
 PushTicketsList.propTypes = {
   history: PropTypes.object.isRequired,
-  match: PropTypes.object.isRequired
+  match: PropTypes.object.isRequired,
 };
 
 export default PushTicketsList;
