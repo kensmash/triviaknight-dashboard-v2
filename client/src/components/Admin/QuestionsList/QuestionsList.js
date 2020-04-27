@@ -59,7 +59,7 @@ const QuestionsList = (props) => {
           !data.questionspage.questions.length &&
           questionSearchCriteria.activePage > 1
         ) {
-          this.props.updateQuestionSearch({
+          updateQuestionSearch({
             variables: {
               ...questionSearchCriteria,
               activePage: 1,
