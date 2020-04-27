@@ -85,7 +85,7 @@ const resolvers = {
         var fortyFiveDaysAgo = new Date();
         fortyFiveDaysAgo.setDate(fortyFiveDaysAgo.getDate() - 45);
 
-        const randomOpponent = await User.aggregate([
+        let randomOpponent = await User.aggregate([
           {
             $match: {
               _id: {
@@ -103,6 +103,43 @@ const resolvers = {
           },
           { $sample: { size: 1 } },
         ]);
+
+        if (!randomOpponent.length) {
+          randomOpponent = await User.aggregate([
+            {
+              $match: {
+                _id: {
+                  $ne: daUser._id,
+                  $nin: daUser.blockedusers,
+                },
+                roles: { $nin: ["reviewer"] },
+                access: { $eq: "paid" },
+                blockedusers: { $nin: [daUser._id] },
+                updatedAt: {
+                  $gte: fortyFiveDaysAgo,
+                },
+              },
+            },
+            { $sample: { size: 1 } },
+          ]);
+        }
+
+        if (!randomOpponent.length) {
+          randomOpponent = await User.aggregate([
+            {
+              $match: {
+                _id: {
+                  $ne: daUser._id,
+                  $nin: daUser.blockedusers,
+                },
+                roles: { $nin: ["reviewer"] },
+                access: { $eq: "paid" },
+                blockedusers: { $nin: [daUser._id] },
+              },
+            },
+            { $sample: { size: 1 } },
+          ]);
+        }
 
         return randomOpponent[0];
       }
