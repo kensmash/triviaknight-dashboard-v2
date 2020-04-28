@@ -53,6 +53,7 @@ const typeDef = gql`
     avatarBackgroundColor: String!
     gamesplayed: Int!
     wins: Int!
+    ties: Int
   }
 
   type JoustSevenDayLeaderBoardResponse {
@@ -63,6 +64,7 @@ const typeDef = gql`
     avatarBackgroundColor: String!
     gamesplayed: Int!
     wins: Int!
+    ties: Int
   }
 
   type QuestSevenDayLeaderBoardResponse {
