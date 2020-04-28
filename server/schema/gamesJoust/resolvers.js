@@ -251,18 +251,19 @@ const resolvers = {
     enterjoustanswerandadvance: requiresAuth.createResolver(
       async (parent, { gameid, roundresults, advance }, { user, expo }) => {
         try {
-          //first add round results
+          //track questions asked for last 30 jousts
           await User.findOneAndUpdate(
             { _id: user.id },
             {
               $push: {
                 recentquestions: {
                   $each: [mongoose.Types.ObjectId(roundresults.question)],
-                  $slice: 140,
+                  $slice: 210,
                 },
               },
             }
           );
+          //add round results
           let updatedGame = await GameJoust.findOneAndUpdate(
             { _id: gameid, "players.player": user.id },
             {
