@@ -1,11 +1,11 @@
 const User = require("../../models/User");
 const GameJoust = require("../../models/GameJoust");
 const GameSolo = require("../../models/GameSolo");
-const GamePressYourLuck = require("../../models/GamePressYourLuck");
 const GameQuest = require("../../models/GameQuest");
 const ExpoPushTicket = require("../../models/ExpoPushTicket");
 const { Expo } = require("expo-server-sdk");
 //auth helpers
+const { joustLeaderAllTimeStats } = require("../_helpers/helper-leaders");
 const { requiresAuth } = require("../_helpers/helper-permissions");
 const {
   trySignup,
@@ -146,45 +146,7 @@ const resolvers = {
     ),
 
     joustleaders: requiresAuth.createResolver(async (parent, { args }) => {
-      const joustplayers = await User.find({
-        roles: { $nin: ["reviewer"] },
-      }).populate({
-        path: "joustgames",
-        populate: { path: "players.player" },
-      });
-
-      const playersArray = joustplayers.map((player) => ({
-        player: {
-          id: player.id,
-          name: player.name,
-          rank: player.rank,
-          avatar: player.avatar,
-          avatarBackgroundColor: player.avatarBackgroundColor,
-        },
-        finishedgames: player.joustgames.filter(
-          (game) => game.gameover && !game.declined
-        ),
-      }));
-
-      const sortedArray = playersArray
-        .sort((a, b) => b.finishedgames.length - a.finishedgames.length)
-        .slice(0, 15);
-
-      const results = sortedArray.map((player) => ({
-        joustid: player.player.id,
-        name: player.player.name,
-        rank: player.player.rank,
-        avatar: player.player.avatar,
-        avatarBackgroundColor: player.player.avatarBackgroundColor,
-        gamesplayed: player.finishedgames.length,
-        wins: player.finishedgames.filter((game) =>
-          game.players.some(
-            (foo) => foo.player._id == player.player.id && foo.winner
-          )
-        ).length,
-      }));
-
-      return results;
+      return joustLeaderAllTimeStats();
     }),
 
     joustleaderssevendays: requiresAuth.createResolver(
@@ -196,7 +158,13 @@ const resolvers = {
           populate: { path: "players.player" },
         });
 
-        const thisWeek = new Date(new Date() - 7 * 60 * 60 * 24 * 1000);
+        //const thisWeek = new Date(new Date() - 7 * 60 * 60 * 24 * 1000);
+        const getBeginningOfTheWeek = (now) => {
+          const days = (now.getDay() + 7 - 1) % 7;
+          now.setDate(now.getDate() - days);
+          now.setHours(0, 0, 0, 0);
+          return now;
+        };
 
         const playersArray = joustplayers.map((player) => ({
           player: {
@@ -208,7 +176,9 @@ const resolvers = {
           },
           finishedgames: player.joustgames.filter(
             (game) =>
-              game.gameover && !game.declined && game.updatedAt >= thisWeek
+              game.gameover &&
+              !game.declined &&
+              game.updatedAt >= getBeginningOfTheWeek(new Date())
           ),
         }));
 
