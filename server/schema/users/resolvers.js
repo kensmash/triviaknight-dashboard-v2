@@ -570,6 +570,21 @@ const resolvers = {
       }
     ),
 
+    updaterank: requiresAuth.createResolver(
+      async (parent, { rank }, { user }) => {
+        try {
+          const editedUser = await User.findOneAndUpdate(
+            { _id: user.id },
+            { $set: { rank } },
+            { new: true }
+          );
+          return editedUser;
+        } catch (err) {
+          return err;
+        }
+      }
+    ),
+
     changerank: requiresAuth.createResolver(
       async (parent, { args }, { user, expo }) => {
         const player = await User.findOne({ _id: user.id })

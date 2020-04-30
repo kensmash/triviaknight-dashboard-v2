@@ -132,6 +132,7 @@ const typeDef = gql`
     updatesignupflow: User
     changeemail(email: String!): User
     changerank: Boolean
+    updaterank(rank: String!): User
     blockuser(playerid: ID!): User
   }
 
