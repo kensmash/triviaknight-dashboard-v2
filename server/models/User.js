@@ -22,7 +22,6 @@ const userSchema = new Schema(
     avatarBackgroundColor: String,
     isAdmin: { type: Boolean, default: false },
     overEighteen: { type: Boolean, default: false },
-    questionsAnswered: { type: Number, default: 0 },
     hasCompletedSignUpFlow: { type: Boolean, default: false },
     roles: { type: [String] },
     banned: { type: Boolean, default: false },
@@ -53,12 +52,6 @@ userSchema.virtual("sologames", {
   foreignField: "players.player", // contains `foreignField`
 });
 
-userSchema.virtual("pressluckgames", {
-  ref: "gamepressyourluck", // The model to use
-  localField: "_id", // Find games where `localField`
-  foreignField: "players.player", // contains `foreignField`
-});
-
 userSchema.virtual("questgames", {
   ref: "gamequest", // The model to use
   localField: "_id", // Find games where `localField`
@@ -67,12 +60,6 @@ userSchema.virtual("questgames", {
 
 userSchema.virtual("joustgames", {
   ref: "gamejoust", // The model to use
-  localField: "_id", // Find games where `localField`
-  foreignField: "players.player", // contains `foreignField`
-});
-
-userSchema.virtual("siegegames", {
-  ref: "gamesiege", // The model to use
   localField: "_id", // Find games where `localField`
   foreignField: "players.player", // contains `foreignField`
 });

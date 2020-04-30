@@ -93,6 +93,7 @@ const typeDef = gql`
     allusergames: UserGameResponse
     alluserpartygames: UserPartyGameResponse
     allusers: [User]!
+    questionsanswered: Int!
     challengeusers: [User]!
     username(name: String, cursor: ID): UserNameSearchResponse
     userspage(offset: Int!, limit: Int!, name: String): UserPageResponse

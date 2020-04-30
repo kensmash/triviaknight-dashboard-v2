@@ -50,10 +50,10 @@ const resolvers = {
       }
     }),
 
-    currentUser: async (parent, args, { user }) => {
+    currentUser: (parent, args, { user }) => {
       if (user) {
-        const totalQuestionsAnswered = await questionsAnswered(user.id);
-        const foundUser = await User.findOne({ _id: user.id })
+        return User.findOne({ _id: user.id })
+
           .populate({
             path: "categories",
             populate: { path: "type" },
@@ -67,14 +67,14 @@ const resolvers = {
               },
             },
           });
-
-        foundUser[questionsAnswered] = totalQuestionsAnswered;
-
-        return foundUser;
       }
 
       return null;
     },
+
+    questionsanswered: requiresAuth.createResolver((parent, args, { user }) => {
+      return questionsAnswered(user.id);
+    }),
 
     gameOpponent: requiresAuth.createResolver((parent, { id }, { user }) => {
       return User.findOne({ _id: id })
