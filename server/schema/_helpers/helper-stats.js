@@ -144,6 +144,80 @@ const gameStats = async (userId) => {
   }
 };
 
+//figure out how many questions a player has
+const questionsAnswered = async (userId) => {
+  try {
+    const questions = await User.aggregate([
+      //match user
+      { $match: { _id: new mongoose.Types.ObjectId(userId) } },
+      //find all games user is in
+      {
+        $lookup: {
+          from: "gamessolo",
+          localField: "_id",
+          foreignField: "players.player",
+          as: "soloGames",
+        },
+      },
+      {
+        $lookup: {
+          from: "gamesjoust",
+          localField: "_id",
+          foreignField: "players.player",
+          as: "joustGames",
+        },
+      },
+      {
+        $lookup: {
+          from: "gamesquest",
+          localField: "_id",
+          foreignField: "players.player",
+          as: "questGames",
+        },
+      },
+      //combine games
+      {
+        $project: {
+          totalGames: {
+            $concatArrays: ["$soloGames", "$joustGames", "$questGames"],
+          },
+        },
+      },
+      //get a document for each game
+      { $unwind: "$totalGames" },
+      //get a document for each player
+      { $unwind: "$totalGames.players" },
+      //retain game type and player info
+      {
+        $project: {
+          stats: "$totalGames.players",
+        },
+      },
+      //only keep current player documents
+      { $match: { "stats.player": new mongoose.Types.ObjectId(userId) } },
+      //get a document for each round result
+      { $unwind: "$stats.roundresults" },
+      //keep type, figure out questions answered and number correct per game type
+      {
+        $project: {
+          stats: "$stats",
+          results: "$stats.roundresults",
+        },
+      },
+      //the final data
+      {
+        $group: {
+          _id: 0,
+          questionsAnswered: { $sum: 1 },
+        },
+      },
+    ]);
+    return questions[0].questionsAnswered;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 //tracks questions answered, correct and incorrect per category
 const categoryStats = async (userId) => {
   //tracks
@@ -551,4 +625,5 @@ module.exports = {
   questGameStats,
   questLastWeekWinners,
   questAllTimeWinners,
+  questionsAnswered,
 };

@@ -5,6 +5,7 @@ const GameQuest = require("../../models/GameQuest");
 const ExpoPushTicket = require("../../models/ExpoPushTicket");
 const { Expo } = require("expo-server-sdk");
 //auth helpers
+const { questionsAnswered } = require("../_helpers/helper-stats");
 const {
   joustLeaderThisWeekStats,
   joustLeaderAllTimeStats,
@@ -49,10 +50,10 @@ const resolvers = {
       }
     }),
 
-    currentUser: (parent, args, { user }) => {
+    currentUser: async (parent, args, { user }) => {
       if (user) {
-        return User.findOne({ _id: user.id })
-
+        const totalQuestionsAnswered = await questionsAnswered(user.id);
+        const foundUser = await User.findOne({ _id: user.id })
           .populate({
             path: "categories",
             populate: { path: "type" },
@@ -66,6 +67,10 @@ const resolvers = {
               },
             },
           });
+
+        foundUser[questionsAnswered] = totalQuestionsAnswered;
+
+        return foundUser;
       }
 
       return null;

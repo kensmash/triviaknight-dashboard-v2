@@ -8,6 +8,7 @@ const typeDef = gql`
     name: String
     email: String
     hasCompletedSignUpFlow: Boolean
+    questionsAnswered: Int
     isAdmin: Boolean
     rank: String
     avatar: String

@@ -22,6 +22,7 @@ const userSchema = new Schema(
     avatarBackgroundColor: String,
     isAdmin: { type: Boolean, default: false },
     overEighteen: { type: Boolean, default: false },
+    questionsAnswered: { type: Number, default: 0 },
     hasCompletedSignUpFlow: { type: Boolean, default: false },
     roles: { type: [String] },
     banned: { type: Boolean, default: false },

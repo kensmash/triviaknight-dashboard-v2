@@ -157,6 +157,7 @@ const joustLeaderAllTimeStats = async () => {
           ties: "$ties",
         },
       },
+      { $sort: { gamesplayed: -1, wins: -1 } },
     ]);
     //console.log("jouststats", jouststats);
     return jouststats;
