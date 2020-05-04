@@ -4,6 +4,7 @@ const { requiresAuth } = require("../_helpers/helper-permissions");
 const {
   gameStats,
   categoryStats,
+  categoryRankings,
   joustGameStats,
   siegeGameStats,
   pressLuckGameStats,
@@ -22,6 +23,10 @@ const resolvers = {
 
     categorystats: requiresAuth.createResolver((parent, { args }, { user }) => {
       return categoryStats(user.id);
+    }),
+
+    categoryrankings: requiresAuth.createResolver((parent, { catid }) => {
+      return categoryRankings(catid);
     }),
 
     joustgamestats: requiresAuth.createResolver(
