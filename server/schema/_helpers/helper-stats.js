@@ -443,7 +443,7 @@ const categoryRankings = async (catId) => {
       },
       //get a document for each game
       { $unwind: "$totalGames" },
-      //only keep current player stats and round results from each document
+      //filter the players array to only keep current player
       {
         $project: {
           _id: 1,
@@ -459,10 +459,11 @@ const categoryRankings = async (catId) => {
           },
         },
       },
-      //get a document for the player in each game
+      //get a document for the current player in each game
       { $unwind: "$players" },
       //get a document per each round result
       { $unwind: "$players.roundresults" },
+      //only keep round results in current category
       {
         $match: {
           "players.roundresults.category": new mongoose.Types.ObjectId(catId),
