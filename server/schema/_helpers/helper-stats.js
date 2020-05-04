@@ -259,6 +259,10 @@ const categoryStats = async (userId) => {
       //only keep player stats and round results from each document
       {
         $project: {
+          id: 1,
+          name: 1,
+          avatar: 1,
+          avatarBackgroundColor: 1,
           stats: "$totalGames.players",
           results: "$totalGames.players.roundresults",
         },
@@ -428,6 +432,10 @@ const categoryRankings = async (catId) => {
       //combine games
       {
         $project: {
+          _id: 1,
+          name: 1,
+          avatar: 1,
+          avatarBackgroundColor: 1,
           totalGames: {
             $concatArrays: ["$soloGames", "$joustGames", "$questGames"],
           },
@@ -435,40 +443,60 @@ const categoryRankings = async (catId) => {
       },
       //get a document for each game
       { $unwind: "$totalGames" },
-      //get a document for each player in each game
-      { $unwind: "$totalGames.players" },
-      //only keep player stats and round results from each document
+      //only keep current player stats and round results from each document
       {
         $project: {
-          stats: "$totalGames.players",
-          results: "$totalGames.players.roundresults",
+          _id: 1,
+          name: 1,
+          avatar: 1,
+          avatarBackgroundColor: 1,
+          players: {
+            $filter: {
+              input: "$totalGames.players",
+              as: "player",
+              cond: { $eq: ["$$player.player", "$$CURRENT._id"] },
+            },
+          },
         },
       },
+      //get a document for the player in each game
+      { $unwind: "$players" },
       //get a document per each round result
-      { $unwind: "$results" },
-      //only keep documents matching category
-      { $match: { "results.category": new mongoose.Types.ObjectId(catId) } },
-
+      { $unwind: "$players.roundresults" },
+      {
+        $match: {
+          "players.roundresults.category": new mongoose.Types.ObjectId(catId),
+        },
+      },
       //group by player
       {
         $group: {
           _id: {
-            player: "$stats.player",
+            player: "$players.player",
           },
+          id: { $first: "$_id" },
+          name: { $first: "$name" },
+          avatar: { $first: "$avatar" },
+          avatarBackgroundColor: { $first: "$avatarBackgroundColor" },
           questionsanswered: { $sum: 1 },
           correct: {
             $sum: {
-              $cond: ["$results.correct", 1, 0],
+              $cond: ["$players.roundresults.correct", 1, 0],
             },
           },
           incorrect: {
             $sum: {
-              $cond: ["$results.correct", 0, 1],
+              $cond: ["$players.roundresults.correct", 0, 1],
             },
           },
+
           normalquestions: {
             $sum: {
-              $cond: [{ $eq: ["$results.difficulty", "Normal"] }, 1, 0],
+              $cond: [
+                { $eq: ["$players.roundresults.difficulty", "Normal"] },
+                1,
+                0,
+              ],
             },
           },
           normalcorrect: {
@@ -476,8 +504,8 @@ const categoryRankings = async (catId) => {
               $cond: [
                 {
                   $and: [
-                    { $eq: ["$results.difficulty", "Normal"] },
-                    { $eq: ["$results.correct", true] },
+                    { $eq: ["$players.roundresults.difficulty", "Normal"] },
+                    { $eq: ["$players.roundresults.correct", true] },
                   ],
                 },
                 1,
@@ -487,7 +515,11 @@ const categoryRankings = async (catId) => {
           },
           hardquestions: {
             $sum: {
-              $cond: [{ $eq: ["$results.difficulty", "Hard"] }, 1, 0],
+              $cond: [
+                { $eq: ["$players.roundresults.difficulty", "Hard"] },
+                1,
+                0,
+              ],
             },
           },
           hardcorrect: {
@@ -495,8 +527,8 @@ const categoryRankings = async (catId) => {
               $cond: [
                 {
                   $and: [
-                    { $eq: ["$results.difficulty", "Hard"] },
-                    { $eq: ["$results.correct", true] },
+                    { $eq: ["$players.roundresults.difficulty", "Hard"] },
+                    { $eq: ["$players.roundresults.correct", true] },
                   ],
                 },
                 1,
@@ -506,28 +538,22 @@ const categoryRankings = async (catId) => {
           },
         },
       },
-      //get player info from reference
-      {
-        $lookup: {
-          from: "users",
-          localField: "_id.player",
-          foreignField: "_id",
-          as: "player",
-        },
-      },
       //shape the cat data
       {
         $project: {
           _id: 0,
-          playerid: { $arrayElemAt: ["$player._id", 0] },
-          playername: { $arrayElemAt: ["$player.name", 0] },
-          playeravatar: { $arrayElemAt: ["$player.avatar", 0] },
-          playerAvatarBackgroundColor: {
-            $arrayElemAt: ["$player.avatarBackgroundColor", 0],
-          },
+          playerid: "$id",
+          playername: "$name",
+          playeravatar: "$avatar",
+          playerAvatarBackgroundColor: "$avatarBackgroundColor",
           questionsanswered: "$questionsanswered",
           correct: 1,
           incorrect: 1,
+          percentcorrect: {
+            $trunc: {
+              $multiply: [{ $divide: ["$correct", "$questionsanswered"] }, 100],
+            },
+          },
           normalquestions: "$normalquestions",
           normalcorrect: "$normalcorrect",
           hardquestions: "$hardquestions",
@@ -536,6 +562,7 @@ const categoryRankings = async (catId) => {
       },
       { $sort: { questionsanswered: -1, correct: -1 } },
     ]);
+    //console.log(categoryrankings);
     return categoryrankings;
   } catch (error) {
     console.error(error);
