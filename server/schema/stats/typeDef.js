@@ -13,6 +13,17 @@ const typeDef = gql`
     hardcorrect: Int!
   }
 
+  type SingleCategoryStat {
+    questionsanswered: Int
+    correct: Int
+    incorrect: Int
+    percentcorrect: Int
+    normalquestions: Int
+    normalcorrect: Int
+    hardquestions: Int
+    hardcorrect: Int
+  }
+
   type CategoryStats {
     categoryid: ID
     categoryname: String
@@ -28,10 +39,11 @@ const typeDef = gql`
   }
 
   type CategoryRankings {
-    playerid: ID
-    playername: String
-    playeravatar: String
-    playerAvatarBackgroundColor: String
+    id: ID
+    name: String
+    avatar: String
+    rank: String
+    avatarBackgroundColor: String
     questionsanswered: Int
     correct: Int
     incorrect: Int
@@ -123,6 +135,7 @@ const typeDef = gql`
   extend type Query {
     gamestats: [GameStats]
     categorystats: [CategoryStats]
+    singlecategorystat: [SingleCategoryStat]
     categoryrankings(catid: ID!): [CategoryRankings]
     joustgamestats: [JoustGameStats]
     siegegamestats: [SiegeGameStats]

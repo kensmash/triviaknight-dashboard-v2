@@ -434,6 +434,7 @@ const categoryRankings = async (catId) => {
         $project: {
           _id: 1,
           name: 1,
+          rank: 1,
           avatar: 1,
           avatarBackgroundColor: 1,
           totalGames: {
@@ -448,6 +449,7 @@ const categoryRankings = async (catId) => {
         $project: {
           _id: 1,
           name: 1,
+          rank: 1,
           avatar: 1,
           avatarBackgroundColor: 1,
           players: {
@@ -477,6 +479,7 @@ const categoryRankings = async (catId) => {
           },
           id: { $first: "$_id" },
           name: { $first: "$name" },
+          rank: { $first: "$rank" },
           avatar: { $first: "$avatar" },
           avatarBackgroundColor: { $first: "$avatarBackgroundColor" },
           questionsanswered: { $sum: 1 },
@@ -543,10 +546,11 @@ const categoryRankings = async (catId) => {
       {
         $project: {
           _id: 0,
-          playerid: "$id",
-          playername: "$name",
-          playeravatar: "$avatar",
-          playerAvatarBackgroundColor: "$avatarBackgroundColor",
+          id: "$id",
+          name: "$name",
+          rank: "$rank",
+          avatar: "$avatar",
+          avatarBackgroundColor: "$avatarBackgroundColor",
           questionsanswered: "$questionsanswered",
           correct: 1,
           incorrect: 1,
@@ -565,6 +569,163 @@ const categoryRankings = async (catId) => {
     ]);
     //console.log(categoryrankings);
     return categoryrankings;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+//track category stats per user
+const userSingleCategoryStat = async (userId, catId) => {
+  //tracks
+  try {
+    const usersinglecatstat = await User.aggregate([
+      //match user
+      { $match: { _id: new mongoose.Types.ObjectId(userId) } },
+      //find all games the user is in
+      {
+        $lookup: {
+          from: "gamessolo",
+          localField: "_id",
+          foreignField: "players.player",
+          as: "soloGames",
+        },
+      },
+      {
+        $lookup: {
+          from: "gamesjoust",
+          localField: "_id",
+          foreignField: "players.player",
+          as: "joustGames",
+        },
+      },
+      {
+        $lookup: {
+          from: "gamesquest",
+          localField: "_id",
+          foreignField: "players.player",
+          as: "questGames",
+        },
+      },
+      //combine games
+      {
+        $project: {
+          totalGames: {
+            $concatArrays: ["$soloGames", "$joustGames", "$questGames"],
+          },
+        },
+      },
+      //get a document for each game
+      { $unwind: "$totalGames" },
+      //filter the players array to only keep current player
+      {
+        $project: {
+          players: {
+            $filter: {
+              input: "$totalGames.players",
+              as: "player",
+              cond: {
+                $eq: ["$$player.player", new mongoose.Types.ObjectId(userId)],
+              },
+            },
+          },
+        },
+      },
+      //get a document for the current player in each game
+      { $unwind: "$players" },
+      //get a document per each round result
+      { $unwind: "$players.roundresults" },
+      //only keep round results in current category
+      {
+        $match: {
+          "players.roundresults.category": new mongoose.Types.ObjectId(catId),
+        },
+      },
+      //group by player
+      {
+        $group: {
+          _id: {
+            player: "$players.player",
+          },
+          questionsanswered: { $sum: 1 },
+          correct: {
+            $sum: {
+              $cond: ["$players.roundresults.correct", 1, 0],
+            },
+          },
+          incorrect: {
+            $sum: {
+              $cond: ["$players.roundresults.correct", 0, 1],
+            },
+          },
+          normalquestions: {
+            $sum: {
+              $cond: [
+                { $eq: ["$players.roundresults.difficulty", "Normal"] },
+                1,
+                0,
+              ],
+            },
+          },
+          normalcorrect: {
+            $sum: {
+              $cond: [
+                {
+                  $and: [
+                    { $eq: ["$players.roundresults.difficulty", "Normal"] },
+                    { $eq: ["$players.roundresults.correct", true] },
+                  ],
+                },
+                1,
+                0,
+              ],
+            },
+          },
+          hardquestions: {
+            $sum: {
+              $cond: [
+                { $eq: ["$players.roundresults.difficulty", "Hard"] },
+                1,
+                0,
+              ],
+            },
+          },
+          hardcorrect: {
+            $sum: {
+              $cond: [
+                {
+                  $and: [
+                    { $eq: ["$players.roundresults.difficulty", "Hard"] },
+                    { $eq: ["$players.roundresults.correct", true] },
+                  ],
+                },
+                1,
+                0,
+              ],
+            },
+          },
+        },
+      },
+      //shape the cat data
+      {
+        $project: {
+          _id: 0,
+          questionsanswered: "$questionsanswered",
+          correct: 1,
+          incorrect: 1,
+          percentcorrect: {
+            $trunc: {
+              $multiply: [{ $divide: ["$correct", "$questionsanswered"] }, 100],
+            },
+          },
+          normalquestions: "$normalquestions",
+          normalcorrect: "$normalcorrect",
+          hardquestions: "$hardquestions",
+          hardcorrect: "$hardcorrect",
+        },
+      },
+    ]);
+    //console.log(categoryrankings);
+    return usersinglecatstat;
   } catch (error) {
     console.error(error);
   }
