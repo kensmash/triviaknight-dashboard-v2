@@ -135,7 +135,7 @@ const typeDef = gql`
   extend type Query {
     gamestats: [GameStats]
     categorystats: [CategoryStats]
-    singlecategorystat: [SingleCategoryStat]
+    singlecategorystat(catid: ID!): [SingleCategoryStat]
     categoryrankings(catid: ID!): [CategoryRankings]
     joustgamestats: [JoustGameStats]
     siegegamestats: [SiegeGameStats]

@@ -958,4 +958,5 @@ module.exports = {
   questAllTimeWinners,
   questionsAnswered,
   categoryRankings,
+  userSingleCategoryStat,
 };

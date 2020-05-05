@@ -5,6 +5,7 @@ const {
   gameStats,
   categoryStats,
   categoryRankings,
+  userSingleCategoryStat,
   joustGameStats,
   siegeGameStats,
   pressLuckGameStats,
@@ -28,6 +29,12 @@ const resolvers = {
     categoryrankings: requiresAuth.createResolver((parent, { catid }) => {
       return categoryRankings(catid);
     }),
+
+    singlecategorystat: requiresAuth.createResolver(
+      (parent, { catid }, { user }) => {
+        return userSingleCategoryStat(user.id, catid);
+      }
+    ),
 
     joustgamestats: requiresAuth.createResolver(
       (parent, { args }, { user }) => {
