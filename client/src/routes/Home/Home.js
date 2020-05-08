@@ -1,17 +1,9 @@
 import React from "react";
-import { Grid, Container, Card } from "semantic-ui-react";
+import { Card } from "semantic-ui-react";
 import Footer from "../../components/Footer/Footer";
 import logo from "../../images/site-logo.png"; // Tell Webpack this JS file uses this image
-import { gql } from "apollo-boost";
-import { useQuery } from "@apollo/react-hooks";
 
 const Home = () => {
-  const { loading, data: { categorieswidget } = {} } = useQuery(
-    QUERY_CATEGORIESWIDGET
-  );
-
-  if (loading) return <div>Loading...</div>;
-
   return (
     <>
       <main>
@@ -20,105 +12,44 @@ const Home = () => {
             <img src={logo} alt="Logo" />
             <p className="homepage-subhead">
               A fun trivia game that you can play on your own or with friends.
+              Over 100 categories and nearly 10,000 questions! Challenge your
+              friends and track your stats.
             </p>
           </div>
         </section>
         <section className="homepage-middle">
-          <h2>Features</h2>
-          <Grid stackable columns={4}>
-            <Grid.Row>
-              <Grid.Column>
-                <Container>
-                  <Card fluid>
-                    <Card.Content>
-                      <Card.Header>
-                        {categorieswidget.totalcategories} Categories
-                      </Card.Header>
-                      <Card.Description>
-                        Matthew is a musician living in Nashville.
-                      </Card.Description>
-                    </Card.Content>
-                  </Card>
-                </Container>
-              </Grid.Column>
-              <Grid.Column>
-                <Container>
-                  <Card fluid>
-                    <Card.Content>
-                      <Card.Header>
-                        {categorieswidget.totalcategories} Questions
-                      </Card.Header>
-                      <Card.Description>
-                        Matthew is a musician living in Nashville.
-                      </Card.Description>
-                    </Card.Content>
-                  </Card>
-                </Container>
-              </Grid.Column>
-              <Grid.Column>
-                <Card fluid>
-                  <Card.Content>
-                    <Card.Header>Challenge Your Friends</Card.Header>
-                    <Card.Description>
-                      Matthew is a musician living in Nashville.
-                    </Card.Description>
-                  </Card.Content>
-                </Card>
-              </Grid.Column>
-              <Grid.Column>
-                <Container>
-                  <Card fluid>
-                    <Card.Content>
-                      <Card.Header>Track Your Stats</Card.Header>
-                      <Card.Description>
-                        Matthew is a musician living in Nashville.
-                      </Card.Description>
-                    </Card.Content>
-                  </Card>
-                </Container>
-              </Grid.Column>
-            </Grid.Row>
-          </Grid>
           <h2>Game Modes</h2>
 
-          <Grid stackable columns={3}>
-            <Grid.Row>
-              <Grid.Column>
-                <Container>
-                  <Card fluid>
-                    <Card.Content>
-                      <Card.Header>Solo</Card.Header>
-                      <Card.Description>
-                        Matthew is a musician living in Nashville.
-                      </Card.Description>
-                    </Card.Content>
-                  </Card>
-                </Container>
-              </Grid.Column>
-              <Grid.Column>
-                <Card fluid>
-                  <Card.Content>
-                    <Card.Header>Joust</Card.Header>
-                    <Card.Description>
-                      Matthew is a musician living in Nashville.
-                    </Card.Description>
-                  </Card.Content>
-                </Card>
-              </Grid.Column>
-              <Grid.Column>
-                <Container>
-                  <Card fluid>
-                    <Card.Content>
-                      <Card.Header>Quest</Card.Header>
-                      <Card.Description>
-                        Matthew is a musician living in Nashville.
-                      </Card.Description>
-                    </Card.Content>
-                  </Card>
-                </Container>
-              </Grid.Column>
-            </Grid.Row>
-          </Grid>
+          <Card.Group centered stackable>
+            <Card>
+              <Card.Content>
+                <Card.Header>Solo</Card.Header>
+
+                <Card.Description>
+                  See how you do in general categories such as Movies,
+                  Television and Music.
+                </Card.Description>
+              </Card.Content>
+            </Card>
+            <Card>
+              <Card.Content>
+                <Card.Header>Joust</Card.Header>
+
+                <Card.Description>
+                  Challenge a friend in any category!
+                </Card.Description>
+              </Card.Content>
+            </Card>
+            <Card>
+              <Card.Content>
+                <Card.Header>Quest</Card.Header>
+
+                <Card.Description>
+                  Play once a day in a weekly topic. Correct answers earn gems!
+                </Card.Description>
+              </Card.Content>
+            </Card>
+          </Card.Group>
         </section>
         <section className="homepage-bottom">
           <Footer />
@@ -127,14 +58,5 @@ const Home = () => {
     </>
   );
 };
-
-const QUERY_CATEGORIESWIDGET = gql`
-  query categoriesWidget {
-    categorieswidget {
-      totalcategories
-      unpublishedcategories
-    }
-  }
-`;
 
 export default Home;

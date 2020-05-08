@@ -724,7 +724,7 @@ const userSingleCategoryStat = async (userId, catId) => {
         },
       },
     ]);
-    //console.log(categoryrankings);
+
     return usersinglecatstat;
   } catch (error) {
     console.error(error);

@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 const bcrypt = require("bcrypt");
-const PlayerPressLuckHighScoresSchema = require("./PlayerPressLuckHighScores");
 const PlayerQuestHighScoresSchema = require("./PlayerQuestHighScores");
 
 //Define the model
@@ -37,7 +36,6 @@ const userSchema = new Schema(
     blockedusers: [{ type: Schema.Types.ObjectId, ref: "user" }],
     categories: [{ type: Schema.Types.ObjectId, ref: "category" }],
     expoPushTokens: [{ type: String }],
-    pressluckhighscores: [PlayerPressLuckHighScoresSchema],
     questhighscores: [PlayerQuestHighScoresSchema],
     gems: { type: Number, default: 20 },
   },

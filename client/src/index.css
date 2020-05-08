@@ -10,6 +10,7 @@ body {
 #root {
   display: flex;
   flex-direction: column;
+  background: rgba(0, 0, 0, 1);
 }
 
 img {
@@ -36,13 +37,14 @@ img {
 }
 
 .homepage-top {
-  height: 100vh;
-  width: 100vw;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 0 0 4em 0;
-  background: rgba(0, 0, 0, 1);
+}
+
+.homepage-middle h2 {
+  color: white;
 }
 
 .bigphone {
@@ -61,7 +63,7 @@ img {
 }
 
 .homepage-middle {
-  background: #fff;
+  background: rgba(0, 0, 0, 1);
   padding: 4em;
 }
 
@@ -76,6 +78,7 @@ img {
   display: flex;
   justify-content: center;
   padding: 1rem;
+  background: rgba(0, 0, 0, 1);
   color: #fff;
 }
 

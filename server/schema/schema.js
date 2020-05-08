@@ -13,7 +13,6 @@ const questionReports = require("./questionReports");
 const gamesSolo = require("./gamesSolo");
 const gamesJoust = require("./gamesJoust");
 const gamesSiege = require("./gamesSiege");
-const gamesPressYourLuck = require("./gamesPressYourLuck");
 const gamesQuest = require("./gamesQuest");
 const gamesHosted = require("./gamesHosted");
 //stats
@@ -40,7 +39,6 @@ module.exports = {
     gamesSolo.typeDef,
     gamesJoust.typeDef,
     gamesSiege.typeDef,
-    gamesPressYourLuck.typeDef,
     gamesQuest.typeDef,
     gamesHosted.typeDef,
     stats.typeDef,
@@ -58,7 +56,6 @@ module.exports = {
     gamesSolo.resolvers,
     gamesJoust.resolvers,
     gamesSiege.resolvers,
-    gamesPressYourLuck.resolvers,
     gamesQuest.resolvers,
     stats.resolvers,
     expoPushNotifications.resolvers,

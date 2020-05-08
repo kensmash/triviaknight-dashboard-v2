@@ -4,7 +4,7 @@ const ExpoPushTicket = require("../models/ExpoPushTicket");
 const ExpoPushReceipt = require("../models/ExpoPushReceipt");
 const {
   sendPushTicketEmail,
-  sendPushReceiptEmail
+  sendPushReceiptEmail,
 } = require("../schema/_helpers/helper-sendgrid");
 
 //check push receipts
@@ -16,7 +16,7 @@ const checkPushReceipts = schedule.scheduleJob(
     //retrieve batches of receipts from the Expo service.
     const pushtickets = await ExpoPushTicket.find({});
     if (pushtickets.length) {
-      const ids = pushtickets.map(ticket => ticket.id);
+      const ids = pushtickets.map((ticket) => ticket.id);
       const expo = new Expo();
       let receiptIdChunks = expo.chunkPushNotificationReceiptIds(ids);
       for (let chunk of receiptIdChunks) {
@@ -25,7 +25,7 @@ const checkPushReceipts = schedule.scheduleJob(
           let receipts = await expo.getPushNotificationReceiptsAsync(chunk);
           //need to convert to array to iterate through
           let receiptsArray = [];
-          const obj = JSON.stringify(receipts, function(key, value) {
+          const obj = JSON.stringify(receipts, function (key, value) {
             receiptsArray.push(value);
           });
           // The receipts specify whether Apple or Google successfully received the
@@ -41,9 +41,9 @@ const checkPushReceipts = schedule.scheduleJob(
                     id: receiptId,
                     status: receiptInfo[0].status,
                     message: receiptInfo[0].message,
-                    details: receiptInfo[0].details
+                    details: receiptInfo[0].details,
                   });
-                  const savedReceipt = await newreceipt.save();
+                  await newreceipt.save();
                   //send email
                   sendPushReceiptEmail(
                     receiptId,
@@ -70,10 +70,10 @@ const pushTicketErrorCheck = schedule.scheduleJob(
   async () => {
     console.log("push ticket error check function called");
     const pushticketerrors = await ExpoPushTicket.find({
-      status: { $ne: "ok" }
+      status: { $ne: "ok" },
     });
     if (pushticketerrors.length) {
-      const pushids = pushticketerrors.map(ticket => ticket.id);
+      const pushids = pushticketerrors.map((ticket) => ticket.id);
       //send email
       sendPushTicketEmail(pushids);
     }
@@ -88,10 +88,10 @@ const deletePushTickets = schedule.scheduleJob(
     ExpoPushTicket.deleteMany(
       {
         createdAt: {
-          $lte: new Date(Date.now() - 2)
-        }
+          $lte: new Date(Date.now() - 2),
+        },
       },
-      function(err) {
+      function (err) {
         if (err) return console.error(err);
       }
     );
@@ -101,5 +101,5 @@ const deletePushTickets = schedule.scheduleJob(
 module.exports = {
   checkPushReceipts,
   pushTicketErrorCheck,
-  deletePushTickets
+  deletePushTickets,
 };

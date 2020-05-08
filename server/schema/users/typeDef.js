@@ -19,7 +19,6 @@ const typeDef = gql`
     sologames: [GameSolo]
     joustgames: [GameJoust]
     siegegames: [GameSiege]
-    pressluckgames: [GamePressYourLuck]
     questgames: [GameQuest]
     expoPushTokens: [String]
     gems: Int
@@ -163,9 +162,7 @@ const typeDef = gql`
   }
 
   type UserGameResponse {
-    pressluckgames: [GamePressYourLuck]
     joustgames: [GameJoust]
-    siegegames: [GameSiege]
   }
 
   type UserPartyGameResponse {
