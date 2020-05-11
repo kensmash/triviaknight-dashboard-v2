@@ -13,7 +13,7 @@ const newCategories = schedule.scheduleJob(
     const categories = await Category.find({
       published: { $eq: true },
       partycategory: { $eq: false },
-      updatedpushsent: { $eq: false },
+      newpushsent: { $eq: false },
       showasnew: { $eq: true },
       updatedAt: {
         $gt: new Date(new Date() - 7 * 60 * 60 * 24 * 1000),
@@ -93,7 +93,7 @@ const newCategories = schedule.scheduleJob(
         {
           published: { $eq: true },
           partycategory: { $eq: false },
-          updatedpushsent: { $eq: false },
+          newpushsent: { $eq: false },
           showasnew: { $eq: true },
           updatedAt: {
             $gt: new Date(new Date() - 7 * 60 * 60 * 24 * 1000),

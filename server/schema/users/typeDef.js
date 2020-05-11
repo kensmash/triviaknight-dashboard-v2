@@ -18,7 +18,6 @@ const typeDef = gql`
     blockedusers: [User]
     sologames: [GameSolo]
     joustgames: [GameJoust]
-    siegegames: [GameSiege]
     questgames: [GameQuest]
     expoPushTokens: [String]
     gems: Int
@@ -42,7 +41,6 @@ const typeDef = gql`
 
   type GameChallengesResponse {
     joustgames: [GameJoust]
-    siegegames: [GameSiege]
   }
 
   type JoustLeaderBoardResponse {

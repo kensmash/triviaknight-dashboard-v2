@@ -16,7 +16,7 @@ const keys = require("./config/keys");
 //schema
 const schema = require("./schema/schema");
 //scheduled jobs
-//const { newCategories } = require("./jobs/jobs-categories");
+const { newCategories } = require("./jobs/jobs-categories");
 const {
   weeklyQuestTopicNotification,
   weeklyHighScoreNotification,

@@ -11,27 +11,28 @@ const QuestionSchema = new Schema(
     type: {
       type: String,
       required: true,
-      default: "Multiple Choice"
+      default: "Multiple Choice",
     },
+    guessable: { type: Boolean, default: true },
     difficulty: {
       type: String,
       required: true,
-      default: "Normal"
+      default: "Normal",
     },
     media: {
       type: String,
       required: true,
-      default: "none" //could do audio, video, image
+      default: "none", //could do audio, video, image
     },
     imageurl: String,
     videourl: String,
     audiourl: String,
-    published: { type: Boolean, default: false }
+    published: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
 
-QuestionSchema.pre("remove", function(next) {
+QuestionSchema.pre("remove", function (next) {
   QuestionReport.remove({ question: { $eq: this._id } }).then(() => next());
 });
 

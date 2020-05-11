@@ -193,7 +193,6 @@ const resolvers = {
               .populate("categories")
               .populate("sologames")
               .populate("joustgames")
-              .populate("siegegames")
               .sort({ updatedAt: -1 }),
             User.countDocuments(queryBuilder(offset, limit, name)),
           ]);
@@ -306,17 +305,11 @@ const resolvers = {
                 { path: "category" },
               ],
             })
-            .sort({ updatedAt: -1 })
-            .populate({
-              path: "siegegames",
-              populate: [{ path: "createdby" }, { path: "players.player" }],
-            })
             .sort({ updatedAt: -1 });
 
           return {
             pressluckgames: player.pressluckgames,
             joustgames: player.joustgames,
-            siegegames: player.siegegames,
           };
         } catch (error) {
           console.error(error);

@@ -12,26 +12,26 @@ const UsersList = () => {
 
   const variables = {
     offset: limit * parseInt(currentActivePage, 10) - limit,
-    limit
+    limit,
   };
 
   const { loading, data: { userspage } = {}, fetchMore } = useQuery(
     QUERY_USERSPAGE,
     {
       variables,
-      fetchPolicy: "cache-and-network"
+      fetchPolicy: "cache-and-network",
     }
   );
 
   useEffect(() => {
     fetchMore({
       variables: {
-        offset: limit * parseInt(currentActivePage, 10) - limit
+        offset: limit * parseInt(currentActivePage, 10) - limit,
       },
       updateQuery: (prev, { fetchMoreResult }) => {
         if (!fetchMoreResult) return prev;
         return fetchMoreResult;
-      }
+      },
     });
   }, [currentActivePage, limit, fetchMore]);
 
@@ -46,7 +46,6 @@ const UsersList = () => {
             <Table.HeaderCell>Categories</Table.HeaderCell>
             <Table.HeaderCell>Solo Games</Table.HeaderCell>
             <Table.HeaderCell>Joust Games</Table.HeaderCell>
-            <Table.HeaderCell>Siege Games</Table.HeaderCell>
           </Table.Row>
         </Table.Header>
         {loading ? (
@@ -59,7 +58,7 @@ const UsersList = () => {
           <>
             <Table.Body>
               {userspage.users.length ? (
-                userspage.users.map(user => (
+                userspage.users.map((user) => (
                   <Table.Row key={user._id}>
                     <Table.Cell>{user.name}</Table.Cell>
                     <Table.Cell>
@@ -83,9 +82,6 @@ const UsersList = () => {
                     <Table.Cell collapsing>
                       {user.joustgames.length ? user.joustgames.length : 0}
                     </Table.Cell>
-                    <Table.Cell collapsing>
-                      {user.siegegames.length ? user.siegegames.length : 0}
-                    </Table.Cell>
                   </Table.Row>
                 ))
               ) : (
@@ -98,7 +94,7 @@ const UsersList = () => {
             </Table.Body>
             <Table.Footer>
               <Table.Row>
-                <Table.HeaderCell colSpan="7">
+                <Table.HeaderCell colSpan="6">
                   <Grid columns="equal">
                     <Grid.Column width={2}>
                       <div className="tableItemNumbers">
@@ -133,7 +129,7 @@ const UsersList = () => {
 
 UsersList.propTypes = {
   history: PropTypes.object.isRequired,
-  match: PropTypes.object.isRequired
+  match: PropTypes.object.isRequired,
 };
 
 export default UsersList;
