@@ -3,14 +3,12 @@ const { requiresAuth } = require("../_helpers/helper-permissions");
 //stats helpers
 const {
   gameStats,
+  questionStats,
   categoryStats,
   categoryRankings,
   userSingleCategoryStat,
   joustGameStats,
-  siegeGameStats,
-  pressLuckGameStats,
-  pressLuckLastWeekWinners,
-  pressLuckAllTimeWinners,
+  joustRecordStats,
   questGameStats,
   questLastWeekWinners,
   questAllTimeWinners,
@@ -20,6 +18,10 @@ const resolvers = {
   Query: {
     gamestats: requiresAuth.createResolver((parent, { args }, { user }) => {
       return gameStats(user.id);
+    }),
+
+    questionstats: requiresAuth.createResolver((parent, { args }, { user }) => {
+      return questionStats(user.id);
     }),
 
     categorystats: requiresAuth.createResolver((parent, { args }, { user }) => {
@@ -42,25 +44,11 @@ const resolvers = {
       }
     ),
 
-    siegegamestats: requiresAuth.createResolver(
+    joustrecordstats: requiresAuth.createResolver(
       (parent, { args }, { user }) => {
-        return siegeGameStats(user.id);
+        return joustRecordStats(user.id);
       }
     ),
-
-    pressluckgamestats: requiresAuth.createResolver((parent, { args }) => {
-      return pressLuckGameStats();
-    }),
-
-    presslucklastweekwinners: requiresAuth.createResolver(
-      (parent, { args }) => {
-        return pressLuckLastWeekWinners();
-      }
-    ),
-
-    pressluckalltimewinners: requiresAuth.createResolver((parent, { args }) => {
-      return pressLuckAllTimeWinners();
-    }),
 
     questgamestats: requiresAuth.createResolver((parent, { args }) => {
       return questGameStats();

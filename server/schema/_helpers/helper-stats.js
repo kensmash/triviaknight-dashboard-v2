@@ -144,6 +144,153 @@ const gameStats = async (userId) => {
   }
 };
 
+//game stats NOT broken down by type
+const questionStats = async (userId) => {
+  try {
+    const simplegamestats = await User.aggregate([
+      //match user
+      { $match: { _id: new mongoose.Types.ObjectId(userId) } },
+      //find all games user is in
+      {
+        $lookup: {
+          from: "gamessolo",
+          localField: "_id",
+          foreignField: "players.player",
+          as: "soloGames",
+        },
+      },
+      {
+        $lookup: {
+          from: "gamesjoust",
+          localField: "_id",
+          foreignField: "players.player",
+          as: "joustGames",
+        },
+      },
+      {
+        $lookup: {
+          from: "gamesquest",
+          localField: "_id",
+          foreignField: "players.player",
+          as: "questGames",
+        },
+      },
+      //combine games
+      {
+        $project: {
+          totalGames: {
+            $concatArrays: ["$soloGames", "$joustGames", "$questGames"],
+          },
+        },
+      },
+      //get a document for each game
+      { $unwind: "$totalGames" },
+      //get a document for each player
+      { $unwind: "$totalGames.players" },
+      //retain game type and player info
+      {
+        $project: {
+          _id: "$totalGames._id",
+          stats: "$totalGames.players",
+        },
+      },
+      //only keep current player documents
+      { $match: { "stats.player": new mongoose.Types.ObjectId(userId) } },
+      //get a document for each round result
+      { $unwind: "$stats.roundresults" },
+      //keep type, figure out questions answered and number correct per game type
+      {
+        $project: {
+          _id: 1,
+          stats: "$stats",
+          results: "$stats.roundresults",
+        },
+      },
+      //group by game
+      {
+        $group: {
+          _id: 0,
+          questionsAnswered: { $sum: 1 },
+          averagescore: { $avg: "$stats.score" },
+          correctAnswers: {
+            $sum: {
+              $cond: ["$results.correct", 1, 0],
+            },
+          },
+          incorrectAnswers: {
+            $sum: {
+              $cond: ["$results.correct", 0, 1],
+            },
+          },
+          normalquestions: {
+            $sum: {
+              $cond: [{ $eq: ["$results.difficulty", "Normal"] }, 1, 0],
+            },
+          },
+          normalcorrect: {
+            $sum: {
+              $cond: [
+                {
+                  $and: [
+                    { $eq: ["$results.difficulty", "Normal"] },
+                    { $eq: ["$results.correct", true] },
+                  ],
+                },
+                1,
+                0,
+              ],
+            },
+          },
+          hardquestions: {
+            $sum: {
+              $cond: [{ $eq: ["$results.difficulty", "Hard"] }, 1, 0],
+            },
+          },
+          hardcorrect: {
+            $sum: {
+              $cond: [
+                {
+                  $and: [
+                    { $eq: ["$results.difficulty", "Hard"] },
+                    { $eq: ["$results.correct", true] },
+                  ],
+                },
+                1,
+                0,
+              ],
+            },
+          },
+        },
+      },
+      //the final data
+      {
+        $project: {
+          _id: 0,
+          averagescore: "$averagescore",
+          questionsanswered: "$questionsAnswered",
+          correctanswers: "$correctAnswers",
+          incorrectanswers: "$incorrectAnswers",
+          normalquestions: "$normalquestions",
+          normalcorrect: "$normalcorrect",
+          hardquestions: "$hardquestions",
+          hardcorrect: "$hardcorrect",
+          percentcorrect: {
+            $trunc: {
+              $multiply: [
+                { $divide: ["$correctAnswers", "$questionsAnswered"] },
+                100,
+              ],
+            },
+          },
+        },
+      },
+    ]);
+    return simplegamestats[0];
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 //figure out how many questions a player has answered
 const questionsAnswered = async (userId) => {
   try {
@@ -567,7 +714,7 @@ const categoryRankings = async (catId) => {
       },
       { $sort: { questionsanswered: -1, correct: -1 } },
     ]);
-    //console.log(categoryrankings);
+
     return categoryrankings;
   } catch (error) {
     console.error(error);
@@ -731,6 +878,82 @@ const userSingleCategoryStat = async (userId, catId) => {
   }
 };
 
+//track player win loss record overall in jousts
+const joustRecordStats = async (userId) => {
+  try {
+    const joustrecordstats = await GameJoust.aggregate([
+      //find all games the user is in
+      {
+        $match: {
+          "players.player": new mongoose.Types.ObjectId(userId),
+          gameover: true,
+          timedout: false,
+          declined: false,
+        },
+      },
+      //get a document for each game player
+      { $unwind: "$players" },
+      //only keep user documents
+      {
+        $match: {
+          "players.player": { $in: [new mongoose.Types.ObjectId(userId)] },
+        },
+      },
+      //group documents
+      {
+        $group: {
+          _id: {
+            player: "$players.player",
+          },
+          totalGames: { $sum: 1 },
+          //we are checking opponent docs, so a win for them is a loss for us
+          wins: {
+            $sum: { $cond: [{ $eq: ["$players.winner", true] }, 1, 0] },
+          },
+          losses: {
+            $sum: {
+              $cond: [
+                {
+                  $and: [
+                    { $eq: ["$players.winner", false] },
+                    { $eq: ["$players.tied", false] },
+                  ],
+                },
+                1,
+                0,
+              ],
+            },
+          },
+          ties: { $sum: { $cond: [{ $eq: ["$players.tied", true] }, 1, 0] } },
+        },
+      },
+      //the final data
+      {
+        $project: {
+          _id: 0,
+          gamesplayed: "$totalGames",
+          wins: "$wins",
+          losses: "$losses",
+          ties: "$ties",
+          winpercent: {
+            $trunc: {
+              $multiply: [{ $divide: ["$wins", "$totalGames"] }, 100],
+            },
+          },
+          tiespercent: {
+            $trunc: {
+              $multiply: [{ $divide: ["$ties", "$totalGames"] }, 100],
+            },
+          },
+        },
+      },
+    ]);
+    return joustrecordstats[0];
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 //tracks number of joust games, wins, losses and ties per opponent
 const joustGameStats = async (userId) => {
   try {
@@ -804,6 +1027,7 @@ const joustGameStats = async (userId) => {
           ties: "$ties",
         },
       },
+      { $sort: { gamesplayed: -1, wins: -1 } },
     ]);
     return jouststats;
   } catch (error) {
@@ -951,8 +1175,10 @@ const questAllTimeWinners = async () => {
 
 module.exports = {
   gameStats,
+  questionStats,
   categoryStats,
   joustGameStats,
+  joustRecordStats,
   questGameStats,
   questLastWeekWinners,
   questAllTimeWinners,

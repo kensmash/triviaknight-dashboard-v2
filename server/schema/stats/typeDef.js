@@ -13,6 +13,18 @@ const typeDef = gql`
     hardcorrect: Int!
   }
 
+  type QuestionStats {
+    questionsanswered: Int
+    correctanswers: Int
+    incorrectanswers: Int
+    averagescore: Float
+    normalquestions: Int!
+    normalcorrect: Int!
+    hardquestions: Int!
+    hardcorrect: Int!
+    percentcorrect: Int!
+  }
+
   type SingleCategoryStat {
     questionsanswered: Int
     correct: Int
@@ -65,41 +77,13 @@ const typeDef = gql`
     ties: Int
   }
 
-  type SiegeGameStats {
-    opponentid: ID
-    opponentname: String
-    opponentavatar: String
+  type JoustRecordStats {
     gamesplayed: Int
     wins: Int
     losses: Int
     ties: Int
-  }
-
-  type PressLuckGameStats {
-    topic: String
-    id: ID
-    name: String
-    rank: String
-    avatar: String
-    gamesplayed: Int
-    highscore: Int
-  }
-
-  type PressLuckPrevWeekWinners {
-    topic: String
-    id: ID
-    name: String
-    rank: String
-    avatar: String
-    highscore: Int
-  }
-
-  type PressLuckAllTimeWinners {
-    id: ID
-    name: String
-    rank: String
-    avatar: String
-    wins: Int
+    winpercent: Int
+    tiespercent: Int
   }
 
   type QuestGameStats {
@@ -134,14 +118,12 @@ const typeDef = gql`
 
   extend type Query {
     gamestats: [GameStats]
+    questionstats: QuestionStats
     categorystats: [CategoryStats]
     singlecategorystat(catid: ID!): [SingleCategoryStat]
     categoryrankings(catid: ID!): [CategoryRankings]
     joustgamestats: [JoustGameStats]
-    siegegamestats: [SiegeGameStats]
-    pressluckgamestats: [PressLuckGameStats]
-    presslucklastweekwinners: [PressLuckPrevWeekWinners]
-    pressluckalltimewinners: [PressLuckAllTimeWinners]
+    joustrecordstats: JoustRecordStats
     questgamestats: [QuestGameStats]
     questlastweekwinners: [QuestPrevWeekWinners]
     questalltimewinners: [QuestAllTimeWinners]
