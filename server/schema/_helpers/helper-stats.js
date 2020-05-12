@@ -623,7 +623,7 @@ const categoryRankings = async (catId) => {
       {
         $group: {
           _id: {
-            player: "$players.player",
+            player: "$players.roundresults.question",
           },
           id: { $first: "$_id" },
           name: { $first: "$name" },
@@ -657,53 +657,6 @@ const categoryRankings = async (catId) => {
               $cond: ["$players.roundresults.correct", 0, 1],
             },
           },
-
-          normalquestions: {
-            $sum: {
-              $cond: [
-                { $eq: ["$players.roundresults.difficulty", "Normal"] },
-                1,
-                0,
-              ],
-            },
-          },
-          normalcorrect: {
-            $sum: {
-              $cond: [
-                {
-                  $and: [
-                    { $eq: ["$players.roundresults.difficulty", "Normal"] },
-                    { $eq: ["$players.roundresults.correct", true] },
-                  ],
-                },
-                1,
-                0,
-              ],
-            },
-          },
-          hardquestions: {
-            $sum: {
-              $cond: [
-                { $eq: ["$players.roundresults.difficulty", "Hard"] },
-                1,
-                0,
-              ],
-            },
-          },
-          hardcorrect: {
-            $sum: {
-              $cond: [
-                {
-                  $and: [
-                    { $eq: ["$players.roundresults.difficulty", "Hard"] },
-                    { $eq: ["$players.roundresults.correct", true] },
-                  ],
-                },
-                1,
-                0,
-              ],
-            },
-          },
         },
       },
       //shape the cat data
@@ -723,10 +676,6 @@ const categoryRankings = async (catId) => {
               $multiply: [{ $divide: ["$correct", "$questionsanswered"] }, 100],
             },
           },
-          normalquestions: "$normalquestions",
-          normalcorrect: "$normalcorrect",
-          hardquestions: "$hardquestions",
-          hardcorrect: "$hardcorrect",
         },
       },
       { $sort: { questionsanswered: -1, correct: -1 } },
