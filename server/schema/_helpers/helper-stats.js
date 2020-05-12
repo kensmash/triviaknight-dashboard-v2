@@ -787,12 +787,21 @@ const userSingleCategoryStat = async (userId, catId) => {
           "players.roundresults.category": new mongoose.Types.ObjectId(catId),
         },
       },
-      //group by player
+      //attempt to remove duplicates
       {
         $group: {
           _id: {
             player: "$players.player",
           },
+          players: { $first: "$players" },
+          uniqueQuestions: { $addToSet: "$players.roundresults.question" },
+        },
+      },
+      { $unwind: "$uniqueQuestions" },
+      //group by player
+      {
+        $group: {
+          _id: 0,
           questionsanswered: { $sum: 1 },
           correct: {
             $sum: {
