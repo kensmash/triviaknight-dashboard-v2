@@ -62,10 +62,6 @@ const typeDef = gql`
     correct: Int
     incorrect: Int
     percentcorrect: Int
-    normalquestions: Int
-    normalcorrect: Int
-    hardquestions: Int
-    hardcorrect: Int
   }
 
   type JoustGameStats {

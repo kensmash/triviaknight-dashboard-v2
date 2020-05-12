@@ -619,7 +619,7 @@ const categoryRankings = async (catId) => {
           "players.roundresults.category": new mongoose.Types.ObjectId(catId),
         },
       },
-      //attempt to remove duplicate questions
+      //group by player attempt to remove duplicate questions
       {
         $group: {
           _id: {
@@ -635,12 +635,11 @@ const categoryRankings = async (catId) => {
         },
       },
       { $unwind: "$uniqueQuestions" },
+
       //group by player
       {
         $group: {
-          _id: {
-            player: "$players.player",
-          },
+          _id: "$players.player",
           id: { $first: "$id" },
           name: { $first: "$name" },
           rank: { $first: "$rank" },
@@ -680,7 +679,7 @@ const categoryRankings = async (catId) => {
       },
       { $sort: { questionsanswered: -1, correct: -1 } },
     ]);
-
+    //console.log(categoryrankings);
     return categoryrankings;
   } catch (error) {
     console.error(error);
