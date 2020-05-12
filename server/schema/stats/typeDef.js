@@ -28,6 +28,7 @@ const typeDef = gql`
   type SingleCategoryStat {
     catquestions: Int
     questionsanswered: Int
+    questionsansweredpercent: Int
     correct: Int
     incorrect: Int
     percentcorrect: Int
@@ -121,7 +122,7 @@ const typeDef = gql`
     gamestats: [GameStats]
     questionstats: QuestionStats
     categorystats: [CategoryStats]
-    singlecategorystat(catid: ID!): [SingleCategoryStat]
+    singlecategorystat(catid: ID!): SingleCategoryStat
     categoryrankings(catid: ID!): [CategoryRankings]
     joustgamestats: [JoustGameStats]
     joustrecordstats: JoustRecordStats

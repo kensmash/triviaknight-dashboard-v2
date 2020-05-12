@@ -724,7 +724,7 @@ const categoryRankings = async (catId) => {
 
 //track category stats per user
 const userSingleCategoryStat = async (userId, catId) => {
-  //tracks
+  //tracks amount of questions in category
   try {
     const catquestions = await Question.aggregate([
       {
@@ -738,7 +738,7 @@ const userSingleCategoryStat = async (userId, catId) => {
       },
     ]);
 
-    const usersinglecatstat = await User.aggregate([
+    let usersinglecatstat = await User.aggregate([
       //match user
       { $match: { _id: new mongoose.Types.ObjectId(userId) } },
       //find all games the user is in
@@ -826,52 +826,6 @@ const userSingleCategoryStat = async (userId, catId) => {
               $cond: ["$players.roundresults.correct", 0, 1],
             },
           },
-          normalquestions: {
-            $sum: {
-              $cond: [
-                { $eq: ["$players.roundresults.difficulty", "Normal"] },
-                1,
-                0,
-              ],
-            },
-          },
-          normalcorrect: {
-            $sum: {
-              $cond: [
-                {
-                  $and: [
-                    { $eq: ["$players.roundresults.difficulty", "Normal"] },
-                    { $eq: ["$players.roundresults.correct", true] },
-                  ],
-                },
-                1,
-                0,
-              ],
-            },
-          },
-          hardquestions: {
-            $sum: {
-              $cond: [
-                { $eq: ["$players.roundresults.difficulty", "Hard"] },
-                1,
-                0,
-              ],
-            },
-          },
-          hardcorrect: {
-            $sum: {
-              $cond: [
-                {
-                  $and: [
-                    { $eq: ["$players.roundresults.difficulty", "Hard"] },
-                    { $eq: ["$players.roundresults.correct", true] },
-                  ],
-                },
-                1,
-                0,
-              ],
-            },
-          },
         },
       },
       //shape the cat data
@@ -881,20 +835,27 @@ const userSingleCategoryStat = async (userId, catId) => {
           questionsanswered: "$questionsanswered",
           correct: 1,
           incorrect: 1,
-          percentcorrect: {
-            $trunc: {
-              $multiply: [{ $divide: ["$correct", "$questionsanswered"] }, 100],
-            },
-          },
-          normalquestions: "$normalquestions",
-          normalcorrect: "$normalcorrect",
-          hardquestions: "$hardquestions",
-          hardcorrect: "$hardcorrect",
         },
       },
     ]);
-    usersinglecatstat[0].catquestions = catquestions[0].questions;
-    return usersinglecatstat;
+    if (usersinglecatstat.length) {
+      usersinglecatstat[0].catquestions = catquestions[0].questions;
+      usersinglecatstat[0].questionsansweredpercent = Math.round(
+        (usersinglecatstat[0].questionsanswered * 100) /
+          catquestions[0].questions
+      );
+    } else {
+      usersinglecatstat = [
+        {
+          catquestions: catquestions[0].questions,
+          questionsanswered: 0,
+          questionsansweredpercent: 0,
+          correct: 0,
+          incorrect: 0,
+        },
+      ];
+    }
+    return usersinglecatstat[0];
   } catch (error) {
     console.error(error);
   }
