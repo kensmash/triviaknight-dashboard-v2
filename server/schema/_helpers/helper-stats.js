@@ -4,6 +4,7 @@ const Question = require("../../models/Question");
 const GameJoust = require("../../models/GameJoust");
 const GameQuest = require("../../models/GameQuest");
 const { currentQuestTopic } = require("../_helpers/helper-gamesquest");
+const util = require("util");
 
 //tracks questions answered, correct and incorrect per game type
 const gameStats = async (userId) => {
@@ -623,23 +624,46 @@ const categoryRankings = async (catId) => {
       {
         $group: {
           _id: {
-            player: "$players.roundresults.question",
+            player: "$players.player",
           },
           id: { $first: "$_id" },
           name: { $first: "$name" },
           rank: { $first: "$rank" },
           avatar: { $first: "$avatar" },
           avatarBackgroundColor: { $first: "$avatarBackgroundColor" },
-          players: { $first: "$players" },
           uniqueQuestions: { $addToSet: "$players.roundresults.question" },
+          roundresults: { $push: "$players.roundresults" },
         },
       },
+      //at this point we have a document for each player, with an array of unique questions
+      //that the player has answered for the given question
+      //unwind to get a doc for every unique question
       { $unwind: "$uniqueQuestions" },
+      //project to preserve the round result for each unique question
+      {
+        $project: {
+          id: 1,
+          name: 1,
+          rank: 1,
+          avatar: 1,
+          avatarBackgroundColor: 1,
+          uniqueQuestions: 1,
+          roundresults: {
+            $filter: {
+              input: "$roundresults",
+              as: "roundresults",
+              cond: {
+                $eq: ["$$roundresults.question", "$$CURRENT.uniqueQuestions"],
+              },
+            },
+          },
+        },
+      },
 
-      //group by player
+      //group by player again
       {
         $group: {
-          _id: "$players.player",
+          _id: "$id",
           id: { $first: "$id" },
           name: { $first: "$name" },
           rank: { $first: "$rank" },
@@ -648,12 +672,7 @@ const categoryRankings = async (catId) => {
           questionsanswered: { $sum: 1 },
           correct: {
             $sum: {
-              $cond: ["$players.roundresults.correct", 1, 0],
-            },
-          },
-          incorrect: {
-            $sum: {
-              $cond: ["$players.roundresults.correct", 0, 1],
+              $cond: [{ $arrayElemAt: ["$roundresults.correct", 0] }, 1, 0],
             },
           },
         },
@@ -669,7 +688,6 @@ const categoryRankings = async (catId) => {
           avatarBackgroundColor: "$avatarBackgroundColor",
           questionsanswered: "$questionsanswered",
           correct: 1,
-          incorrect: 1,
           percentcorrect: {
             $trunc: {
               $multiply: [{ $divide: ["$correct", "$questionsanswered"] }, 100],
@@ -679,7 +697,10 @@ const categoryRankings = async (catId) => {
       },
       { $sort: { questionsanswered: -1, correct: -1 } },
     ]);
-    //console.log(categoryrankings);
+
+    /* console.log(
+      util.inspect(categoryrankings, { showHidden: false, depth: null })
+    );*/
     return categoryrankings;
   } catch (error) {
     console.error(error);
