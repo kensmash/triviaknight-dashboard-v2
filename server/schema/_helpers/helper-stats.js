@@ -638,7 +638,9 @@ const categoryRankings = async (catId) => {
       //group by player
       {
         $group: {
-          _id: 0,
+          _id: {
+            player: "$players.player",
+          },
           id: { $first: "$id" },
           name: { $first: "$name" },
           rank: { $first: "$rank" },
