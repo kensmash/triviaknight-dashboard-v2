@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const User = require("../../models/User");
+const Question = require("../../models/Question");
 const GameJoust = require("../../models/GameJoust");
 const GameQuest = require("../../models/GameQuest");
 const { currentQuestTopic } = require("../_helpers/helper-gamesquest");
@@ -725,6 +726,18 @@ const categoryRankings = async (catId) => {
 const userSingleCategoryStat = async (userId, catId) => {
   //tracks
   try {
+    const catquestions = await Question.aggregate([
+      {
+        $match: {
+          category: { $eq: mongoose.Types.ObjectId(catId) },
+          published: { $eq: true },
+        },
+      },
+      {
+        $count: "questions",
+      },
+    ]);
+
     const usersinglecatstat = await User.aggregate([
       //match user
       { $match: { _id: new mongoose.Types.ObjectId(userId) } },
@@ -787,7 +800,7 @@ const userSingleCategoryStat = async (userId, catId) => {
           "players.roundresults.category": new mongoose.Types.ObjectId(catId),
         },
       },
-      //attempt to remove duplicates
+      //attempt to remove duplicate questions
       {
         $group: {
           _id: {
@@ -880,7 +893,7 @@ const userSingleCategoryStat = async (userId, catId) => {
         },
       },
     ]);
-
+    usersinglecatstat[0].catquestions = catquestions[0].questions;
     return usersinglecatstat;
   } catch (error) {
     console.error(error);

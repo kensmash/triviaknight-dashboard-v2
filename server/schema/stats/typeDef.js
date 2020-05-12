@@ -26,6 +26,7 @@ const typeDef = gql`
   }
 
   type SingleCategoryStat {
+    catquestions: Int
     questionsanswered: Int
     correct: Int
     incorrect: Int
