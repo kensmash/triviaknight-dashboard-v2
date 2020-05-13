@@ -23,7 +23,7 @@ const resolvers = {
         published: { $eq: true },
         partycategory: { $eq: false },
       })
-        .sort({ createdAt: -1 })
+        .sort({ name: 1 })
         .populate("type")
         .populate("genres")
         .populate("followers");
