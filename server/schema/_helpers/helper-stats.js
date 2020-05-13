@@ -516,6 +516,7 @@ const categoryStats = async (userId) => {
           },
         },
       },
+      { $sort: { questionsanswered: -1, percentcorrect: -1 } },
     ]);
     /*console.log(
       util.inspect(categorystats, { showHidden: false, depth: null })
