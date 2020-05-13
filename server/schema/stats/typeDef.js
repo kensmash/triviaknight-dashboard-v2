@@ -67,6 +67,7 @@ const typeDef = gql`
   type JoustGameStats {
     opponentid: ID
     opponentname: String
+    opponentrank: String
     opponentavatar: String
     opponentAvatarBackgroundColor: String
     gamesplayed: Int

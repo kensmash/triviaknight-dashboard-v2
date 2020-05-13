@@ -964,6 +964,7 @@ const joustGameStats = async (userId) => {
           _id: 0,
           opponentid: { $arrayElemAt: ["$opponent._id", 0] },
           opponentname: { $arrayElemAt: ["$opponent.name", 0] },
+          opponentrank: { $arrayElemAt: ["$opponent.rank", 0] },
           opponentavatar: { $arrayElemAt: ["$opponent.avatar", 0] },
           opponentAvatarBackgroundColor: {
             $arrayElemAt: ["$opponent.avatarBackgroundColor", 0],
