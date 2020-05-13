@@ -9,6 +9,8 @@ export default gql`
       type
       genres
       partycategory
+      showasnew
+      showasupdated
     }
   }
 `;

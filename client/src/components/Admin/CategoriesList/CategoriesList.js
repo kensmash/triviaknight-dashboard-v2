@@ -11,6 +11,7 @@ import {
   Pagination,
 } from "semantic-ui-react";
 //components
+import CatOptionsSelect from "./CatOptionsSelect";
 import CatGameTypeSelect from "../CatGameTypeSelect/CatGameTypeSelect";
 import CatTypeSelect from "../CatTypeSelect/CatTypeSelect";
 import CatGenreSelect from "../CatGenreSelect/CatGenreSelect";
@@ -36,6 +37,8 @@ const CategoriesList = (props) => {
       type: categorySearchCriteria.type,
       genres: categorySearchCriteria.genres,
       partycategory: categorySearchCriteria.partycategory,
+      showasnew: categorySearchCriteria.showasnew,
+      showasupdated: categorySearchCriteria.showasupdated,
     },
   };
 
@@ -81,6 +84,35 @@ const CategoriesList = (props) => {
     });
   };
 
+  const catOptionsSelectHandler = (_e, data) => {
+    if (data.value === "showasupdated") {
+      console.log("updated");
+      updateCategorySearch({
+        variables: {
+          ...categorySearchCriteria,
+          showasupdated: true,
+          showasnew: false,
+        },
+      });
+    } else if (data.value === "showasnew") {
+      updateCategorySearch({
+        variables: {
+          ...categorySearchCriteria,
+          showasnew: true,
+          showasupdated: false,
+        },
+      });
+    } else {
+      updateCategorySearch({
+        variables: {
+          ...categorySearchCriteria,
+          showasupdated: false,
+          showasnew: false,
+        },
+      });
+    }
+  };
+
   const catTypeSelectHandler = (_e, data) => {
     updateCategorySearch({
       variables: {
@@ -115,23 +147,6 @@ const CategoriesList = (props) => {
       <Grid columns="equal" className="searchCriteria">
         <Grid.Row style={{ paddingBottom: 0 }}>
           <Grid.Column className="tablePerPageColumn">
-            <Input icon fluid>
-              <input
-                placeholder="Search by Category Name"
-                value={categorySearchCriteria.name}
-                onChange={inputChangedHandler}
-              />
-
-              {categorySearchCriteria.name !== "" ? (
-                <Button icon="x" onClick={() => clearCategorySearchHandler()} />
-              ) : (
-                <Icon name="search" />
-              )}
-            </Input>
-          </Grid.Column>
-        </Grid.Row>
-        <Grid.Row>
-          <Grid.Column className="tablePerPageColumn">
             <CatGameTypeSelect
               value={categorySearchCriteria.partycategory}
               placeholder="Filter By Game Type"
@@ -160,6 +175,39 @@ const CategoriesList = (props) => {
                 catGenreSelectHandler(event, data)
               }
             />
+          </Grid.Column>
+        </Grid.Row>
+        <Grid.Row>
+          <Grid.Column className="tablePerPageColumn">
+            <CatOptionsSelect
+              pagetype="catlist"
+              value={
+                categorySearchCriteria.showasnew
+                  ? "showasnew"
+                  : categorySearchCriteria.showasupdated
+                  ? "showasupdated"
+                  : null
+              }
+              placeholder="Filter Options"
+              catOptionsSelectHandler={(event, data) =>
+                catOptionsSelectHandler(event, data)
+              }
+            />
+          </Grid.Column>
+          <Grid.Column className="tablePerPageColumn">
+            <Input icon fluid>
+              <input
+                placeholder="Search by Category Name"
+                value={categorySearchCriteria.name}
+                onChange={inputChangedHandler}
+              />
+
+              {categorySearchCriteria.name !== "" ? (
+                <Button icon="x" onClick={() => clearCategorySearchHandler()} />
+              ) : (
+                <Icon name="search" />
+              )}
+            </Input>
           </Grid.Column>
         </Grid.Row>
       </Grid>
@@ -313,6 +361,8 @@ const MUTATION_UPDATECATEGORYSEARCH = gql`
     $type: ID
     $genres: [ID]
     $partycategory: Boolean
+    $showasnew: Boolean
+    $showasupdated: Boolean
   ) {
     updateCategorySearch(
       activePage: $activePage
@@ -321,12 +371,16 @@ const MUTATION_UPDATECATEGORYSEARCH = gql`
       type: $type
       genres: $genres
       partycategory: $partycategory
+      showasnew: $showasnew
+      showasupdated: $showasupdated
     ) @client {
       activePage
       limit
       type
       genres
       partycategory
+      showasnew
+      showasupdated
     }
   }
 `;

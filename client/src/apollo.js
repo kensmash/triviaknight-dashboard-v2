@@ -10,7 +10,7 @@ const cache = new InMemoryCache();
 //persist local cache https://gist.github.com/randytorres/2d8c36f567a1be7ddb89bb7b8ca7929d
 const persistor = new CachePersistor({
   cache,
-  storage: window.sessionStorage
+  storage: window.sessionStorage,
   //debug: true
 });
 
@@ -22,14 +22,16 @@ const defaultState = {
     name: "",
     type: null,
     genres: [],
-    partycategory: false
+    partycategory: false,
+    showasnew: false,
+    showasupdated: false,
   },
   categoryGenreSearchCriteria: {
     __typename: "categoryGenreSearchCriteria",
     activePage: 1,
     limit: 15,
     name: "",
-    types: []
+    types: [],
   },
   questionSearchCriteria: {
     __typename: "questionSearchCriteria",
@@ -39,12 +41,12 @@ const defaultState = {
     category: "",
     difficulty: "",
     type: "",
-    publishedstatus: null
+    publishedstatus: null,
   },
   addQuestionCriteria: {
     __typename: "addQuestionCriteria",
-    category: ""
-  }
+    category: "",
+  },
 };
 
 const client = new ApolloClient({
@@ -58,7 +60,16 @@ const client = new ApolloClient({
       Mutation: {
         updateCategorySearch: (
           _,
-          { activePage, limit, name, type, genres, partycategory },
+          {
+            activePage,
+            limit,
+            name,
+            type,
+            genres,
+            partycategory,
+            showasnew,
+            showasupdated,
+          },
           { cache }
         ) => {
           const query = categorySearchQuery;
@@ -71,8 +82,10 @@ const client = new ApolloClient({
               name,
               type,
               genres,
-              partycategory
-            }
+              partycategory,
+              showasnew,
+              showasupdated,
+            },
           };
           cache.writeQuery({ query, data });
           return data.categorySearchCriteria;
@@ -90,8 +103,8 @@ const client = new ApolloClient({
               activePage,
               limit,
               name,
-              types
-            }
+              types,
+            },
           };
           cache.writeQuery({ query, data });
           return data.categoryGenreSearchCriteria;
@@ -105,7 +118,7 @@ const client = new ApolloClient({
             category,
             difficulty,
             type,
-            publishedstatus
+            publishedstatus,
           },
           { cache }
         ) => {
@@ -120,8 +133,8 @@ const client = new ApolloClient({
               category,
               difficulty,
               type,
-              publishedstatus
-            }
+              publishedstatus,
+            },
           };
           cache.writeQuery({ query, data });
           return data.questionSearchCriteria;
@@ -132,15 +145,15 @@ const client = new ApolloClient({
           const data = {
             addQuestionCriteria: {
               ...previous.addQuestionCriteria,
-              category
-            }
+              category,
+            },
           };
           cache.writeQuery({ query, data });
           return data.addQuestionCriteria;
-        }
-      }
-    }
-  }
+        },
+      },
+    },
+  },
 });
 
 //fix for apollo-link-state cache breaking after logout

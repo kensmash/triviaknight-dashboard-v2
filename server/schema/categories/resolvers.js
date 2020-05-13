@@ -51,6 +51,12 @@ const resolvers = {
         if (input.partycategory !== null) {
           query.partycategory = { $eq: input.partycategory };
         }
+        if (input.showasnew) {
+          query.showasnew = { $eq: true };
+        }
+        if (input.showasupdated) {
+          query.showasupdated = { $eq: true };
+        }
         //console.log(query);
         return query;
       };

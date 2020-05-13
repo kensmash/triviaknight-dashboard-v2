@@ -47,6 +47,8 @@ const typeDef = gql`
     genres: [ID]
     published: Boolean
     partycategory: Boolean
+    showasnew: Boolean
+    showasupdated: Boolean
   }
 
   input upsertCategoryInput {

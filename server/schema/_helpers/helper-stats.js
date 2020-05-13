@@ -551,9 +551,9 @@ const categoryRankings = async (catId) => {
   //tracks
   try {
     const categoryrankings = await User.aggregate([
-      //match user
+      //filter out non-TK users
       { $match: { roles: { $nin: ["reviewer"] }, access: { $eq: "paid" } } },
-      //find all games the user is in
+      //find all games per user
       {
         $lookup: {
           from: "gamessolo",
@@ -620,7 +620,7 @@ const categoryRankings = async (catId) => {
           "players.roundresults.category": new mongoose.Types.ObjectId(catId),
         },
       },
-      //group by player attempt to remove duplicate questions
+      //attempt to remove duplicate questions
       {
         $group: {
           _id: {
@@ -636,10 +636,10 @@ const categoryRankings = async (catId) => {
         },
       },
       //at this point we have a document for each player, with an array of unique questions
-      //that the player has answered for the given question
-      //unwind to get a doc for every unique question
+      //that the player has answered for the given category
+      //unwind to get a doc for each question
       { $unwind: "$uniqueQuestions" },
-      //project to preserve the round result for each unique question
+      //project to preserve the round result for each question via filter
       {
         $project: {
           id: 1,
@@ -659,7 +659,6 @@ const categoryRankings = async (catId) => {
           },
         },
       },
-
       //group by player again
       {
         $group: {
@@ -695,10 +694,9 @@ const categoryRankings = async (catId) => {
           },
         },
       },
-      { $sort: { questionsanswered: -1, correct: -1 } },
+      { $sort: { questionsanswered: -1, percentcorrect: -1 } },
     ]);
-
-    /* console.log(
+    /*console.log(
       util.inspect(categoryrankings, { showHidden: false, depth: null })
     );*/
     return categoryrankings;
