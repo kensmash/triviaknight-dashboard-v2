@@ -412,65 +412,50 @@ const categoryStats = async (userId) => {
           name: 1,
           avatar: 1,
           avatarBackgroundColor: 1,
-          stats: "$totalGames.players",
-          results: "$totalGames.players.roundresults",
+          players: "$totalGames.players",
         },
       },
       //only keep current player documents
-      { $match: { "stats.player": new mongoose.Types.ObjectId(userId) } },
+      { $match: { "players.player": new mongoose.Types.ObjectId(userId) } },
       //get a document per each round result
-      { $unwind: "$results" },
+      { $unwind: "$players.roundresults" },
+      //attempt to remove duplicate questions
+      {
+        $group: {
+          _id: "$players.roundresults.category",
+          results: { $push: "$players.roundresults" },
+          uniqueQuestions: { $addToSet: "$players.roundresults.question" },
+        },
+      },
+      { $unwind: "$uniqueQuestions" },
+      //project to preserve the round result for each question via filter
+      {
+        $project: {
+          uniqueQuestions: 1,
+          roundresults: {
+            $filter: {
+              input: "$results",
+              as: "roundresults",
+              cond: {
+                $eq: ["$$roundresults.question", "$$CURRENT.uniqueQuestions"],
+              },
+            },
+          },
+        },
+      },
       //group by category
       {
         $group: {
-          _id: { category: "$results.category" },
+          _id: "$_id",
           questionsanswered: { $sum: 1 },
           correct: {
             $sum: {
-              $cond: ["$results.correct", 1, 0],
+              $cond: [{ $arrayElemAt: ["$roundresults.correct", 0] }, 1, 0],
             },
           },
           incorrect: {
             $sum: {
-              $cond: ["$results.correct", 0, 1],
-            },
-          },
-          normalquestions: {
-            $sum: {
-              $cond: [{ $eq: ["$results.difficulty", "Normal"] }, 1, 0],
-            },
-          },
-          normalcorrect: {
-            $sum: {
-              $cond: [
-                {
-                  $and: [
-                    { $eq: ["$results.difficulty", "Normal"] },
-                    { $eq: ["$results.correct", true] },
-                  ],
-                },
-                1,
-                0,
-              ],
-            },
-          },
-          hardquestions: {
-            $sum: {
-              $cond: [{ $eq: ["$results.difficulty", "Hard"] }, 1, 0],
-            },
-          },
-          hardcorrect: {
-            $sum: {
-              $cond: [
-                {
-                  $and: [
-                    { $eq: ["$results.difficulty", "Hard"] },
-                    { $eq: ["$results.correct", true] },
-                  ],
-                },
-                1,
-                0,
-              ],
+              $cond: [{ $arrayElemAt: ["$roundresults.correct", 0] }, 0, 1],
             },
           },
         },
@@ -479,7 +464,7 @@ const categoryStats = async (userId) => {
       {
         $lookup: {
           from: "categories",
-          localField: "_id.category",
+          localField: "_id",
           foreignField: "_id",
           as: "category",
         },
@@ -496,10 +481,6 @@ const categoryStats = async (userId) => {
           questionsanswered: "$questionsanswered",
           correct: 1,
           incorrect: 1,
-          normalquestions: "$normalquestions",
-          normalcorrect: "$normalcorrect",
-          hardquestions: "$hardquestions",
-          hardcorrect: "$hardcorrect",
         },
       },
       //only keep published and non-party cats
@@ -533,13 +514,13 @@ const categoryStats = async (userId) => {
               $multiply: [{ $divide: ["$correct", "$questionsanswered"] }, 100],
             },
           },
-          normalquestions: "$normalquestions",
-          normalcorrect: "$normalcorrect",
-          hardquestions: "$hardquestions",
-          hardcorrect: "$hardcorrect",
         },
       },
     ]);
+    /*console.log(
+      util.inspect(categorystats, { showHidden: false, depth: null })
+    );*/
+    //console.log(categorystats);
     return categorystats;
   } catch (error) {
     console.error(error);
