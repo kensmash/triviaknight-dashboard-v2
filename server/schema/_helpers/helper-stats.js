@@ -287,7 +287,20 @@ const questionStats = async (userId) => {
         },
       },
     ]);
-    return simplegamestats[0];
+    if (!simplegamestats.length) {
+      return {
+        questionsanswered: 0,
+        correctanswers: 0,
+        incorrectanswers: 0,
+        normalquestions: 0,
+        normalcorrect: 0,
+        hardquestions: 0,
+        hardcorrect: 0,
+        percentcorrect: 0,
+      };
+    } else {
+      return simplegamestats[0];
+    }
   } catch (error) {
     console.error(error);
   }
@@ -354,7 +367,11 @@ const questionsAnswered = async (userId) => {
         },
       },
     ]);
-    return questions[0].questionsAnswered;
+    if (!questions.length) {
+      return 0;
+    } else {
+      return questions[0].questionsAnswered;
+    }
   } catch (error) {
     console.error(error);
   }
@@ -896,7 +913,18 @@ const joustRecordStats = async (userId) => {
         },
       },
     ]);
-    return joustrecordstats[0];
+    if (!joustrecordstats.length) {
+      return {
+        gamesplayed: 0,
+        wins: 0,
+        losses: 0,
+        ties: 0,
+        winpercent: 0,
+        tiespercent: 0,
+      };
+    } else {
+      return joustrecordstats[0];
+    }
   } catch (error) {
     console.error(error);
   }
