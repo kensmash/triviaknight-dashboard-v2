@@ -23,6 +23,7 @@ const CatOptionsSelect = (props) => {
       fluid
       selection
       clearable
+      selectOnBlur={false}
       options={catOptions}
       onChange={props.catOptionsSelectHandler}
     />
