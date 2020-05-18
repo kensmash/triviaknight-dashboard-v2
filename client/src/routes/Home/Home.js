@@ -12,7 +12,7 @@ const Home = () => {
             <img src={logo} alt="Logo" />
             <p className="homepage-subhead">
               A fun trivia game that you can play on your own or with friends.
-              Over 100 categories and nearly 10,000 questions! Challenge your
+              Over 150 categories and nearly 10,000 questions! Challenge your
               friends and track your stats.
             </p>
           </div>
