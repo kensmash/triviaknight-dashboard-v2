@@ -415,7 +415,6 @@ const resolvers = {
       subscribe: withFilter(
         (_, __, { pubsub }) => pubsub.asyncIterator(JOUST_UPDATE),
         (payload, variables) => {
-          console.log("payload", payload);
           return payload.joustgamesupdate.playerid === variables.playerid;
         }
       ),
