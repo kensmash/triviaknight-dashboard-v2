@@ -259,7 +259,7 @@ const resolvers = {
           .populate("players.replacedquestions")
           .populate("category")
           .sort({ updatedAt: -1 })
-          .limit(20);
+          .limit(12);
 
         return joustgames;
       } catch (error) {

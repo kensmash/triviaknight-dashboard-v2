@@ -20,6 +20,7 @@ const changeQuestTopic = schedule.scheduleJob(
     console.log("running change quest topic");
     //take care of previous topic
     const currentTopic = await currentQuestTopic();
+
     await saveQuestHighScore(currentTopic.topic);
     //now get next topic
     const nextTopic = await nextQuestTopic();
@@ -48,7 +49,7 @@ const changeQuestTopic = schedule.scheduleJob(
     }
 
     //set new current quest active and unset next quest active
-    if (nextTopic) {
+    if (Object.keys(nextTopic).length) {
       if (nextTopic.type === "Category") {
         await Category.findOneAndUpdate(
           {
@@ -84,10 +85,11 @@ const changeQuestTopic = schedule.scheduleJob(
         },
         { $sample: { size: 1 } },
       ]);
-      if (newCat) {
+
+      if (newCat.length) {
         await Category.findOneAndUpdate(
           {
-            _id: mongoose.Types.ObjectId(newCat._id),
+            _id: mongoose.Types.ObjectId(newCat[0]._id),
           },
           { $set: { questactive: true, nextquestactive: false } }
         );
