@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const GameJoust = require("../../models/GameJoust");
 const User = require("../../models/User");
+const { withFilter } = require("graphql-subscriptions");
 //auth helpers
 const {
   requiresAuth,
@@ -17,6 +18,8 @@ const {
 } = require("../_helpers/helper-questions");
 //array helper
 const { arrayUnique } = require("../_helpers/helper-arrays");
+//subscriptions
+const JOUST_UPDATE = "JOUST_UPDATE";
 
 const resolvers = {
   Query: {
@@ -249,7 +252,11 @@ const resolvers = {
     ),
 
     enterjoustanswerandadvance: requiresAuth.createResolver(
-      async (parent, { gameid, roundresults, advance }, { user, expo }) => {
+      async (
+        parent,
+        { gameid, roundresults, advance },
+        { user, expo, pubsub }
+      ) => {
         try {
           //track questions asked for last 30 jousts
           await User.findOneAndUpdate(
@@ -292,6 +299,12 @@ const resolvers = {
                 opponent,
                 expo
               );
+              pubsub.publish(JOUST_UPDATE, {
+                joustgamesupdate: {
+                  playerid: opponent.player._id,
+                  updated: true,
+                },
+              });
             } else {
               //change turns
               updatedGame = await changeJoustTurn(
@@ -300,6 +313,12 @@ const resolvers = {
                 opponent,
                 expo
               );
+              pubsub.publish(JOUST_UPDATE, {
+                joustgamesupdate: {
+                  playerid: opponent.player._id,
+                  updated: true,
+                },
+              });
             }
           }
           return updatedGame;
@@ -310,7 +329,7 @@ const resolvers = {
     ),
 
     resignjoustgame: requiresAuth.createResolver(
-      async (parent, { gameid }, { user, expo }) => {
+      async (parent, { gameid }, { user, expo, pubsub }) => {
         try {
           const updatedGame = await GameJoust.findOneAndUpdate(
             { _id: gameid, "players.player": user.id },
@@ -337,7 +356,9 @@ const resolvers = {
             opponent,
             expo
           );
-
+          pubsub.publish(JOUST_UPDATE, {
+            joustgamesupdate: { playerid: opponent.player._id, updated: true },
+          });
           return endedGame;
         } catch (error) {
           console.error(error);
@@ -387,6 +408,18 @@ const resolvers = {
         }
       }
     ),
+  },
+
+  Subscription: {
+    joustgamesupdate: {
+      subscribe: withFilter(
+        (_, __, { pubsub }) => pubsub.asyncIterator(JOUST_UPDATE),
+        (payload, variables) => {
+          console.log("payload", payload);
+          return payload.joustgamesupdate.playerid === variables.playerid;
+        }
+      ),
+    },
   },
 };
 

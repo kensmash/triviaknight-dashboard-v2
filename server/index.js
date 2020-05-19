@@ -4,6 +4,7 @@ const express = require("express");
 const session = require("express-session");
 const redis = require("redis"),
   redisclient = redis.createClient(process.env.REDIS_URL);
+const { RedisPubSub } = require("graphql-redis-subscriptions");
 const RedisStore = require("connect-redis")(session);
 const mongoose = require("mongoose");
 const multer = require("multer");
@@ -42,8 +43,21 @@ mongoose.connect(keys.mongoURI, {
 });
 
 const PORT = process.env.PORT || 4000;
+const redis_uri = process.env.REDIS_URL && url.parse(process.env.REDIS_URL);
+//https://devcenter.heroku.com/articles/securing-heroku-redis
+const pubsub = new RedisPubSub({
+  connection: {
+    host: process.env.REDIS_URL && redis_uri.hostname,
+    port: process.env.REDIS_URL ? Number(redis_uri.port) : 6379,
+    password: process.env.REDIS_URL && redis_uri.auth.split(":")[1],
+    retry_strategy: (options) => {
+      // reconnect after
+      return Math.max(options.attempt * 100, 3000);
+    },
+  },
+});
 
-const server = new ApolloServer({
+/*const server = new ApolloServer({
   ...schema,
   //playground: true,
   //introspection: true,
@@ -55,6 +69,32 @@ const server = new ApolloServer({
       user: req.session.user,
       expo,
     };
+  },
+});*/
+
+const server = new ApolloServer({
+  ...schema,
+  context: async ({ req, connection }) => {
+    if (connection) {
+      //subscription coming through
+      return { pubsub };
+    } else {
+      return {
+        secret: keys.secret,
+        req: req,
+        redisclient: redisclient,
+        user: req.session.user,
+        pubsub,
+        expo,
+      };
+    }
+  },
+  subscriptions: {
+    keepAlive: 10000,
+  },
+  //introspection: true,
+  engine: {
+    apiKey: keys.EngineAPI,
   },
 });
 
@@ -122,6 +162,7 @@ server.applyMiddleware({
 });
 
 const httpServer = http.createServer(app);
+server.installSubscriptionHandlers(httpServer);
 
 httpServer
   .listen({ port: PORT }, () =>

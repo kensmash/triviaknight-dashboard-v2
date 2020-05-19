@@ -87,6 +87,11 @@ const typeDef = gql`
     joustgames: [GameJoust]
   }
 
+  type JoustGameSubscriptionResponse {
+    playerid: ID!
+    updated: Boolean!
+  }
+
   extend type Mutation {
     createjoustgame(input: createJoustGameInput!): GameJoust
     joinjoustgame(gameid: ID!, timer: Int!): GameJoust
@@ -101,6 +106,10 @@ const typeDef = gql`
     joustresultsseen(gameid: ID!): GameJoust
     expirejoustgame(gameid: ID!): GameJoust
     deletejoustgame(gameid: ID!): GameJoust
+  }
+
+  extend type Subscription {
+    joustgamesupdate(playerid: ID!): JoustGameSubscriptionResponse
   }
 `;
 

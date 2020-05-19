@@ -23,6 +23,7 @@ const supportRequests = require("./supportRequests");
 const typeDef = gql`
   type Query
   type Mutation
+  type Subscription
 `;
 
 module.exports = {
