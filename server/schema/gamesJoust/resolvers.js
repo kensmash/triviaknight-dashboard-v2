@@ -105,13 +105,15 @@ const resolvers = {
               { "players.player": user.id },
               { "players.player": opponentid },
             ],
-
             gameover: { $eq: true },
             timedout: { $eq: false },
-          }).populate({
-            path: "category",
-            populate: { path: "type" },
-          });
+          })
+            .limit(30)
+            .sort({ updatedAt: -1 })
+            .populate({
+              path: "category",
+              populate: { path: "type" },
+            });
 
           return joustgames;
         } catch (error) {
