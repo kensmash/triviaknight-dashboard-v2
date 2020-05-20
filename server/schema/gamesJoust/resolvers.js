@@ -96,6 +96,29 @@ const resolvers = {
         }
       }
     ),
+
+    joustopponenthistory: requiresAuth.createResolver(
+      async (parent, { opponentid }, { user }) => {
+        try {
+          const joustgames = await GameJoust.find({
+            $and: [
+              { "players.player": user.id },
+              { "players.player": opponentid },
+            ],
+
+            gameover: { $eq: true },
+            timedout: { $eq: false },
+          }).populate({
+            path: "category",
+            populate: { path: "type" },
+          });
+
+          return joustgames;
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    ),
   },
 
   Mutation: {
