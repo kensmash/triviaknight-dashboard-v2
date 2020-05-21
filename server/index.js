@@ -13,6 +13,8 @@ const url = require("url");
 const redirectToHTTPS = require("express-http-to-https").redirectToHTTPS;
 const { Expo } = require("expo-server-sdk");
 const expo = new Expo();
+//for saving support emails
+const SupportRequest = require("./models/SupportRequest");
 //some config
 const keys = require("./config/keys");
 //schema
@@ -57,21 +59,6 @@ const pubsub = new RedisPubSub({
     },
   },
 });
-
-/*const server = new ApolloServer({
-  ...schema,
-  //playground: true,
-  //introspection: true,
-  context: async ({ req }) => {
-    return {
-      secret: keys.secret,
-      req: req,
-      redisclient: redisclient,
-      user: req.session.user,
-      expo,
-    };
-  },
-});*/
 
 const server = new ApolloServer({
   ...schema,
