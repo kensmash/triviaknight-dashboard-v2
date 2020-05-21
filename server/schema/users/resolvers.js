@@ -252,6 +252,7 @@ const resolvers = {
       try {
         const joustgames = await GameJoust.find({
           "players.player": user.id,
+          timedout: { $eq: false },
         })
           .populate("createdby")
           .populate("players.player")
