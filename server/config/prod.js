@@ -13,4 +13,5 @@ module.exports = {
   //GSuite
   GSuiteServiceClient: process.env.GSUITE_SERVICECLIENT,
   GSuitePrivateKey: process.env.GSUITE_PRIVATEKEY.replace(/\\n/g, "\n"),
+  //https://stackoverflow.com/questions/39492587/escaping-issue-with-firebase-privatekey-as-a-heroku-config-variable
 };

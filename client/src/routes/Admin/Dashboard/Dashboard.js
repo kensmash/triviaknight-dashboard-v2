@@ -7,7 +7,7 @@ import QuestionsWidget from "../../../components/Admin/Dashboard/QuestionsWidget
 import CategoriesWidget from "../../../components/Admin/Dashboard/CategoriesWidget";
 //smaller widgets
 import QuestionReportsWidget from "../../../components/Admin/Dashboard/QuestionReportsWidget";
-import SupportRequestsWidget from "../../../components/Admin/Dashboard/SupportRequestsWidget";
+import QuestTopicWidget from "../../../components/Admin/Dashboard/QuestTopicWidget";
 import PushTicketsWidget from "../../../components/Admin/Dashboard/PushTicketsWidget";
 import PushReceiptsWidget from "../../../components/Admin/Dashboard/PushReceiptsWidget";
 
@@ -19,8 +19,9 @@ const Dashboard = ({ match, history }) => (
       <CategoriesWidget history={history} />
     </Card.Group>
     <Card.Group stackable itemsPerRow={4}>
+      <QuestTopicWidget history={history} />
       <QuestionReportsWidget history={history} />
-      <SupportRequestsWidget history={history} />
+
       <PushTicketsWidget history={history} />
       <PushReceiptsWidget history={history} />
     </Card.Group>

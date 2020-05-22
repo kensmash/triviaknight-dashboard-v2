@@ -38,6 +38,7 @@ const typeDef = gql`
 
   extend type Query {
     currentquesttopic: QuestTopicResponse
+    nextquesttopic: QuestTopicResponse
     currentquestgame(id: ID!): GameQuest
     questgamepage(
       limit: Int!

@@ -6,7 +6,10 @@ const {
   requiresAdmin,
 } = require("../_helpers/helper-permissions");
 //query helpers
-const { currentQuestTopic } = require("../_helpers/helper-gamesquest");
+const {
+  currentQuestTopic,
+  nextQuestTopic,
+} = require("../_helpers/helper-gamesquest");
 const {
   questQuestions,
   differentQuestion,
@@ -74,6 +77,11 @@ const resolvers = {
 
     currentquesttopic: requiresAuth.createResolver(async (parent, { args }) => {
       const results = await currentQuestTopic();
+      return results;
+    }),
+
+    nextquesttopic: requiresAuth.createResolver(async (parent, { args }) => {
+      const results = await nextQuestTopic();
       return results;
     }),
   },
