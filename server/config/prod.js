@@ -12,5 +12,5 @@ module.exports = {
   EngineAPI: process.env.ENGINE_API_KEY,
   //GSuite
   GSuiteServiceClient: process.env.GSUITE_SERVICECLIENT,
-  GSuitePrivateKey: process.env.GSUITE_PRIVATEKEY,
+  GSuitePrivateKey: process.env.GSUITE_PRIVATEKEY.replace(/\\n/g, "\n"),
 };
