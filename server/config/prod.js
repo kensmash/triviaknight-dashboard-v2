@@ -10,4 +10,7 @@ module.exports = {
   SendGridKey: process.env.SENDGRID_API_KEY,
   //Apollo Engine
   EngineAPI: process.env.ENGINE_API_KEY,
+  //GSuite
+  GSuiteServiceClient: process.env.GSUITE_SERVICECLIENT,
+  GSuitePrivateKey: process.env.GSUITE_PRIVATEKEY,
 };

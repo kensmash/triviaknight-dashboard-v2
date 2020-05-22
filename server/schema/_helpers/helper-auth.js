@@ -1,7 +1,8 @@
 const bcrypt = require("bcrypt");
 const User = require("../../models/User");
 const { userSessionIdPrefix } = require("../../constants");
-const { sendPasswordCodeEmail } = require("./helper-sendgrid");
+//const { sendPasswordCodeEmail } = require("./helper-sendgrid");
+const { sendPasswordCodeEmail } = require("./helper-nodemailer");
 
 //logout redis stuff
 //https://github.com/benawad/fullstack-graphql-airbnb-clone/blob/22_rn_session_save/packages/server/src/utils/removeAllUsersSessions.ts
@@ -33,8 +34,8 @@ const trySignup = async (
       return {
         error: {
           field: "email",
-          msg: "That email address is already in use."
-        }
+          msg: "That email address is already in use.",
+        },
       };
     }
   } catch (error) {
@@ -44,15 +45,15 @@ const trySignup = async (
 
   try {
     const existingName = await User.findOne({
-      name: { $regex: new RegExp("^" + name + "$", "i"), $options: "i" }
+      name: { $regex: new RegExp("^" + name + "$", "i"), $options: "i" },
     });
     if (existingName) {
       console.log("Sorry, that name is already in use.");
       return {
         error: {
           field: "name",
-          msg: "Sorry, that name is already in use."
-        }
+          msg: "Sorry, that name is already in use.",
+        },
       };
     }
   } catch (error) {
@@ -68,14 +69,14 @@ const trySignup = async (
       avatar: "castle",
       access: "paid",
       roles: ["player"],
-      expoPushTokens: expoPushToken ? [expoPushToken] : []
+      expoPushTokens: expoPushToken ? [expoPushToken] : [],
     });
     await newUser.save();
     const user = await User.findOne({ email });
     request.session.user = {
       id: user.id,
       name: user.name,
-      isAdmin: user.isAdmin
+      isAdmin: user.isAdmin,
     };
 
     if (request.sessionID) {
@@ -87,7 +88,7 @@ const trySignup = async (
 
     return {
       user,
-      sessionID: request.sessionID
+      sessionID: request.sessionID,
     };
   } catch (error) {
     console.error(error);
@@ -111,8 +112,8 @@ const tryLogin = async (
       return {
         error: {
           field: "email",
-          msg: "No user found with that email."
-        }
+          msg: "No user found with that email.",
+        },
       };
     }
   } catch (error) {
@@ -125,15 +126,15 @@ const tryLogin = async (
     return {
       error: {
         field: "password",
-        msg: "Incorrect password."
-      }
+        msg: "Incorrect password.",
+      },
     };
   }
 
   request.session.user = {
     id: user.id,
     name: user.name,
-    isAdmin: user.isAdmin
+    isAdmin: user.isAdmin,
   };
 
   if (request.sessionID) {
@@ -154,12 +155,12 @@ const tryLogin = async (
   return {
     payload: {
       user,
-      sessionID: request.sessionID
-    }
+      sessionID: request.sessionID,
+    },
   };
 };
 
-const createForgotPasswordCode = async email => {
+const createForgotPasswordCode = async (email) => {
   try {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -222,14 +223,14 @@ const updateEmail = async (userId, email) => {
 const updateName = async (userId, name, request) => {
   try {
     const existingName = await User.findOne({
-      name: { $regex: new RegExp("^" + name + "$", "i"), $options: "i" }
+      name: { $regex: new RegExp("^" + name + "$", "i"), $options: "i" },
     });
     if (existingName) {
       return {
         error: {
           field: "name",
-          msg: "Sorry, that name is already in use."
-        }
+          msg: "Sorry, that name is already in use.",
+        },
       };
     }
   } catch (error) {
@@ -246,7 +247,7 @@ const updateName = async (userId, name, request) => {
 
     request.session.user = {
       ...request.session.user,
-      name
+      name,
     };
 
     return { user: editedUser };
@@ -264,5 +265,5 @@ module.exports = {
   resetPasswordCode,
   updatePassword,
   updateEmail,
-  updateName
+  updateName,
 };

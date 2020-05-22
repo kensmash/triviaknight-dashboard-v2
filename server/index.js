@@ -7,14 +7,11 @@ const redis = require("redis"),
 const { RedisPubSub } = require("graphql-redis-subscriptions");
 const RedisStore = require("connect-redis")(session);
 const mongoose = require("mongoose");
-const multer = require("multer");
 const path = require("path");
 const url = require("url");
 const redirectToHTTPS = require("express-http-to-https").redirectToHTTPS;
 const { Expo } = require("expo-server-sdk");
 const expo = new Expo();
-//for saving support emails
-const SupportRequest = require("./models/SupportRequest");
 //some config
 const keys = require("./config/keys");
 //schema
@@ -91,33 +88,6 @@ if (process.env.NODE_ENV === "production") {
   app.set("trust proxy", 1); //trust first proxy
   app.use(redirectToHTTPS()); //force https
 }
-
-//parse inbound emails
-//https://sendgrid.com/docs/for-developers/tracking-events/nodejs-code-example/
-//and holy geez https://blog.padpiper.com/a-guide-to-inbound-parse-with-sendgrid-nodejs-382a266f8c3f
-//and https://sendgrid.com/blog/how-we-use-inbound-parse-on-the-community-development-team/
-const upload = multer();
-app.post("/parse", upload.array(), async function (req, res) {
-  const from = req.body.from;
-  const to = req.body.to;
-  const text = req.body.text;
-  const subject = req.body.subject;
-  //var num_attachments = req.body.attachments;
-  if (to === "support@triviaknightapp.com") {
-    //save this to database
-    try {
-      const newrequest = new SupportRequest({
-        from,
-        text,
-        subject,
-      });
-      await newrequest.save();
-    } catch (error) {
-      console.error(error);
-    }
-  }
-  res.sendStatus(200);
-});
 
 app.use(
   session({
