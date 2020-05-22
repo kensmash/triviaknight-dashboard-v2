@@ -18,7 +18,6 @@ const gamesHosted = require("./gamesHosted");
 const stats = require("./stats");
 //misc
 const expoPushNotifications = require("./expoPushNotifications");
-const supportRequests = require("./supportRequests");
 
 const typeDef = gql`
   type Query
@@ -42,7 +41,6 @@ module.exports = {
     gamesHosted.typeDef,
     stats.typeDef,
     expoPushNotifications.typeDef,
-    supportRequests.typeDef,
   ],
   resolvers: [
     users.resolvers,
@@ -57,6 +55,5 @@ module.exports = {
     gamesQuest.resolvers,
     stats.resolvers,
     expoPushNotifications.resolvers,
-    supportRequests.resolvers,
   ],
 };
