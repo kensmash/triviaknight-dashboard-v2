@@ -11,8 +11,8 @@ const sendPasswordCodeEmail = async (recipient, name, code) => {
     auth: {
       type: "OAuth2",
       user: YOUR_EMAIL_ADDRESS,
-      serviceClient: keys.client_id,
-      privateKey: keys.private_key,
+      serviceClient: keys.GSuiteServiceClient,
+      privateKey: keys.GSuitePrivateKey,
     },
   });
   try {
@@ -41,8 +41,8 @@ const sendPushReceiptEmail = async (id, message, details) => {
     auth: {
       type: "OAuth2",
       user: YOUR_EMAIL_ADDRESS,
-      serviceClient: keys.client_id,
-      privateKey: keys.private_key,
+      serviceClient: keys.GSuiteServiceClient,
+      privateKey: keys.GSuitePrivateKey,
     },
   });
   try {
@@ -70,8 +70,8 @@ const sendPushTicketEmail = async (ids) => {
     auth: {
       type: "OAuth2",
       user: YOUR_EMAIL_ADDRESS,
-      serviceClient: keys.client_id,
-      privateKey: keys.private_key,
+      serviceClient: keys.GSuiteServiceClient,
+      privateKey: keys.GSuitePrivateKey,
     },
   });
   try {
