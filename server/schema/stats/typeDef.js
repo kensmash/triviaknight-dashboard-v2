@@ -34,8 +34,12 @@ const typeDef = gql`
     percentcorrect: Int
     normalquestions: Int
     normalcorrect: Int
+    normalincorrect: Int
+    normalpercentcorrect: Int
     hardquestions: Int
     hardcorrect: Int
+    hardincorrect: Int
+    hardpercentcorrect: Int
   }
 
   type CategoryStats {

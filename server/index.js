@@ -11,7 +11,6 @@ const path = require("path");
 const url = require("url");
 const redirectToHTTPS = require("express-http-to-https").redirectToHTTPS;
 const { Expo } = require("expo-server-sdk");
-const expo = new Expo();
 //some config
 const keys = require("./config/keys");
 //schema
@@ -41,6 +40,8 @@ mongoose.connect(keys.mongoURI, {
   useNewUrlParser: true,
   useCreateIndex: true,
 });
+
+const expo = new Expo();
 
 const PORT = process.env.PORT || 4000;
 const redis_uri = process.env.REDIS_URL && url.parse(process.env.REDIS_URL);

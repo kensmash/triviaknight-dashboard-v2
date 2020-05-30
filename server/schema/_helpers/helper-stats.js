@@ -4,7 +4,7 @@ const Question = require("../../models/Question");
 const GameJoust = require("../../models/GameJoust");
 const GameQuest = require("../../models/GameQuest");
 const { currentQuestTopic } = require("../_helpers/helper-gamesquest");
-const util = require("util");
+//const util = require("util");
 
 //tracks questions answered, correct and incorrect per game type
 const gameStats = async (userId) => {
@@ -808,6 +808,80 @@ const userSingleCategoryStat = async (userId, catId) => {
               $cond: ["$players.roundresults.correct", 0, 1],
             },
           },
+          normalquestions: {
+            $sum: {
+              $cond: [
+                { $eq: ["$players.roundresults.difficulty", "Normal"] },
+                1,
+                0,
+              ],
+            },
+          },
+          normalcorrect: {
+            $sum: {
+              $cond: [
+                {
+                  $and: [
+                    { $eq: ["$players.roundresults.difficulty", "Normal"] },
+                    { $eq: ["$players.roundresults.correct", true] },
+                  ],
+                },
+                1,
+                0,
+              ],
+            },
+          },
+          normalincorrect: {
+            $sum: {
+              $cond: [
+                {
+                  $and: [
+                    { $eq: ["$players.roundresults.difficulty", "Normal"] },
+                    { $eq: ["$players.roundresults.correct", false] },
+                  ],
+                },
+                1,
+                0,
+              ],
+            },
+          },
+          hardquestions: {
+            $sum: {
+              $cond: [
+                { $eq: ["$players.roundresults.difficulty", "Hard"] },
+                1,
+                0,
+              ],
+            },
+          },
+          hardcorrect: {
+            $sum: {
+              $cond: [
+                {
+                  $and: [
+                    { $eq: ["$players.roundresults.difficulty", "Hard"] },
+                    { $eq: ["$players.roundresults.correct", true] },
+                  ],
+                },
+                1,
+                0,
+              ],
+            },
+          },
+          hardincorrect: {
+            $sum: {
+              $cond: [
+                {
+                  $and: [
+                    { $eq: ["$players.roundresults.difficulty", "Hard"] },
+                    { $eq: ["$players.roundresults.correct", false] },
+                  ],
+                },
+                1,
+                0,
+              ],
+            },
+          },
         },
       },
       //shape the cat data
@@ -817,6 +891,41 @@ const userSingleCategoryStat = async (userId, catId) => {
           questionsanswered: "$questionsanswered",
           correct: 1,
           incorrect: 1,
+          normalquestions: 1,
+          normalcorrect: 1,
+          normalincorrect: 1,
+          hardquestions: 1,
+          hardcorrect: 1,
+          hardincorrect: 1,
+          //stack overflow rocks https://stackoverflow.com/questions/22841266/how-to-handle-division-by-zero-in-mongodb-aggregation-framework
+          normalpercentcorrect: {
+            $cond: [
+              { $eq: ["$normalquestions", 0] },
+              0,
+              {
+                $trunc: {
+                  $multiply: [
+                    { $divide: ["$normalcorrect", "$normalquestions"] },
+                    100,
+                  ],
+                },
+              },
+            ],
+          },
+          hardpercentcorrect: {
+            $cond: [
+              { $eq: ["$hardquestions", 0] },
+              0,
+              {
+                $trunc: {
+                  $multiply: [
+                    { $divide: ["$hardcorrect", "$hardquestions"] },
+                    100,
+                  ],
+                },
+              },
+            ],
+          },
         },
       },
     ]);
