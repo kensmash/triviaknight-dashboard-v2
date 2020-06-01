@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Query } from "react-apollo";
 import gql from "graphql-tag";
-import { Card, Statistic } from "semantic-ui-react";
+import { Card } from "semantic-ui-react";
 
 const QuestTopicWidget = (props) => (
   <Query query={nextQuestTopicQuery} fetchPolicy="network-only">

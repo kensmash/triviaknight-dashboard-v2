@@ -23,6 +23,7 @@ const trySignup = async (
   name,
   email,
   password,
+  access,
   request,
   redisclient,
   expoPushToken
@@ -63,11 +64,11 @@ const trySignup = async (
 
   try {
     const newUser = await new User({
-      name: name,
-      email: email,
-      password: password,
+      name,
+      email,
+      password,
+      access,
       avatar: "castle",
-      access: "paid",
       roles: ["player"],
       expoPushTokens: expoPushToken ? [expoPushToken] : [],
     });

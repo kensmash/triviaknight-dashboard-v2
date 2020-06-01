@@ -16,6 +16,7 @@ export default gql`
       type
       difficulty
       published
+      guessable
     }
   }
 `;

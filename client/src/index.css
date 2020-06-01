@@ -3,7 +3,7 @@ body {
   margin: 0;
 }
 
-body {
+html {
   background: rgba(238, 238, 238, 1);
 }
 
@@ -18,7 +18,7 @@ img {
 }
 
 .table {
-  margin-bottom: 20px;
+  margin-bottom: 40px !important;
 }
 
 .ui.header {

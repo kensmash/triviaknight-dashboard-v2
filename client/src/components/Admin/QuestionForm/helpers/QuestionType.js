@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Card, Form, Radio } from "semantic-ui-react";
+import { Transition, Card, Form, Radio, Checkbox } from "semantic-ui-react";
 
 const QuestionType = (props) => (
   <Card fluid>
@@ -29,6 +29,26 @@ const QuestionType = (props) => (
         />
       </Form.Field>
     </Card.Content>
+
+    <Transition
+      visible={props.selectedQuestionType === "Multiple Choice"}
+      animation="slide down"
+      duration={400}
+    >
+      <Card.Content extra>
+        <Form.Field>
+          <Checkbox
+            label="Guessable"
+            checked={props.guessable}
+            onChange={(event, value) => props.guessableHandler(event, value)}
+          />
+        </Form.Field>
+        <p>
+          Deselect this checkbox if the question can’t be guessed by the
+          player(s).
+        </p>
+      </Card.Content>
+    </Transition>
   </Card>
 );
 
@@ -36,6 +56,8 @@ QuestionType.propTypes = {
   questionTypeSelectHandler: PropTypes.func,
   selectedQuestionType: PropTypes.string,
   errormessage: PropTypes.string,
+  guessable: PropTypes.bool,
+  guessableHandler: PropTypes.func,
 };
 
 export default QuestionType;

@@ -18,7 +18,8 @@ import QUERY_CLIENTADDQUESTIONCRITERIA from "../../../apollo/queries/client-addQ
 const QuestionForm = (props) => {
   const [questionSubmitted, setQuestionSubmitted] = useState(false);
   const [redirect, setRedirect] = useState(false);
-  const initialFields = {
+  const [pageType, setPageType] = useState("New Question");
+  const [fields, setFields] = useState({
     question: "",
     answers: [
       { answer: "", correct: false },
@@ -33,9 +34,9 @@ const QuestionForm = (props) => {
     videourl: null,
     audiourl: null,
     published: false,
-  };
-
-  const initialFieldErrors = {
+    guessable: true,
+  });
+  const [fieldErrors, setFieldErrors] = useState({
     question: "",
     answerindexes: [],
     answer: "",
@@ -44,10 +45,7 @@ const QuestionForm = (props) => {
     category: "",
     questiontype: "",
     questiondifficulty: "",
-  };
-
-  const [fields, setFields] = useState(initialFields);
-  const [fieldErrors, setFieldErrors] = useState(initialFieldErrors);
+  });
 
   const { data: { addQuestionCriteria } = {} } = useQuery(
     QUERY_CLIENTADDQUESTIONCRITERIA
@@ -59,32 +57,32 @@ const QuestionForm = (props) => {
   );
 
   useEffect(() => {
-    const setInitialFieldsHandler = () => {
-      if (props.pageType === "edit") {
-        const { question } = props;
-        updateAddQuestionCriteria({
-          variables: {
-            category: question.category._id,
-          },
-        });
-        setFields({
-          question: question.question,
-          answers: question.answers.map((question) => ({
-            answer: question.answer,
-            correct: question.correct,
-          })),
-          category: question.category._id,
-          questiontype: question.type,
-          questiondifficulty: question.difficulty,
-          imageurl: question.imageurl,
-          videourl: question.videourl,
-          audiourl: question.audiourl,
-          published: question.published,
-        });
-      }
-    };
-    setInitialFieldsHandler();
-  }, [props, updateAddQuestionCriteria]);
+    if (props.pageType === "edit" && pageType !== "Edit") {
+      console.log("rararrrr");
+      const { question } = props;
+      setPageType("Edit");
+      setFields({
+        question: question.question,
+        answers: question.answers.map((question) => ({
+          answer: question.answer,
+          correct: question.correct,
+        })),
+        category: question.category._id,
+        questiontype: question.type,
+        questiondifficulty: question.difficulty,
+        imageurl: question.imageurl,
+        videourl: question.videourl,
+        audiourl: question.audiourl,
+        published: question.published,
+        guessable: question.guessable,
+      });
+      updateAddQuestionCriteria({
+        variables: {
+          category: props.question.category._id,
+        },
+      });
+    }
+  }, [props, updateAddQuestionCriteria, pageType]);
 
   const gotoQuestionsPageHandler = () => {
     clearFormHandler();
@@ -124,6 +122,14 @@ const QuestionForm = (props) => {
       ...fieldErrors,
       answers: "",
     });
+  };
+
+  const guessableHandler = (_event, value) => {
+    if (value.checked) {
+      setFields({ ...fields, guessable: true });
+    } else {
+      setFields({ ...fields, guessable: false });
+    }
   };
 
   const addAnswerHander = () => {
@@ -277,6 +283,7 @@ const QuestionForm = (props) => {
       videourl,
       audiourl,
       published,
+      guessable,
     } = fields;
     //add question
     await upsertQuestion({
@@ -292,6 +299,7 @@ const QuestionForm = (props) => {
           videourl,
           audiourl,
           published,
+          guessable,
         },
       },
     });
@@ -315,6 +323,7 @@ const QuestionForm = (props) => {
       videourl: null,
       audiourl: null,
       published: false,
+      guessable: true,
     });
   };
 
@@ -413,6 +422,8 @@ const QuestionForm = (props) => {
               addQuestionType={props.addQuestionType}
               selectedQuestionType={fields.questiontype}
               questionTypeSelectHandler={questionTypeSelectHandler}
+              guessable={fields.guessable}
+              guessableHandler={guessableHandler}
             />
             <QuestionDifficulty
               selectedQuestionDifficulty={fields.questiondifficulty}

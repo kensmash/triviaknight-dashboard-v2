@@ -809,7 +809,7 @@ const userSingleCategoryStat = async (userId, catId) => {
           },
         },
       },
-      //group by player
+      //group and calculate stats
       {
         $group: {
           _id: 0,

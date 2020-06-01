@@ -3,7 +3,7 @@ const Question = require("../../models/Question");
 //auth helpers
 const {
   requiresAuth,
-  requiresAdmin
+  requiresAdmin,
 } = require("../_helpers/helper-permissions");
 
 const resolvers = {
@@ -52,7 +52,7 @@ const resolvers = {
               .sort({ _id: -1 }),
             Question.countDocuments(
               queryBuilder(question, category, difficulty, type, published)
-            )
+            ),
           ]);
 
           const questionResults = questions[0];
@@ -61,7 +61,7 @@ const resolvers = {
           return {
             pages: Math.ceil(questionCount / limit),
             totalrecords: questionCount,
-            questions: questionResults
+            questions: questionResults,
           };
         } catch (error) {
           console.error(error);
@@ -69,50 +69,11 @@ const resolvers = {
       }
     ),
 
-    tkgamequestions: async (parent, args) => {
-      try {
-        const questions = await Question.aggregate([
-          {
-            $match: {
-              published: { $eq: true }
-            }
-          },
-          {
-            $lookup: {
-              from: "categories",
-              localField: "category",
-              foreignField: "_id",
-              as: "category"
-            }
-          },
-          {
-            $match: {
-              "category.published": true,
-              "category.partycategory": false,
-              "category.joustexclusive": false
-            }
-          },
-          { $sample: { size: 250 } },
-          {
-            $project: {
-              question: 1,
-              difficulty: 1,
-              answers: 1,
-              category: { $arrayElemAt: ["$category", 0] }
-            }
-          }
-        ]);
-        return questions;
-      } catch (error) {
-        console.error(error);
-      }
-    },
-
     questionswidget: requiresAdmin.createResolver(async (parent, args) => {
       try {
         const widget = await Promise.all([
           Question.estimatedDocumentCount(),
-          Question.countDocuments({ published: { $eq: false } })
+          Question.countDocuments({ published: { $eq: false } }),
         ]);
 
         const totalquestions = widget[0];
@@ -120,7 +81,7 @@ const resolvers = {
 
         return {
           totalquestions,
-          unpublishedquestions
+          unpublishedquestions,
         };
       } catch (error) {
         console.error(error);
@@ -129,7 +90,7 @@ const resolvers = {
 
     question: requiresAdmin.createResolver((parent, { id }) => {
       return Question.findOne({ _id: id }).populate("category");
-    })
+    }),
   },
 
   Mutation: {
@@ -137,7 +98,7 @@ const resolvers = {
       try {
         const upsertedQuestion = await Question.findOneAndUpdate(
           {
-            _id: mongoose.Types.ObjectId(input.id)
+            _id: mongoose.Types.ObjectId(input.id),
           },
           input,
           { upsert: true, new: true }
@@ -152,17 +113,17 @@ const resolvers = {
     deletequestion: requiresAdmin.createResolver(async (parent, { id }) => {
       try {
         const deletedQuestion = await Question.deleteOne({
-          _id: id
+          _id: id,
         });
 
         return deletedQuestion;
       } catch (error) {
         console.error(error);
       }
-    })
-  }
+    }),
+  },
 };
 
 module.exports = {
-  resolvers
+  resolvers,
 };

@@ -100,6 +100,7 @@ const typeDef = gql`
     name: String!
     email: String!
     password: String!
+    access: String!
     expoPushToken: String
   }
 

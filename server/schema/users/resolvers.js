@@ -340,6 +340,7 @@ const resolvers = {
         userinput.name,
         userinput.email,
         userinput.password,
+        userinput.access,
         request,
         redisclient,
         userinput.expoPushToken

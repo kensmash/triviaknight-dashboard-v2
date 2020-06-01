@@ -13,6 +13,7 @@ const typeDef = gql`
     videourl: String
     audiourl: String
     published: Boolean
+    guessable: Boolean
   }
 
   type Answer {
@@ -47,6 +48,7 @@ const typeDef = gql`
     videourl: String
     audiourl: String
     published: Boolean!
+    guessable: Boolean
   }
 
   extend type Query {
@@ -71,5 +73,5 @@ const typeDef = gql`
 `;
 
 module.exports = {
-  typeDef
+  typeDef,
 };
