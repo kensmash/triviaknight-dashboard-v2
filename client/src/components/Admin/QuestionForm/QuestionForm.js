@@ -51,7 +51,7 @@ const QuestionForm = (props) => {
     QUERY_CLIENTADDQUESTIONCRITERIA
   );
 
-  const [upsertQuestion] = useMutation(MUTATION_UPSERTQUESTION);
+  const [upsertQuestion, { loading }] = useMutation(MUTATION_UPSERTQUESTION);
   const [updateAddQuestionCriteria] = useMutation(
     MUTATION_UPDATEADDQUESTIONCRITERIA
   );
@@ -440,10 +440,20 @@ const QuestionForm = (props) => {
         <div className="formButtonGroup">
           {!questionSubmitted ? (
             <>
-              <Button color="green" size="large" onClick={formSubmitHandler}>
+              <Button
+                color="green"
+                size="large"
+                loading={loading}
+                onClick={formSubmitHandler}
+              >
                 Submit
               </Button>
-              <Button color="grey" size="large" onClick={props.history.goBack}>
+              <Button
+                color="grey"
+                size="large"
+                disabled={loading}
+                onClick={props.history.goBack}
+              >
                 Cancel
               </Button>
             </>
