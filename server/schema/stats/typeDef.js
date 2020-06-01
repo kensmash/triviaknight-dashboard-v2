@@ -26,6 +26,7 @@ const typeDef = gql`
   }
 
   type SingleCategoryStat {
+    _id: ID
     catquestions: Int
     questionsanswered: Int
     questionsansweredpercent: Int

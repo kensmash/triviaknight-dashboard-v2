@@ -4,7 +4,7 @@ const Question = require("../../models/Question");
 const GameJoust = require("../../models/GameJoust");
 const GameQuest = require("../../models/GameQuest");
 const { currentQuestTopic } = require("../_helpers/helper-gamesquest");
-//const util = require("util");
+const util = require("util");
 
 //tracks questions answered, correct and incorrect per game type
 const gameStats = async (userId) => {
@@ -789,10 +789,26 @@ const userSingleCategoryStat = async (userId, catId) => {
             player: "$players.player",
           },
           players: { $first: "$players" },
+          results: { $push: "$players.roundresults" },
           uniqueQuestions: { $addToSet: "$players.roundresults.question" },
         },
       },
       { $unwind: "$uniqueQuestions" },
+      //project to preserve the round result for each question via filter
+      {
+        $project: {
+          uniqueQuestions: 1,
+          roundresults: {
+            $filter: {
+              input: "$results",
+              as: "roundresults",
+              cond: {
+                $eq: ["$$roundresults.question", "$$CURRENT.uniqueQuestions"],
+              },
+            },
+          },
+        },
+      },
       //group by player
       {
         $group: {
@@ -800,18 +816,23 @@ const userSingleCategoryStat = async (userId, catId) => {
           questionsanswered: { $sum: 1 },
           correct: {
             $sum: {
-              $cond: ["$players.roundresults.correct", 1, 0],
+              $cond: [{ $arrayElemAt: ["$roundresults.correct", 0] }, 1, 0],
             },
           },
           incorrect: {
             $sum: {
-              $cond: ["$players.roundresults.correct", 0, 1],
+              $cond: [{ $arrayElemAt: ["$roundresults.correct", 0] }, 0, 1],
             },
           },
           normalquestions: {
             $sum: {
               $cond: [
-                { $eq: ["$players.roundresults.difficulty", "Normal"] },
+                {
+                  $eq: [
+                    { $arrayElemAt: ["$roundresults.difficulty", 0] },
+                    "Normal",
+                  ],
+                },
                 1,
                 0,
               ],
@@ -822,8 +843,18 @@ const userSingleCategoryStat = async (userId, catId) => {
               $cond: [
                 {
                   $and: [
-                    { $eq: ["$players.roundresults.difficulty", "Normal"] },
-                    { $eq: ["$players.roundresults.correct", true] },
+                    {
+                      $eq: [
+                        { $arrayElemAt: ["$roundresults.difficulty", 0] },
+                        "Normal",
+                      ],
+                    },
+                    {
+                      $eq: [
+                        { $arrayElemAt: ["$roundresults.correct", 0] },
+                        true,
+                      ],
+                    },
                   ],
                 },
                 1,
@@ -836,8 +867,18 @@ const userSingleCategoryStat = async (userId, catId) => {
               $cond: [
                 {
                   $and: [
-                    { $eq: ["$players.roundresults.difficulty", "Normal"] },
-                    { $eq: ["$players.roundresults.correct", false] },
+                    {
+                      $eq: [
+                        { $arrayElemAt: ["$roundresults.difficulty", 0] },
+                        "Normal",
+                      ],
+                    },
+                    {
+                      $eq: [
+                        { $arrayElemAt: ["$roundresults.correct", 0] },
+                        false,
+                      ],
+                    },
                   ],
                 },
                 1,
@@ -848,7 +889,12 @@ const userSingleCategoryStat = async (userId, catId) => {
           hardquestions: {
             $sum: {
               $cond: [
-                { $eq: ["$players.roundresults.difficulty", "Hard"] },
+                {
+                  $eq: [
+                    { $arrayElemAt: ["$roundresults.difficulty", 0] },
+                    "Hard",
+                  ],
+                },
                 1,
                 0,
               ],
@@ -859,8 +905,18 @@ const userSingleCategoryStat = async (userId, catId) => {
               $cond: [
                 {
                   $and: [
-                    { $eq: ["$players.roundresults.difficulty", "Hard"] },
-                    { $eq: ["$players.roundresults.correct", true] },
+                    {
+                      $eq: [
+                        { $arrayElemAt: ["$roundresults.difficulty", 0] },
+                        "Hard",
+                      ],
+                    },
+                    {
+                      $eq: [
+                        { $arrayElemAt: ["$roundresults.correct", 0] },
+                        true,
+                      ],
+                    },
                   ],
                 },
                 1,
@@ -873,8 +929,18 @@ const userSingleCategoryStat = async (userId, catId) => {
               $cond: [
                 {
                   $and: [
-                    { $eq: ["$players.roundresults.difficulty", "Hard"] },
-                    { $eq: ["$players.roundresults.correct", false] },
+                    {
+                      $eq: [
+                        { $arrayElemAt: ["$roundresults.difficulty", 0] },
+                        "Hard",
+                      ],
+                    },
+                    {
+                      $eq: [
+                        { $arrayElemAt: ["$roundresults.correct", 0] },
+                        false,
+                      ],
+                    },
                   ],
                 },
                 1,
@@ -943,9 +1009,21 @@ const userSingleCategoryStat = async (userId, catId) => {
           questionsansweredpercent: 0,
           correct: 0,
           incorrect: 0,
+          normalquestions: 0,
+          normalcorrect: 0,
+          normalincorrect: 0,
+          normalpercentcorrect: 0,
+          hardquestions: 0,
+          hardcorrect: 0,
+          hardincorrect: 0,
+          hardpercentcorrect: 0,
         },
       ];
     }
+
+    /*console.log(
+      util.inspect(usersinglecatstat, { showHidden: false, depth: null })
+    );*/
     return usersinglecatstat[0];
   } catch (error) {
     console.error(error);
