@@ -212,12 +212,13 @@ const resolvers = {
     ),
 
     username: requiresAuth.createResolver(
-      async (parent, { name, cursor }, { user }) => {
+      async (parent, { name, access, cursor }, { user }) => {
         try {
           const paginatedusers = await User.find({
             _id: { $ne: user.id },
             $text: { $search: name },
             roles: { $nin: ["reviewer"] },
+            access: { $eq: access },
             blockedusers: { $nin: [user.id] },
           });
 
