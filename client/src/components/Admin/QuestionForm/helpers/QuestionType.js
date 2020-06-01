@@ -43,10 +43,6 @@ const QuestionType = (props) => (
             onChange={(event, value) => props.guessableHandler(event, value)}
           />
         </Form.Field>
-        <p>
-          Deselect this checkbox if the question can’t be guessed by the
-          player(s).
-        </p>
       </Card.Content>
     </Transition>
   </Card>
