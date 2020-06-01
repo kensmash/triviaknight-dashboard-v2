@@ -99,6 +99,7 @@ const trySignup = async (
 const tryLogin = async (
   email,
   password,
+  access,
   request,
   redisclient,
   expoPushToken
@@ -145,11 +146,14 @@ const tryLogin = async (
     );
   }
 
+  if (access === "paid") {
+    await User.findOneAndUpdate({ email }, { $set: { access } });
+  }
+
   if (expoPushToken) {
-    const editedUser = await User.findOneAndUpdate(
+    await User.findOneAndUpdate(
       { email },
-      { $addToSet: { expoPushTokens: expoPushToken } },
-      { new: true }
+      { $addToSet: { expoPushTokens: expoPushToken } }
     );
   }
 
@@ -199,7 +203,7 @@ const resetPasswordCode = async (email, code) => {
 const updatePassword = async (email, password) => {
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
-    const editedUser = await User.findOneAndUpdate(
+    await User.findOneAndUpdate(
       { email },
       { $set: { password: hashedPassword } }
     );

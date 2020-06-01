@@ -348,10 +348,21 @@ const resolvers = {
       );
     },
 
-    login: async (parent, { email, password, expoPushToken }, context) => {
+    login: async (
+      parent,
+      { email, password, access, expoPushToken },
+      context
+    ) => {
       const request = context.req;
       const redisclient = context.redisclient;
-      return tryLogin(email, password, request, redisclient, expoPushToken);
+      return tryLogin(
+        email,
+        password,
+        access,
+        request,
+        redisclient,
+        expoPushToken
+      );
     },
 
     logout: async (parent, args, context) => {

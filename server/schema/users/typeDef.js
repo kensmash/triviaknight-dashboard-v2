@@ -109,6 +109,7 @@ const typeDef = gql`
     login(
       email: String!
       password: String!
+      access: String!
       expoPushToken: String
     ): LoginResponse!
     logout: LogoutResponse!
