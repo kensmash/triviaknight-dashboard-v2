@@ -13,7 +13,6 @@ const QuestionSchema = new Schema(
       required: true,
       default: "Multiple Choice",
     },
-    guessable: { type: Boolean, default: true },
     difficulty: {
       type: String,
       required: true,
@@ -28,6 +27,7 @@ const QuestionSchema = new Schema(
     videourl: String,
     audiourl: String,
     published: { type: Boolean, default: false },
+    guessable: { type: Boolean, default: true },
   },
   { timestamps: true }
 );

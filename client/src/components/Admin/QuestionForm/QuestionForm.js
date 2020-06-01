@@ -58,8 +58,8 @@ const QuestionForm = (props) => {
 
   useEffect(() => {
     if (props.pageType === "edit" && pageType !== "Edit") {
-      console.log("rararrrr");
       const { question } = props;
+
       setPageType("Edit");
       setFields({
         question: question.question,
@@ -128,6 +128,7 @@ const QuestionForm = (props) => {
     if (value.checked) {
       setFields({ ...fields, guessable: true });
     } else {
+      console.log(false);
       setFields({ ...fields, guessable: false });
     }
   };
@@ -285,6 +286,7 @@ const QuestionForm = (props) => {
       published,
       guessable,
     } = fields;
+
     //add question
     await upsertQuestion({
       variables: {
@@ -495,6 +497,7 @@ const MUTATION_UPSERTQUESTION = gql`
     upsertquestion(input: $input) {
       _id
       question
+      guessable
     }
   }
 `;

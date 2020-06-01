@@ -48,12 +48,11 @@ const typeDef = gql`
     videourl: String
     audiourl: String
     published: Boolean!
-    guessable: Boolean
+    guessable: Boolean!
   }
 
   extend type Query {
     question(id: ID!): Question
-    tkgamequestions: [Question]
     questionswidget: QuestionWidgetResponse
     questionspage(
       limit: Int!
