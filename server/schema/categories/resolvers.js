@@ -100,11 +100,10 @@ const resolvers = {
       }
     },
 
-    tkgamecategories: requiresAuth.createResolver(
+    partycategories: requiresAuth.createResolver(
       (parent, { args }, { user }) => {
         return Category.find({
           published: { $eq: true },
-          partycategory: { $eq: false },
         })
           .sort({ name: 1 })
           .populate("type")

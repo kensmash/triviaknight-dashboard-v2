@@ -110,6 +110,7 @@ const resolvers = {
           })
             .limit(30)
             .sort({ updatedAt: -1 })
+            .populate("players.player")
             .populate({
               path: "category",
               populate: { path: "type" },
