@@ -190,8 +190,22 @@ const typeDef = gql`
     expirehostedgame(gameid: ID!): GameHosted
     cancelhostedgame(gameid: ID!): GameHosted
   }
+
+  extend type Subscription {
+    hostedplayerjoined(gameid: ID!): GameHosted
+    gamecategoryadded(gameid: ID!): GameHosted
+    playerselectedcategories(gameid: ID!): GameHosted
+    hostedgamestarted(gameid: ID!): GameHosted
+    hostedgameupdated(gameid: ID!): GameHosted
+    hostedplayerupdated(gameid: ID!): GameHosted
+    hostshowquestion(gameid: ID!): GameHosted
+    hostedgametied(gameid: ID!): GameHosted
+    hostedgameover(gameid: ID!): GameHosted
+    playerremoved(gameid: ID!): GameHosted
+    hostedgamecancelled(gameid: ID!): GameHosted
+  }
 `;
 
 module.exports = {
-  typeDef
+  typeDef,
 };

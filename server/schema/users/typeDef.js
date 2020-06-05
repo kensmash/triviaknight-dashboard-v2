@@ -87,8 +87,6 @@ const typeDef = gql`
     joustleaders: [JoustLeaderBoardResponse]
     joustleaderssevendays: [JoustSevenDayLeaderBoardResponse]
     questleaderssevendays: [QuestSevenDayLeaderBoardResponse]
-    allusergames: UserGameResponse
-    alluserpartygames: UserPartyGameResponse
     allusers: [User]!
     questionsanswered: Int!
     challengeusers: [User]!
@@ -159,15 +157,6 @@ const typeDef = gql`
     sessionID: String
     user: User
     error: Error
-  }
-
-  type UserGameResponse {
-    joustgames: [GameJoust]
-  }
-
-  type UserPartyGameResponse {
-    hostedgameshost: [GameHosted]
-    hostedgamesplayer: [GameHosted]
   }
 `;
 

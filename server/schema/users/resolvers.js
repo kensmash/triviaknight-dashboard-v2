@@ -290,47 +290,6 @@ const resolvers = {
         }
       }
     ),
-
-    allusergames: requiresAuth.createResolver(
-      async (parent, args, { user }) => {
-        try {
-          const player = await User.findOne({ _id: user.id })
-            .populate({
-              path: "pressluckgames",
-              populate: { path: "players.player" },
-            })
-            .populate({
-              path: "joustgames",
-              populate: [
-                { path: "createdby" },
-                { path: "players.player" },
-                { path: "category" },
-              ],
-            })
-            .sort({ updatedAt: -1 });
-
-          return {
-            pressluckgames: player.pressluckgames,
-            joustgames: player.joustgames,
-          };
-        } catch (error) {
-          console.error(error);
-        }
-      }
-    ),
-
-    alluserpartygames: requiresAuth.createResolver(
-      async (parent, args, { user }) => {
-        const player = await User.findOne({ _id: user.id })
-          .populate("hostedgameshost")
-          .populate("hostedgamesplayer");
-
-        return {
-          hostedgameshost: player.hostedgameshost,
-          hostedgamesplayer: player.hostedgamesplayer,
-        };
-      }
-    ),
   },
 
   Mutation: {
