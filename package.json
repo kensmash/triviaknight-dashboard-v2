@@ -13,7 +13,7 @@
   "author": "Ken Frederick",
   "license": "ISC",
   "dependencies": {
-    "apollo-server-express": "^2.9.6",
+    "apollo-server-express": "^2.14.2",
     "bcrypt": "^3.0.6",
     "connect-redis": "^4.0.3",
     "expo-server-sdk": "^3.3.0",
