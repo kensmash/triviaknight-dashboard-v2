@@ -5,17 +5,17 @@ import FormErrorMessage from "../../components/FormMessage/FormErrorMessage";
 //graphql
 import { useMutation, useApolloClient } from "@apollo/react-hooks";
 
-const Login = props => {
+const Login = (props) => {
   const [fields, setFields] = useState({
     email: "",
-    password: ""
+    password: "",
   });
   const [fieldErrors, setFieldErrors] = useState({ email: "", password: "" });
 
   const [logIn] = useMutation(MUTATION_LOGIN);
   const client = useApolloClient();
 
-  const inputChangedHandler = event => {
+  const inputChangedHandler = (event) => {
     setFields({ ...fields, [event.target.id]: event.target.value });
     setFieldErrors({ ...fieldErrors, [event.target.id]: "" });
   };
@@ -39,7 +39,7 @@ const Login = props => {
   const loginHandler = async () => {
     const { email, password } = fields;
     const response = await logIn({
-      variables: { email, password }
+      variables: { email, password, access: "" },
     });
 
     const { payload, error } = response.data.login;
@@ -70,7 +70,7 @@ const Login = props => {
                 placeholder="Email"
                 id="email"
                 value={fields.email}
-                onChange={event => inputChangedHandler(event)}
+                onChange={(event) => inputChangedHandler(event)}
               />
               <FormErrorMessage
                 reveal={fieldErrors.email !== ""}
@@ -84,7 +84,7 @@ const Login = props => {
                 placeholder="Password"
                 id="password"
                 value={fields.password}
-                onChange={event => inputChangedHandler(event)}
+                onChange={(event) => inputChangedHandler(event)}
               />
               <FormErrorMessage
                 reveal={fieldErrors.password !== ""}
@@ -93,7 +93,7 @@ const Login = props => {
             </Form.Field>
             <Button
               type="submit"
-              onClick={event => {
+              onClick={(event) => {
                 event.preventDefault();
                 formSubmitHandler();
               }}
@@ -108,8 +108,8 @@ const Login = props => {
 };
 
 const MUTATION_LOGIN = gql`
-  mutation login($email: String!, $password: String!) {
-    login(email: $email, password: $password) {
+  mutation login($email: String!, $password: String!, $access: String!) {
+    login(email: $email, password: $password, access: $access) {
       payload {
         user {
           _id
