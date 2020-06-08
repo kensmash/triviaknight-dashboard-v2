@@ -1,6 +1,6 @@
-const GameHosted = require("../../models/GameHosted");
+const GameRoundTable = require("../../models/GameRoundTable");
 
-const createHostedGame = async (
+const createRoundTableGame = async (
   playerid,
   pointsgoal,
   categoriestype,
@@ -9,7 +9,7 @@ const createHostedGame = async (
   categories
 ) => {
   try {
-    const newgame = new GameHosted({
+    const newgame = new GameRoundTable({
       createdby: playerid,
       pointsgoal,
       categoriestype,
@@ -19,7 +19,7 @@ const createHostedGame = async (
       selectedquestions: previousquestions,
     });
     const hostedGame = await newgame.save();
-    const newHostedGame = await GameHosted.findOne({
+    const newHostedGame = await GameRoundTable.findOne({
       _id: hostedGame._id,
     }).populate("createdby");
     return newHostedGame;
@@ -30,7 +30,7 @@ const createHostedGame = async (
 
 const removePlayer = async (gameid, playerid) => {
   try {
-    const updatedGame = await GameHosted.findOneAndUpdate(
+    const updatedGame = await GameRoundTable.findOneAndUpdate(
       { _id: gameid, "players.player": playerid },
       { $pull: { players: { player: playerid } } },
       { new: true }
@@ -41,9 +41,9 @@ const removePlayer = async (gameid, playerid) => {
   }
 };
 
-const hostedResultsSeen = async (gameid, playerid) => {
+const roundTableResultsSeen = async (gameid, playerid) => {
   try {
-    const updatedGame = await GameHosted.findOneAndUpdate(
+    const updatedGame = await GameRoundTable.findOneAndUpdate(
       { _id: gameid, "players.player": playerid },
       { $set: { "players.$.resultsseen": true } },
       { new: true }
@@ -55,7 +55,7 @@ const hostedResultsSeen = async (gameid, playerid) => {
 };
 
 module.exports = {
-  createHostedGame,
+  createRoundTableGame,
   removePlayer,
-  hostedResultsSeen,
+  roundTableResultsSeen,
 };

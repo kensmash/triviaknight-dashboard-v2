@@ -1,13 +1,13 @@
-const GameHosted = require("../../models/GameHosted");
+const GameRoundTable = require("../../models/GameRoundTable");
 const ExpoPushTicket = require("../../models/ExpoPushTicket");
 const Expo = require("expo-server-sdk");
 //auth helpers
 const { requiresAuth } = require("../_helpers/helper-permissions");
 //game helpers
 const {
-  createHostedGame,
-  hostedResultsSeen,
-} = require("../_helpers/helper-gameshosted");
+  createRoundTableGame,
+  roundTableResultsSeen,
+} = require("../_helpers/helper-gamesroundtable");
 const { gameQuestion } = require("../_helpers/helper-questions");
 
 //subscription
@@ -30,7 +30,7 @@ const resolvers = {
   Query: {
     allhostedgames: async (parent, args, { user }) => {
       try {
-        const allhostedgames = await GameHosted.find({
+        const allhostedgames = await GameRoundTable.find({
           $or: [{ "players.player": user.id }, { createdby: user.id }],
         })
           .populate("createdby")
@@ -51,7 +51,7 @@ const resolvers = {
 
     currenthostedgame: async (parent, { id }, { user }) => {
       try {
-        const currenthostedgame = await GameHosted.findOne({
+        const currenthostedgame = await GameRoundTable.findOne({
           _id: id,
           $or: [{ "players.player": user.id }, { createdby: user.id }],
         })
@@ -80,7 +80,7 @@ const resolvers = {
 
     currenthostedgameplayerinfo: async (parent, { id }) => {
       try {
-        const currenthostedgame = await GameHosted.findOne({
+        const currenthostedgame = await GameRoundTable.findOne({
           _id: id,
         })
           .populate("createdby")
@@ -134,7 +134,7 @@ const resolvers = {
         { user, expo, pubsub }
       ) => {
         try {
-          const updatedGame = await GameHosted.findOneAndUpdate(
+          const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid },
             {
               $set: { players },
@@ -207,7 +207,7 @@ const resolvers = {
     removeplayer: requiresAuth.createResolver(
       async (parent, { gameid, playerid }, { pubsub }) => {
         try {
-          const updatedGame = await GameHosted.findOneAndUpdate(
+          const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid, "players.player": playerid },
             { $pull: { players: { player: playerid } } },
             { new: true }
@@ -226,7 +226,7 @@ const resolvers = {
     joinhostedgame: requiresAuth.createResolver(
       async (parent, { gameid }, { user, pubsub }) => {
         try {
-          const updatedGame = await GameHosted.findOneAndUpdate(
+          const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid, "players.player": user.id },
             { $set: { "players.$.joined": true } },
             { new: true }
@@ -245,7 +245,7 @@ const resolvers = {
     declinehostedgame: requiresAuth.createResolver(
       async (parent, { gameid }, { user, pubsub }) => {
         try {
-          const updatedGame = await GameHosted.findOneAndUpdate(
+          const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid, "players.player": user.id },
             { $set: { "players.$.declined": true } },
             { new: true }
@@ -264,7 +264,7 @@ const resolvers = {
     addgamecategories: requiresAuth.createResolver(
       async (parent, { gameid, categories }, { user, pubsub }) => {
         try {
-          const updatedGame = await GameHosted.findOneAndUpdate(
+          const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid, "players.player": user.id },
             {
               $set: { "players.$.hasselectedcategories": true },
@@ -299,7 +299,7 @@ const resolvers = {
     hostedplayeralwaysseequestion: requiresAuth.createResolver(
       async (parent, { gameid }, { user }) => {
         try {
-          const updatedGame = await GameHosted.findOneAndUpdate(
+          const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid, "players.player": user.id },
             { $set: { "players.$.alwaysseequestion": true } },
             { new: true }
@@ -321,7 +321,7 @@ const resolvers = {
         const firstCategory =
           categories[Math.floor(Math.random() * categories.length)];
         try {
-          const updatedGame = await GameHosted.findOneAndUpdate(
+          const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid },
             {
               $set: {
@@ -415,7 +415,7 @@ const resolvers = {
             "Multiple Choice",
             previousquestions
           );
-          const updatedGame = await GameHosted.findOneAndUpdate(
+          const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid },
             {
               $set: {
@@ -453,7 +453,7 @@ const resolvers = {
             "Multiple Choice",
             previousquestions
           );
-          const updatedGame = await GameHosted.findOneAndUpdate(
+          const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid },
             {
               $set: { currentquestion },
@@ -482,7 +482,7 @@ const resolvers = {
     setplayeranswermode: requiresAuth.createResolver(
       async (parent, { gameid, answermode }, { user, pubsub }) => {
         try {
-          const updatedGame = await GameHosted.findOneAndUpdate(
+          const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid, "players.player": user.id },
             { $set: { "players.$.answermode": answermode } },
             { new: true }
@@ -505,7 +505,7 @@ const resolvers = {
     resetplayerresponse: requiresAuth.createResolver(
       async (parent, { gameid, playerid }) => {
         try {
-          const updatedGame = await GameHosted.findOneAndUpdate(
+          const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid, "players.player": playerid },
             {
               $set: {
@@ -529,7 +529,7 @@ const resolvers = {
     removeplayerroundresults: requiresAuth.createResolver(
       async (parent, { gameid, playerid, score }, { pubsub }) => {
         try {
-          const updatedGame = await GameHosted.findOneAndUpdate(
+          const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid, "players.player": playerid },
             {
               $pop: {
@@ -556,7 +556,7 @@ const resolvers = {
     playerenterguess: requiresAuth.createResolver(
       async (parent, { gameid, guess }, { user, pubsub }) => {
         try {
-          const updatedGame = await GameHosted.findOneAndUpdate(
+          const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid, "players.player": user.id },
             {
               $set: {
@@ -585,7 +585,7 @@ const resolvers = {
     playerentermultchoice: requiresAuth.createResolver(
       async (parent, { gameid, answer, roundresults }, { user, pubsub }) => {
         try {
-          const updatedGame = await GameHosted.findOneAndUpdate(
+          const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid, "players.player": user.id },
             {
               $set: {
@@ -623,7 +623,7 @@ const resolvers = {
     hostenterguess: requiresAuth.createResolver(
       async (parent, { gameid, playerid, roundresults }, { pubsub }) => {
         try {
-          const updatedGame = await GameHosted.findOneAndUpdate(
+          const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid, "players.player": playerid },
             {
               $set: {
@@ -664,14 +664,14 @@ const resolvers = {
       ) => {
         try {
           //first remove last element in round results array
-          const removeArrayElement = await GameHosted.findOneAndUpdate(
+          const removeArrayElement = await GameRoundTable.findOneAndUpdate(
             { _id: gameid, "players.player": playerid },
             {
               $pop: { "players.$.roundresults": 1 },
             }
           );
           //then perform the updates
-          const updateTheThings = await GameHosted.findOneAndUpdate(
+          const updateTheThings = await GameRoundTable.findOneAndUpdate(
             { _id: gameid, "players.player": playerid },
             {
               $set: {
@@ -706,7 +706,7 @@ const resolvers = {
     hostshowquestion: requiresAuth.createResolver(
       async (parent, { gameid }, { pubsub }) => {
         try {
-          const updatedGame = await GameHosted.findOneAndUpdate(
+          const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid },
             { $set: { showquestiontoplayers: true } },
             { new: true }
@@ -725,7 +725,7 @@ const resolvers = {
     hostshowanswer: requiresAuth.createResolver(
       async (parent, { gameid }, { pubsub }) => {
         try {
-          const updatedGame = await GameHosted.findOneAndUpdate(
+          const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid },
             { $set: { showanswertoplayers: true } },
             { new: true }
@@ -753,7 +753,7 @@ const resolvers = {
     playerreceiveguessfeedback: requiresAuth.createResolver(
       async (parent, { gameid }, { user }) => {
         try {
-          const updatedGame = await GameHosted.findOneAndUpdate(
+          const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid, "players.player": user.id },
             {
               $set: {
@@ -772,7 +772,7 @@ const resolvers = {
     playernextround: requiresAuth.createResolver(
       async (parent, { gameid, playerid }) => {
         try {
-          const updatedGame = await GameHosted.findOneAndUpdate(
+          const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid, "players.player": playerid },
             {
               $set: {
@@ -796,7 +796,7 @@ const resolvers = {
     gamenextround: requiresAuth.createResolver(
       async (parent, { gameid, category, tiebreakerround }, { pubsub }) => {
         try {
-          const updatedGame = await GameHosted.findOneAndUpdate(
+          const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid },
             {
               $set: {
@@ -836,7 +836,7 @@ const resolvers = {
     sethostedtie: requiresAuth.createResolver(
       async (parent, { gameid, playerid }, { pubsub }) => {
         try {
-          const updatedGame = await GameHosted.findOneAndUpdate(
+          const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid, "players.player": playerid },
             {
               $set: { "players.$.tied": true },
@@ -857,7 +857,7 @@ const resolvers = {
     removehostedtie: requiresAuth.createResolver(
       async (parent, { gameid, playerid }, { pubsub }) => {
         try {
-          const updatedGame = await GameHosted.findOneAndUpdate(
+          const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid, "players.player": playerid },
             {
               $set: { "players.$.tied": false },
@@ -878,7 +878,7 @@ const resolvers = {
     sethostedwinner: requiresAuth.createResolver(
       async (parent, { gameid, playerid }) => {
         try {
-          const updatedGame = await GameHosted.findOneAndUpdate(
+          const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid, "players.player": playerid },
             {
               $set: { "players.$.winner": true },
@@ -895,7 +895,7 @@ const resolvers = {
     tiehostedgame: requiresAuth.createResolver(
       async (parent, { gameid }, { pubsub }) => {
         try {
-          const updatedGame = await GameHosted.findOneAndUpdate(
+          const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid },
             {
               $set: { showanswertoplayers: false, tied: true },
@@ -917,7 +917,7 @@ const resolvers = {
     endhostedgame: requiresAuth.createResolver(
       async (parent, { gameid }, { pubsub }) => {
         try {
-          const updatedGame = await GameHosted.findOneAndUpdate(
+          const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid },
             {
               $set: { gameover: true, endeddate: new Date() },
@@ -944,7 +944,7 @@ const resolvers = {
     cancelhostedgame: requiresAuth.createResolver(
       async (parent, { gameid }, { pubsub }) => {
         try {
-          const updatedGame = await GameHosted.findOneAndUpdate(
+          const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid },
             {
               $set: { cancelled: true, endeddate: new Date() },

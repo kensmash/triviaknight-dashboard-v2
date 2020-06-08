@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
-const HostedRoundResultsSchema = require("./HostedRoundResults");
+const RoundTableRoundResultsSchema = require("./RoundTableRoundResults");
 
-const PlayerHostedSchema = new Schema(
+const PlayerRoundTableSchema = new Schema(
   {
     player: { type: Schema.Types.ObjectId, ref: "user", required: true },
     joined: { type: Boolean, default: false },
@@ -20,9 +20,9 @@ const PlayerHostedSchema = new Schema(
     tied: { type: Boolean, default: false },
     winner: { type: Boolean, default: false },
     resultsseen: { type: Boolean, default: false },
-    roundresults: [HostedRoundResultsSchema]
+    roundresults: [RoundTableRoundResultsSchema],
   },
   { _id: false }
 );
 
-module.exports = PlayerHostedSchema;
+module.exports = PlayerRoundTableSchema;

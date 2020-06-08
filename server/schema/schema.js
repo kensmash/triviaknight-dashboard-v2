@@ -13,7 +13,7 @@ const questionReports = require("./questionReports");
 const gamesSolo = require("./gamesSolo");
 const gamesJoust = require("./gamesJoust");
 const gamesQuest = require("./gamesQuest");
-const gamesHosted = require("./gamesHosted");
+const gamesRoundTable = require("./gamesRoundTable");
 //stats
 const stats = require("./stats");
 //misc
@@ -38,7 +38,7 @@ module.exports = {
     gamesSolo.typeDef,
     gamesJoust.typeDef,
     gamesQuest.typeDef,
-    gamesHosted.typeDef,
+    gamesRoundTable.typeDef,
     stats.typeDef,
     expoPushNotifications.typeDef,
   ],

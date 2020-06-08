@@ -1,19 +1,19 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
-const PlayerHostedSchema = require("./PlayerHosted");
+const PlayerRoundTableSchema = require("./PlayerRoundTable");
 
-const gameHostedSchema = new Schema(
+const gameRoundTableSchema = new Schema(
   {
     type: { type: String, required: true, default: "Hosted" },
     createdby: { type: Schema.Types.ObjectId, ref: "user", required: true },
     categoriestype: { type: String, default: "player" },
     difficulty: { type: String, default: "Normal" },
-    players: [PlayerHostedSchema],
+    players: [PlayerRoundTableSchema],
     categories: [
       {
         type: Schema.Types.ObjectId,
-        ref: "category"
-      }
+        ref: "category",
+      },
     ],
     pointsgoal: { type: Number, default: 30 },
     categoriesperplayer: { type: Number, default: 3 },
@@ -21,45 +21,45 @@ const gameHostedSchema = new Schema(
     tiebreakerround: { type: Number, default: 0 },
     currentcategory: {
       type: Schema.Types.ObjectId,
-      ref: "category"
+      ref: "category",
     },
     currentquestion: {
       type: Schema.Types.ObjectId,
-      ref: "question"
+      ref: "question",
     },
     hasquestion: { type: Boolean, default: false },
     showquestiontoplayers: {
       type: Boolean,
-      default: false
+      default: false,
     },
     showanswertoplayers: {
       type: Boolean,
-      default: false
+      default: false,
     },
     differentquestionfetchedcount: { type: Number, default: 0 },
     selectedcategories: [
       {
         type: Schema.Types.ObjectId,
-        ref: "category"
-      }
+        ref: "category",
+      },
     ],
     selectedquestions: [
       {
         type: Schema.Types.ObjectId,
-        ref: "question"
-      }
+        ref: "question",
+      },
     ],
     started: { type: Boolean, default: false },
     cancelled: { type: Boolean, default: false },
     expired: { type: Boolean, default: false },
     tied: { type: Boolean, default: false },
-    gameover: { type: Boolean, default: false }
+    gameover: { type: Boolean, default: false },
   },
-  { timestamps: true, collection: "gameshosted" }
+  { timestamps: true, collection: "gamesroundtable" }
 );
 
 //Create the model class
-const GameHosted = mongoose.model("gamehosted", gameHostedSchema);
+const GameRoundTable = mongoose.model("gameroundtable", gameRoundTableSchema);
 
 //Export the model
-module.exports = GameHosted;
+module.exports = GameRoundTable;

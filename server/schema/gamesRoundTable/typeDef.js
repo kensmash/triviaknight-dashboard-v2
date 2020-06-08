@@ -1,15 +1,16 @@
 const { gql } = require("apollo-server-express");
 
 const typeDef = gql`
-  type GameHosted {
+  type GameRoundTable {
     _id: ID!
     createdby: User
     categoriestype: String
     difficulty: String
-    players: [PlayerHosted]!
+    players: [PlayerRoundTable]!
     pointsgoal: Int
     categoriesperplayer: Int
     currentround: Int
+    currentroundhost: ID!
     tiebreakerround: Int
     categories: [Category]
     currentcategory: Category
@@ -28,7 +29,7 @@ const typeDef = gql`
     createdAt: String
   }
 
-  type PlayerHosted {
+  type PlayerRoundTable {
     player: User!
     joined: Boolean
     declined: Boolean
@@ -45,10 +46,10 @@ const typeDef = gql`
     tied: Boolean
     winner: Boolean
     resultsseen: Boolean
-    roundresults: [HostedRoundResults]
+    roundresults: [RoundTableRoundResults]
   }
 
-  type HostedRoundResults {
+  type RoundTableRoundResults {
     question: Question
     difficulty: String
     category: Category
@@ -58,7 +59,7 @@ const typeDef = gql`
     points: Int
   }
 
-  input HostedPlayerInput {
+  input RoundTablePlayerInput {
     player: ID
     joined: Boolean
     declined: Boolean
@@ -71,7 +72,7 @@ const typeDef = gql`
     score: Int
   }
 
-  input HostedRoundResultsInput {
+  input RoundTableRoundResultsInput {
     round: Int
     question: ID
     difficulty: String
@@ -93,116 +94,110 @@ const typeDef = gql`
     correct: Boolean
   }
 
-  type HostedHostEndedPaginationResponse {
-    items: [GameHosted]
-    hasMore: Boolean
-  }
-
-  type HostedPlayerEndedPaginationResponse {
-    items: [GameHosted]
+  type RoundTableEndedPaginationResponse {
+    items: [GameRoundTable]
     hasMore: Boolean
   }
 
   extend type Query {
-    allhostedgames: [GameHosted]
-    allendedhostedhostgames(
+    allroundtablegames: [GameRoundTable]
+    allendedroundtablegames(
       limit: Int!
       endeddate: String
-    ): HostedHostEndedPaginationResponse
-    allendedhostedplayergames(
-      limit: Int!
-      endeddate: String
-    ): HostedPlayerEndedPaginationResponse
-    currenthostedgame(id: ID!): GameHosted
-    currenthostedgameplayerinfo(id: ID!): GameHosted
+    ): RoundTableEndedPaginationResponse
+    currentroundtablegame(id: ID!): GameRoundTable
+    currentroundtablegameplayerinfo(id: ID!): GameRoundTable
   }
 
   extend type Mutation {
-    createhostedgame(
+    createroundtablegame(
       pointsgoal: Int!
       categoriestype: String!
       categoriesperplayer: Int
       previousquestions: [ID]
       categories: [ID]
-    ): GameHosted
+    ): GameRoundTable
     inviteplayers(
       gameid: ID!
-      players: [HostedPlayerInput!]
+      players: [RoundTablePlayerInput!]
       playerExpoPushTokens: [String]
-    ): GameHosted
-    removeplayer(gameid: ID!, playerid: ID!): GameHosted
-    joinhostedgame(gameid: ID!): GameHosted
-    declinehostedgame(gameid: ID!): GameHosted
-    addgamecategories(gameid: ID!, categories: [ID!]): GameHosted
-    hostedplayeralwaysseequestion(gameid: ID!): GameHosted
-    starthostedgame(
+    ): GameRoundTable
+    removeplayer(gameid: ID!, playerid: ID!): GameRoundTable
+    joinroundtablegame(gameid: ID!): GameRoundTable
+    declineroundtablegame(gameid: ID!): GameRoundTable
+    addgamecategories(gameid: ID!, categories: [ID!]): GameRoundTable
+    startroundtablegame(
       gameid: ID!
       categories: [ID!]
       playerExpoPushTokens: [String]!
-    ): GameHosted
-    setcurrenthostedquestion(
+    ): GameRoundTable
+    setcurrentroundtablequestion(
       gameid: ID!
       category: ID!
       previousquestions: [ID]
-    ): GameHosted
-    fetchdifferenthostedquestion(
+    ): GameRoundTable
+    fetchdifferentroundtablequestion(
       gameid: ID!
       category: ID!
       previousquestions: [ID]
-    ): GameHosted
-    setplayeranswermode(gameid: ID!, answermode: String!): GameHosted
-    resetplayerresponse(gameid: ID!, playerid: ID!): GameHosted
+    ): GameRoundTable
+    setplayeranswermode(gameid: ID!, answermode: String!): GameRoundTable
+    resetplayerresponse(gameid: ID!, playerid: ID!): GameRoundTable
     removeplayerroundresults(
       gameid: ID!
       playerid: ID!
       score: Int!
-    ): GameHosted
-    playerenterguess(gameid: ID!, guess: String!): GameHosted
+    ): GameRoundTable
+    playerenterguess(gameid: ID!, guess: String!): GameRoundTable
     playerentermultchoice(
       gameid: ID!
       answer: String!
       roundresults: RoundResultsInput!
-    ): GameHosted
+    ): GameRoundTable
     hostenterguess(
       gameid: ID!
       playerid: ID!
       roundresults: RoundResultsInput!
-    ): GameHosted
+    ): GameRoundTable
     hostupdateguess(
       gameid: ID!
       playerid: ID!
       score: Int!
       correct: Boolean!
       roundresults: RoundResultsInput!
-    ): GameHosted
-    playerreceiveguessfeedback(gameid: ID!): GameHosted
-    hostshowquestion(gameid: ID!): GameHosted
-    hostshowanswer(gameid: ID!): GameHosted
-    playernextround(gameid: ID!, playerid: ID!): GameHosted
-    gamenextround(gameid: ID!, category: ID!, tiebreakerround: Int!): GameHosted
-    sethostedtie(gameid: ID!, playerid: ID!): GameHosted
-    removehostedtie(gameid: ID!, playerid: ID!): GameHosted
-    sethostedwinner(gameid: ID!, playerid: ID!): GameHosted
-    hostedresultsseen(gameid: ID!): GameHosted
-    tiehostedgame(gameid: ID!): GameHosted
-    starttiebreakerrounds(gameid: ID!): GameHosted
-    endhostedgame(gameid: ID!): GameHosted
-    expirehostedgame(gameid: ID!): GameHosted
-    cancelhostedgame(gameid: ID!): GameHosted
+    ): GameRoundTable
+    playerreceiveguessfeedback(gameid: ID!): GameRoundTable
+    hostshowquestion(gameid: ID!): GameRoundTable
+    hostshowanswer(gameid: ID!): GameRoundTable
+    playernextround(gameid: ID!, playerid: ID!): GameRoundTable
+    gamenextround(
+      gameid: ID!
+      category: ID!
+      tiebreakerround: Int!
+    ): GameRoundTable
+    setroundtabletie(gameid: ID!, playerid: ID!): GameRoundTable
+    removeroundtabletie(gameid: ID!, playerid: ID!): GameRoundTable
+    setroundtablewinner(gameid: ID!, playerid: ID!): GameRoundTable
+    roundtableresultsseen(gameid: ID!): GameRoundTable
+    tieroundtablegame(gameid: ID!): GameRoundTable
+    starttiebreakerrounds(gameid: ID!): GameRoundTable
+    endroundtablegame(gameid: ID!): GameRoundTable
+    expireroundtablegame(gameid: ID!): GameRoundTable
+    cancelroundtablegame(gameid: ID!): GameRoundTable
   }
 
   extend type Subscription {
-    hostedplayerjoined(gameid: ID!): GameHosted
-    gamecategoryadded(gameid: ID!): GameHosted
-    playerselectedcategories(gameid: ID!): GameHosted
-    hostedgamestarted(gameid: ID!): GameHosted
-    hostedgameupdated(gameid: ID!): GameHosted
-    hostedplayerupdated(gameid: ID!): GameHosted
-    hostshowquestion(gameid: ID!): GameHosted
-    hostedgametied(gameid: ID!): GameHosted
-    hostedgameover(gameid: ID!): GameHosted
-    playerremoved(gameid: ID!): GameHosted
-    hostedgamecancelled(gameid: ID!): GameHosted
+    roundtableplayerjoined(gameid: ID!): GameRoundTable
+    gamecategoryadded(gameid: ID!): GameRoundTable
+    playerselectedcategories(gameid: ID!): GameRoundTable
+    roundtablegamestarted(gameid: ID!): GameRoundTable
+    roundtablegameupdated(gameid: ID!): GameRoundTable
+    roundtableplayerupdated(gameid: ID!): GameRoundTable
+    hostshowquestion(gameid: ID!): GameRoundTable
+    roundtablegametied(gameid: ID!): GameRoundTable
+    roundtablegameover(gameid: ID!): GameRoundTable
+    playerremoved(gameid: ID!): GameRoundTable
+    roundtablegamecancelled(gameid: ID!): GameRoundTable
   }
 `;
 

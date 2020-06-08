@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
-const HostedRoundResultsSchema = new Schema(
+const RoundTableRoundResultsSchema = new Schema(
   {
     question: { type: Schema.Types.ObjectId, ref: "question", required: true },
     difficulty: { type: String, default: "Normal" },
@@ -9,9 +9,9 @@ const HostedRoundResultsSchema = new Schema(
     answer: String,
     correct: Boolean,
     points: Number,
-    answertype: String
+    answertype: String,
   },
   { _id: false }
 );
 
-module.exports = HostedRoundResultsSchema;
+module.exports = RoundTableRoundResultsSchema;
