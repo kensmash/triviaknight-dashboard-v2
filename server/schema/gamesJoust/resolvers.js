@@ -16,8 +16,6 @@ const {
   joustQuestions,
   differentQuestion,
 } = require("../_helpers/helper-questions");
-//array helper
-const { arrayUnique } = require("../_helpers/helper-arrays");
 //subscriptions
 const JOUST_UPDATE = "JOUST_UPDATE";
 
@@ -144,8 +142,8 @@ const resolvers = {
           const opponent = await User.findOne({ _id: input.opponentid });
           const userquestions = player.recentquestions.slice();
           const opponentquestions = opponent.recentquestions.slice();
-          const previousquestions = arrayUnique(
-            userquestions.concat(opponentquestions)
+          const previousquestions = userquestions.concat(
+            opponentquestions.filter((item) => userquestions.indexOf(item) < 0)
           );
           const questions = await joustQuestions(
             input.category,

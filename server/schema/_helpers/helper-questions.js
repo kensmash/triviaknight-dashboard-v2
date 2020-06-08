@@ -65,6 +65,8 @@ const joustQuestions = async (category, previousquestions) => {
     mongoose.Types.ObjectId(question)
   );
 
+  // console.log("previousQuestionIds", previousQuestionIds.length);
+
   try {
     let firstQuestions = await Question.aggregate([
       {
@@ -79,6 +81,7 @@ const joustQuestions = async (category, previousquestions) => {
     ]);
 
     if (firstQuestions.length < 5) {
+      // console.log("first questions less than five");
       firstQuestions = await Question.aggregate([
         {
           $match: {
@@ -104,6 +107,7 @@ const joustQuestions = async (category, previousquestions) => {
     ]);
 
     if (lastQuestions.length < 2) {
+      //console.log("last questions less than two");
       lastQuestions = await Question.aggregate([
         {
           $match: {
@@ -298,7 +302,7 @@ const questQuestions = async (topictype, topicid) => {
   }
 };
 
-//quest games
+//different question advantage
 const differentQuestion = async (catid, currentquestions) => {
   const questionIds = currentquestions.map((question) =>
     mongoose.Types.ObjectId(question)
