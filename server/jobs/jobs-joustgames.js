@@ -87,6 +87,18 @@ const runningOutOfTime = schedule.scheduleJob(
       const users = await User.find({ _id: { $in: playerids } });
       //get their expoPushTokens
       if (users.length) {
+        //update the games so we don't send push notifications every day
+        await GameJoust.updateMany(
+          {
+            gameover: false,
+            updatedAt: {
+              $lte: sevenDaysAgo,
+            },
+          }, // conditions
+          {
+            timedoutwarningsent: true,
+          }
+        );
         let pushTokens = [];
         users.forEach(
           (user) => (pushTokens = pushTokens.concat(user.expoPushTokens))
@@ -144,18 +156,6 @@ const runningOutOfTime = schedule.scheduleJob(
             }
           }
         })();
-        //update the games so we don't send push notifications every day
-
-        GameJoust.updateMany(
-          {
-            updatedAt: {
-              $lte: sevenDaysAgo,
-            },
-          }, // conditions
-          {
-            timedoutwarningsent: true,
-          }
-        );
       }
     }
   }
