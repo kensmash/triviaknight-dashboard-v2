@@ -71,6 +71,10 @@ const typeDef = gql`
     expirequestgame(gameid: ID!): GameQuest
     deletequestgame(gameid: ID!): GameQuest
   }
+
+  extend type Subscription {
+    questtopicupdated: QuestTopicResponse
+  }
 `;
 
 module.exports = {
