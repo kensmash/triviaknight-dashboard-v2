@@ -136,7 +136,7 @@ const updatedCategories = schedule.scheduleJob(
         //send them a push notification
         const expo = new Expo();
         let messages = [];
-        const pushMessage = `New questions! Trivia Knight has added new questions in ${catnames}. Check them out!`;
+        const pushMessage = `New questions! Trivia Knight has added new ${catnames} questions. Check them out!`;
 
         for (let pushToken of pushTokens) {
           // Check that all your push tokens appear to be valid Expo push tokens

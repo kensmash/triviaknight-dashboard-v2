@@ -83,6 +83,14 @@ const typeDef = gql`
     answertype: String
   }
 
+  input createRoundTableGameInput {
+    pointsgoal: Int!
+    categoriestype: String!
+    categoriesperplayer: Int
+    previousquestions: [ID]
+    categories: [ID]
+  }
+
   type QuestionSelectedSubscriptionResponse {
     gameid: ID!
     questionselected: Boolean
@@ -110,13 +118,7 @@ const typeDef = gql`
   }
 
   extend type Mutation {
-    createroundtablegame(
-      pointsgoal: Int!
-      categoriestype: String!
-      categoriesperplayer: Int
-      previousquestions: [ID]
-      categories: [ID]
-    ): GameRoundTable
+    createroundtablegame(input: createRoundTableGameInput!): GameRoundTable
     inviteplayers(
       gameid: ID!
       players: [RoundTablePlayerInput!]
