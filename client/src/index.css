@@ -36,35 +36,36 @@ img {
   color: #fff;
 }
 
-.homepage-top {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0 0 4em 0;
+.homepage-bg {
+  width: 100vw;
+  height: 100vh;
+  background: url(images/home-screen-bg.png) no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
 }
 
-.homepage-middle h2 {
+.homepage-top h2 {
   color: white;
 }
 
-.bigphone {
-  z-index: 5;
-  width: 22em;
+.logo-container {
+  margin-top: 2em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.logo-container {
-  margin-left: 2em;
-  padding: 2em;
+.content-container {
+  width: 80%;
+  padding: 1em;
+  margin: auto;
 }
 
 .homepage-subhead {
   color: #fff;
   font-size: 2em;
-}
-
-.homepage-middle {
-  background: rgba(0, 0, 0, 1);
-  padding: 4em;
 }
 
 .bullet-container {
@@ -78,7 +79,6 @@ img {
   display: flex;
   justify-content: center;
   padding: 1rem;
-  background: rgba(0, 0, 0, 1);
   color: #fff;
 }
 
@@ -198,9 +198,6 @@ img {
   }
   .questionCard {
     height: 100%;
-  }
-  .homepage-top {
-    padding: 3em 8em 0 8em;
   }
 }
 
