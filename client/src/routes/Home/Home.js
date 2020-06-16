@@ -13,7 +13,7 @@ const Home = () => {
         <div className="content-container">
           <p className="homepage-subhead">
             A fun trivia game that you can play on your own or with friends.
-            Over 150 categories and nearly 10,000 questions! Challenge your
+            Over 150 categories and more than 10,000 questions! Challenge your
             friends and track your stats.
           </p>
           <h2>Game Modes</h2>
