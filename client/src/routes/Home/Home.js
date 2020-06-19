@@ -11,12 +11,12 @@ const Home = () => {
           <img src={logo} alt="Logo" />
         </div>
         <div className="content-container">
-          <p className="homepage-subhead">
+          <p className="homepage-subhead text-shadow">
             A fun trivia game that you can play on your own or with friends.
             Over 150 categories and more than 10,000 questions! Challenge your
             friends and track your stats.
           </p>
-          <h2>Game Modes</h2>
+          <h2 class="text-shadow">Game Modes</h2>
         </div>
       </section>
       <section className="homepage-middle content-container">

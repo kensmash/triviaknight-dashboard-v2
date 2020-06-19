@@ -38,6 +38,8 @@ const userSchema = new Schema(
     expoPushTokens: [{ type: String }],
     questhighscores: [PlayerQuestHighScoresSchema],
     gems: { type: Number, default: 20 },
+    showonleaderboards: { type: Boolean, default: true },
+    acceptspushnotifications: { type: Boolean, default: true },
   },
   { timestamps: true }
 );

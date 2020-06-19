@@ -38,7 +38,8 @@ img {
 
 .homepage-bg {
   width: 100vw;
-  height: 100vh;
+  height: 100%;
+  min-height: 100vh;
   background: url(images/home-screen-bg.png) no-repeat center center fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
@@ -51,16 +52,36 @@ img {
 }
 
 .logo-container {
-  margin-top: 2em;
+  margin-top: 3em;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.logo-container img {
+  max-width: 80%;
+}
+
+@media screen and (min-width: 768px) {
+  .logo-container img {
+    max-width: 84%;
+  }
+}
+
+@media screen and (min-width: 1000px) {
+  .logo-container img {
+    max-width: 90%;
+  }
 }
 
 .content-container {
   width: 80%;
   padding: 1em;
   margin: auto;
+}
+
+.text-shadow {
+  text-shadow: 1px 1px black;
 }
 
 .homepage-subhead {
@@ -78,7 +99,7 @@ img {
 .publicfooter {
   display: flex;
   justify-content: center;
-  padding: 1rem;
+  padding: 2rem 1rem;
   color: #fff;
 }
 

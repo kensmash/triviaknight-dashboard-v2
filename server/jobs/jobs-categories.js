@@ -23,7 +23,9 @@ const newCategories = schedule.scheduleJob(
       const trimmedcats = categories.slice(0, 5);
       const catnames = trimmedcats.map((cat) => cat.name).join(", ");
       //find users in database
-      const users = await User.find({});
+      const users = await User.find({
+        acceptspushnotifications: { $eq: true },
+      });
       //get their expoPushTokens
       if (users.length) {
         let pushTokens = [];
@@ -125,7 +127,9 @@ const updatedCategories = schedule.scheduleJob(
       const trimmedcats = categories.slice(0, 5);
       const catnames = trimmedcats.map((cat) => cat.name).join(", ");
       //find users in database
-      const users = await User.find({});
+      const users = await User.find({
+        acceptspushnotifications: { $eq: true },
+      });
       //get their expoPushTokens
       if (users.length) {
         let pushTokens = [];

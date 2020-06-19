@@ -107,7 +107,9 @@ const weeklyQuestTopicNotification = schedule.scheduleJob(
     const topic = currentTopic.topic;
     if (topic) {
       //find users in database
-      const users = await User.find({});
+      const users = await User.find({
+        acceptspushnotifications: { $eq: true },
+      });
       //get their expoPushTokens
       if (users.length) {
         let pushTokens = [];
@@ -186,6 +188,7 @@ const weeklyHighScoreNotification = schedule.scheduleJob(
     //find last week's topic
     const allPreviousWinners = await User.find({
       questhighscores: { $exists: true, $ne: [] },
+      acceptspushnotifications: { $eq: true },
     }).sort({ "questhighscores.date": -1 });
 
     if (allPreviousWinners.length) {
@@ -198,6 +201,7 @@ const weeklyHighScoreNotification = schedule.scheduleJob(
     const winners = await User.find({
       "questhighscores.topic": { $eq: lastWeeksTopic },
       "questhighscores.date": { $gte: lastWeek },
+      acceptspushnotifications: { $eq: true },
     }).sort({ "questhighscores.date": -1 });
 
     //return results
