@@ -551,7 +551,13 @@ const categoryRankings = async (catId) => {
   try {
     const categoryrankings = await User.aggregate([
       //filter out non-TK users
-      { $match: { roles: { $nin: ["reviewer"] }, access: { $eq: "paid" } } },
+      {
+        $match: {
+          roles: { $nin: ["reviewer"] },
+          access: { $eq: "paid" },
+          showonleaderboards: true,
+        },
+      },
       //find all games per user
       {
         $lookup: {
