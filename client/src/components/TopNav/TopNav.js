@@ -85,11 +85,7 @@ const TopNav = (props) => {
               <Menu.Item as={Link} to={"/admin/users"} name="Users" />
             </>
           ) : null}
-          {currentUser ? (
-            <Menu.Item name="logout" onClick={logoutHandler} />
-          ) : (
-            <Menu.Item as={Link} to="/login" name="login" />
-          )}
+          {currentUser && <Menu.Item name="logout" onClick={logoutHandler} />}
         </Menu.Menu>
       </Menu>
     </>

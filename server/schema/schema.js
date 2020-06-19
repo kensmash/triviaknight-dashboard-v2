@@ -53,6 +53,7 @@ module.exports = {
     gamesSolo.resolvers,
     gamesJoust.resolvers,
     gamesQuest.resolvers,
+    gamesRoundTable.resolvers,
     stats.resolvers,
     expoPushNotifications.resolvers,
   ],

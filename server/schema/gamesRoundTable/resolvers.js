@@ -4,10 +4,6 @@ const Expo = require("expo-server-sdk");
 //auth helpers
 const { requiresAuth } = require("../_helpers/helper-permissions");
 //game helpers
-const {
-  createRoundTableGame,
-  roundTableResultsSeen,
-} = require("../_helpers/helper-gamesroundtable");
 const { gameQuestion } = require("../_helpers/helper-questions");
 
 //subscription
@@ -27,103 +23,33 @@ const HOSTEDGAME_OVER = "HOSTEDGAME_OVER";
 const HOSTEDGAME_CANCELLED = "HOSTEDGAME_CANCELLED";
 
 const resolvers = {
-  Query: {
-    allhostedgames: async (parent, args, { user }) => {
-      try {
-        const allhostedgames = await GameRoundTable.find({
-          $or: [{ "players.player": user.id }, { createdby: user.id }],
-        })
-          .populate("createdby")
-          .populate("players.player");
-        return allhostedgames;
-      } catch (error) {
-        console.error(error);
-      }
-    },
-
-    allendedhostedhostgames: (parent, { limit, endeddate }, { user }) => {
-      return allEndedHostedHostGames(user, limit, endeddate);
-    },
-
-    allendedhostedplayergames: (parent, { limit, endeddate }, { user }) => {
-      return allEndedHostedPlayerGames(user, limit, endeddate);
-    },
-
-    currenthostedgame: async (parent, { id }, { user }) => {
-      try {
-        const currenthostedgame = await GameRoundTable.findOne({
-          _id: id,
-          $or: [{ "players.player": user.id }, { createdby: user.id }],
-        })
-          .populate("createdby")
-          .populate("players.player")
-          .populate({
-            path: "players.roundresults.question",
-          })
-          .populate({
-            path: "categories",
-            populate: { path: "type" },
-          })
-          .populate({
-            path: "currentcategory",
-            populate: { path: "type" },
-          })
-          .populate("currentquestion")
-          .populate("selectedcategories")
-          .populate("selectedquestions");
-
-        return currenthostedgame;
-      } catch (error) {
-        console.error(error);
-      }
-    },
-
-    currenthostedgameplayerinfo: async (parent, { id }) => {
-      try {
-        const currenthostedgame = await GameRoundTable.findOne({
-          _id: id,
-        })
-          .populate("createdby")
-          .populate("players.player")
-          .populate({
-            path: "players.categories",
-          })
-          .populate({
-            path: "players.roundresults.category",
-          })
-          .populate({
-            path: "categories",
-            populate: { path: "type" },
-          });
-
-        return currenthostedgame;
-      } catch (error) {
-        console.error(error);
-      }
-    },
-  },
+  Query: {},
 
   Mutation: {
-    createhostedgame: requiresAuth.createResolver(
-      (
-        parent,
-        {
-          pointsgoal,
-          categoriestype,
-          categoriesperplayer,
-          previousquestions,
-          categories,
-        },
-        { user }
-      ) => {
-        return createHostedGame(
-          user.id,
-          pointsgoal,
-          categoriestype,
-          categoriesperplayer,
-          previousquestions,
-          categories
-        );
+    createroundtablegame: requiresAuth.createResolver(
+      async (parent, { input }, { user }) => {
+        try {
+          const newgame = new GameRoundTable({
+            createdby: user.id,
+            pointsgoal: input.pointsgoal,
+            categoriestype: input.categoriestype,
+            categoriesperplayer: input.categoriesperplayer,
+            players: [
+              {
+                player: user.id,
+                joined: true,
+              },
+            ],
+          });
+          const roundTableGame = await newgame.save();
+          const newRoundTableGame = await GameRoundTable.findOne({
+            _id: roundTableGame._id,
+          });
+          console.log("newRoundTableGame", newRoundTableGame);
+          return newRoundTableGame;
+        } catch (error) {
+          console.error(error);
+        }
       }
     ),
 
@@ -223,7 +149,7 @@ const resolvers = {
       }
     ),
 
-    joinhostedgame: requiresAuth.createResolver(
+    joinroundtablegame: requiresAuth.createResolver(
       async (parent, { gameid }, { user, pubsub }) => {
         try {
           const updatedGame = await GameRoundTable.findOneAndUpdate(
@@ -242,7 +168,7 @@ const resolvers = {
       }
     ),
 
-    declinehostedgame: requiresAuth.createResolver(
+    declineroundtablegame: requiresAuth.createResolver(
       async (parent, { gameid }, { user, pubsub }) => {
         try {
           const updatedGame = await GameRoundTable.findOneAndUpdate(
@@ -296,22 +222,7 @@ const resolvers = {
       }
     ),
 
-    hostedplayeralwaysseequestion: requiresAuth.createResolver(
-      async (parent, { gameid }, { user }) => {
-        try {
-          const updatedGame = await GameRoundTable.findOneAndUpdate(
-            { _id: gameid, "players.player": user.id },
-            { $set: { "players.$.alwaysseequestion": true } },
-            { new: true }
-          ).populate("players.player");
-          return updatedGame;
-        } catch (error) {
-          console.error(error);
-        }
-      }
-    ),
-
-    starthostedgame: requiresAuth.createResolver(
+    startroundtablegame: requiresAuth.createResolver(
       async (
         parent,
         { gameid, categories, playerExpoPushTokens },
@@ -406,7 +317,7 @@ const resolvers = {
       }
     ),
 
-    setcurrenthostedquestion: requiresAuth.createResolver(
+    setcurrentroundtablequestion: requiresAuth.createResolver(
       async (parent, { gameid, category, previousquestions }, { pubsub }) => {
         try {
           const currentquestion = await gameQuestion(
@@ -444,7 +355,7 @@ const resolvers = {
       }
     ),
 
-    fetchdifferenthostedquestion: requiresAuth.createResolver(
+    fetchdifferentroundtablequestion: requiresAuth.createResolver(
       async (parent, { gameid, category, previousquestions }, { pubsub }) => {
         try {
           const currentquestion = await gameQuestion(
@@ -833,7 +744,7 @@ const resolvers = {
       }
     ),
 
-    sethostedtie: requiresAuth.createResolver(
+    setroundtabletie: requiresAuth.createResolver(
       async (parent, { gameid, playerid }, { pubsub }) => {
         try {
           const updatedGame = await GameRoundTable.findOneAndUpdate(
@@ -854,7 +765,7 @@ const resolvers = {
       }
     ),
 
-    removehostedtie: requiresAuth.createResolver(
+    removeroundtabletie: requiresAuth.createResolver(
       async (parent, { gameid, playerid }, { pubsub }) => {
         try {
           const updatedGame = await GameRoundTable.findOneAndUpdate(
@@ -875,7 +786,7 @@ const resolvers = {
       }
     ),
 
-    sethostedwinner: requiresAuth.createResolver(
+    setroundtablewinner: requiresAuth.createResolver(
       async (parent, { gameid, playerid }) => {
         try {
           const updatedGame = await GameRoundTable.findOneAndUpdate(
@@ -892,7 +803,7 @@ const resolvers = {
       }
     ),
 
-    tiehostedgame: requiresAuth.createResolver(
+    tieroundtablegame: requiresAuth.createResolver(
       async (parent, { gameid }, { pubsub }) => {
         try {
           const updatedGame = await GameRoundTable.findOneAndUpdate(
@@ -914,7 +825,7 @@ const resolvers = {
       }
     ),
 
-    endhostedgame: requiresAuth.createResolver(
+    endroundtablegame: requiresAuth.createResolver(
       async (parent, { gameid }, { pubsub }) => {
         try {
           const updatedGame = await GameRoundTable.findOneAndUpdate(
@@ -935,13 +846,13 @@ const resolvers = {
       }
     ),
 
-    hostedresultsseen: requiresAuth.createResolver(
+    roundtableresultsseen: requiresAuth.createResolver(
       (parent, { gameid }, { user }) => {
         return hostedResultsSeen(gameid, user.id);
       }
     ),
 
-    cancelhostedgame: requiresAuth.createResolver(
+    cancelroundtablegame: requiresAuth.createResolver(
       async (parent, { gameid }, { pubsub }) => {
         try {
           const updatedGame = await GameRoundTable.findOneAndUpdate(
@@ -964,7 +875,7 @@ const resolvers = {
   },
 
   Subscription: {
-    hostedplayerjoined: {
+    roundtableplayerjoined: {
       subscribe: withFilter(
         (_, __, { pubsub }) => pubsub.asyncIterator(HOSTEDPLAYER_JOINED),
         (payload, variables) => {
@@ -972,6 +883,7 @@ const resolvers = {
         }
       ),
     },
+
     gamecategoryadded: {
       subscribe: withFilter(
         (_, __, { pubsub }) => pubsub.asyncIterator(CATEGORY_ADDED),
@@ -980,6 +892,7 @@ const resolvers = {
         }
       ),
     },
+
     playerselectedcategories: {
       subscribe: withFilter(
         (_, __, { pubsub }) =>
@@ -989,6 +902,7 @@ const resolvers = {
         }
       ),
     },
+
     playerremoved: {
       subscribe: withFilter(
         (_, __, { pubsub }) => pubsub.asyncIterator(PLAYER_REMOVED),
@@ -997,7 +911,8 @@ const resolvers = {
         }
       ),
     },
-    hostedgamestarted: {
+
+    roundtablegamestarted: {
       subscribe: withFilter(
         (_, __, { pubsub }) => pubsub.asyncIterator(HOSTEDGAME_STARTED),
         (payload, variables) => {
@@ -1005,7 +920,8 @@ const resolvers = {
         }
       ),
     },
-    hostedgameupdated: {
+
+    roundtablegameupdated: {
       subscribe: withFilter(
         (_, __, { pubsub }) => pubsub.asyncIterator(HOSTEDGAME_UPDATED),
         (payload, variables) => {
@@ -1013,6 +929,7 @@ const resolvers = {
         }
       ),
     },
+
     hostshowquestion: {
       subscribe: withFilter(
         (_, __, { pubsub }) => pubsub.asyncIterator(HOSTEDGAME_SHOWQUESTION),
@@ -1021,7 +938,8 @@ const resolvers = {
         }
       ),
     },
-    hostedplayerupdated: {
+
+    roundtableplayerupdated: {
       subscribe: withFilter(
         (_, __, { pubsub }) => pubsub.asyncIterator(HOSTEDPLAYER_UPDATED),
         (payload, variables) => {
@@ -1029,7 +947,8 @@ const resolvers = {
         }
       ),
     },
-    hostedgametied: {
+
+    roundtablegametied: {
       subscribe: withFilter(
         (_, __, { pubsub }) => pubsub.asyncIterator(HOSTEDGAME_TIED),
         (payload, variables) => {
@@ -1037,7 +956,8 @@ const resolvers = {
         }
       ),
     },
-    hostedgameover: {
+
+    roundtablegameover: {
       subscribe: withFilter(
         (_, __, { pubsub }) => pubsub.asyncIterator(HOSTEDGAME_OVER),
         (payload, variables) => {
@@ -1045,7 +965,8 @@ const resolvers = {
         }
       ),
     },
-    hostedgamecancelled: {
+
+    roundtablegamecancelled: {
       subscribe: withFilter(
         (_, __, { pubsub }) => pubsub.asyncIterator(HOSTEDGAME_CANCELLED),
         (payload, variables) => {
