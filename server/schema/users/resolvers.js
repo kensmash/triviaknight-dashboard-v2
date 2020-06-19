@@ -2,8 +2,6 @@ const User = require("../../models/User");
 const GameJoust = require("../../models/GameJoust");
 const GameSolo = require("../../models/GameSolo");
 const GameQuest = require("../../models/GameQuest");
-const ExpoPushTicket = require("../../models/ExpoPushTicket");
-const { Expo } = require("expo-server-sdk");
 //auth helpers
 const { questionsAnswered } = require("../_helpers/helper-stats");
 const {
@@ -548,135 +546,47 @@ const resolvers = {
       }
     ),
 
-    changerank: requiresAuth.createResolver(
-      async (parent, { args }, { user, expo }) => {
-        const player = await User.findOne({ _id: user.id })
-          .populate("sologames")
-          .populate({
-            path: "joustgames",
-            populate: { path: "players.player" },
-          })
-          .populate({
-            path: "questgames",
-            populate: { path: "players.player" },
-          });
-
-        const sologames = player.sologames;
-        const joustgames = player.joustgames;
-        const questgames = player.questgames;
-
-        //calculate questions player has answered
-        const soloquestionsanswered = sologames.length * 7;
-        const joustquestionsanswered = joustgames
-          .map((game) => {
-            return game.players.find((player) => player.player._id == user.id)
-              .roundresults.length;
-          })
-          .reduce((a, b) => a + b, 0);
-        const questquestionsanswered = questgames.length * 7;
-
-        const totalquestionsanswered =
-          soloquestionsanswered +
-          joustquestionsanswered +
-          questquestionsanswered;
-
-        let newRank;
-        let rankChanged = false;
-
-        if (totalquestionsanswered >= 100) {
-          if (player.rank === "Page") {
-            newRank = "Squire";
-            rankChanged = true;
-          }
+    updateleaderboardpreference: requiresAuth.createResolver(
+      async (parent, { preference }, { user }) => {
+        try {
+          const editedUser = await User.findOneAndUpdate(
+            { _id: user.id },
+            { $set: { showonleaderboards: preference } },
+            { new: true }
+          );
+          return editedUser;
+        } catch (err) {
+          return err;
         }
+      }
+    ),
 
-        if (totalquestionsanswered >= 500) {
-          if (player.rank === "Squire") {
-            newRank = "Knight";
-            rankChanged = true;
-          }
+    updategamepushpreference: requiresAuth.createResolver(
+      async (parent, { preference }, { user }) => {
+        try {
+          const editedUser = await User.findOneAndUpdate(
+            { _id: user.id },
+            { $set: { acceptsgamepushnotifications: preference } },
+            { new: true }
+          );
+          return editedUser;
+        } catch (err) {
+          return err;
         }
+      }
+    ),
 
-        if (totalquestionsanswered >= 1000) {
-          if (player.rank === "Knight") {
-            newRank = "Wizard";
-            rankChanged = true;
-          }
-        }
-
-        if (totalquestionsanswered >= 5000) {
-          if (player.rank === "Wizard") {
-            newRank = "Dragon";
-            rankChanged = true;
-          }
-        }
-
-        if (rankChanged) {
-          try {
-            const editedUser = await User.findOneAndUpdate(
-              { _id: player._id },
-              { $set: { rank: newRank } },
-              { new: true }
-            );
-
-            //push notifications
-            let messages = [];
-            const pushTokens = editedUser.expoPushTokens;
-            for (let pushToken of pushTokens) {
-              // Check that all your push tokens appear to be valid Expo push tokens
-              if (!Expo.isExpoPushToken(pushToken)) {
-                console.error(
-                  `Push token ${pushToken} is not a valid Expo push token`
-                );
-                continue;
-              }
-              messages.push({
-                to: pushToken,
-                sound: "default",
-                body: `New rank! You have been upgraded to the rank of ${newRank}.`,
-                data: {
-                  title: "New Rank",
-                  text: `You have been upgraded to the rank of ${newRank}!`,
-                },
-              });
-            }
-            //send push notifications in chunks
-            let chunks = expo.chunkPushNotifications(messages);
-            //receive tickets in response
-            let tickets = [];
-            (async () => {
-              for (let chunk of chunks) {
-                try {
-                  let ticketChunk = await expo.sendPushNotificationsAsync(
-                    chunk
-                  );
-                  tickets.push(...ticketChunk);
-                } catch (error) {
-                  console.error(error);
-                }
-                //add types
-                const ticketsWithTypes = tickets.map((ticket) => ({
-                  type: "New User Rank",
-                  ...ticket,
-                }));
-                //save tickets to database for later retrieval
-                for (let ticket of ticketsWithTypes) {
-                  try {
-                    const newticket = new ExpoPushTicket(ticket);
-                    await newticket.save();
-                  } catch (error) {
-                    console.error(error);
-                  }
-                }
-              }
-            })();
-
-            return true;
-          } catch (err) {
-            return err;
-          }
-        } else {
-          return false;
+    updateweeklypushpreference: requiresAuth.createResolver(
+      async (parent, { preference }, { user }) => {
+        try {
+          const editedUser = await User.findOneAndUpdate(
+            { _id: user.id },
+            { $set: { acceptsweeklypushnotifications: preference } },
+            { new: true }
+          );
+          return editedUser;
+        } catch (err) {
+          return err;
         }
       }
     ),

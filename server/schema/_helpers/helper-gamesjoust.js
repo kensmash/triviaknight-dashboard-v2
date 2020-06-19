@@ -26,7 +26,10 @@ const changeJoustTurn = async (gameid, player, opponent, expo) => {
       .populate("players.questions")
       .populate("players.replacedquestions");
 
-    const opponentInfo = await User.findOne({ _id: opponent.player._id });
+    const opponentInfo = await User.findOne({
+      _id: opponent.player._id,
+      acceptsgamepushnotifications: true,
+    });
     const pushTokens = opponentInfo.expoPushTokens;
 
     //push notifications
@@ -156,7 +159,10 @@ const endJoustGame = async (gameid, player, opponent, expo) => {
     let pushTitle = `Joust Game Ended`;
     let pushMessage = `${player.player.name} has completed a Joust Game. See the results.`;
 
-    const opponentInfo = await User.findOne({ _id: opponent.player._id });
+    const opponentInfo = await User.findOne({
+      _id: opponent.player._id,
+      acceptsgamepushnotifications: true,
+    });
     const pushTokens = opponentInfo.expoPushTokens;
 
     for (let pushToken of pushTokens) {

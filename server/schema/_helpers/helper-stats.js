@@ -1241,6 +1241,9 @@ const questGameStats = async () => {
           _id: 0,
           topic: currentTopic.topic,
           id: { $arrayElemAt: ["$player._id", 0] },
+          showonleaderboards: {
+            $arrayElemAt: ["$player.showonleaderboards", 0],
+          },
           name: { $arrayElemAt: ["$player.name", 0] },
           rank: { $arrayElemAt: ["$player.rank", 0] },
           avatar: { $arrayElemAt: ["$player.avatar", 0] },
@@ -1250,6 +1253,9 @@ const questGameStats = async () => {
           gamesplayed: "$totalGames",
           highscore: "$highScore",
         },
+      },
+      {
+        $match: { showonleaderboards: true },
       },
       { $sort: { highscore: -1 } },
     ]);
@@ -1271,6 +1277,7 @@ const questLastWeekWinners = async () => {
 
     //find last week's topic
     const allPreviousWinners = await User.find({
+      showonleaderboards: true,
       questhighscores: { $exists: true, $ne: [] },
     }).sort({ "questhighscores.date": -1 });
 
@@ -1314,6 +1321,7 @@ const questAllTimeWinners = async () => {
   try {
     let results = [];
     const winners = await User.find({
+      showonleaderboards: true,
       "questhighscores.date": { $exists: true },
     });
     if (winners.length) {

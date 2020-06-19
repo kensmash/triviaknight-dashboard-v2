@@ -21,6 +21,9 @@ const typeDef = gql`
     questgames: [GameQuest]
     expoPushTokens: [String]
     gems: Int
+    showonleaderboards: Boolean
+    acceptsgamepushnotifications: Boolean
+    acceptsweeklypushnotifications: Boolean
   }
 
   type UserPageResponse {
@@ -128,9 +131,11 @@ const typeDef = gql`
     changegems(add: Boolean!, amount: Int!): User
     updatesignupflow: User
     changeemail(email: String!): User
-    changerank: Boolean
     updaterank(rank: String!): User
     blockuser(playerid: ID!): User
+    updateleaderboardpreference(preference: Boolean!): User
+    updategamepushpreference(preference: Boolean!): User
+    updateweeklypushpreference(preference: Boolean!): User
   }
 
   type Error {

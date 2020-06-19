@@ -39,7 +39,8 @@ const userSchema = new Schema(
     questhighscores: [PlayerQuestHighScoresSchema],
     gems: { type: Number, default: 20 },
     showonleaderboards: { type: Boolean, default: true },
-    acceptspushnotifications: { type: Boolean, default: true },
+    acceptsgamepushnotifications: { type: Boolean, default: true },
+    acceptsweeklypushnotifications: { type: Boolean, default: true },
   },
   { timestamps: true }
 );

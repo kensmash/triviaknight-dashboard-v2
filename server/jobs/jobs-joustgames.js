@@ -86,7 +86,7 @@ const runningOutOfTime = schedule.scheduleJob(
       //find users in database
       const users = await User.find({
         _id: { $in: playerids },
-        acceptspushnotifications: { $eq: true },
+        acceptsgamepushnotifications: { $eq: true },
       });
       //get their expoPushTokens
       if (users.length) {
