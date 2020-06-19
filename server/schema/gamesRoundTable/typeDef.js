@@ -106,8 +106,8 @@ const typeDef = gql`
   }
 
   extend type Query {
-    allroundtablegames: [GameRoundTable]
-    allendedroundtablegames(
+    currentroundtablegames: [GameRoundTable]
+    endedroundtablegames(
       limit: Int!
       endeddate: String
     ): RoundTableEndedPaginationResponse

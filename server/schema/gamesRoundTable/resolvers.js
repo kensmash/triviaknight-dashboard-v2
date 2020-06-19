@@ -23,7 +23,21 @@ const HOSTEDGAME_OVER = "HOSTEDGAME_OVER";
 const HOSTEDGAME_CANCELLED = "HOSTEDGAME_CANCELLED";
 
 const resolvers = {
-  Query: {},
+  Query: {
+    currentroundtablegames: requiresAuth.createResolver(
+      async (parent, args, { user }) => {
+        try {
+          const allroundtablegames = await GameRoundTable.find({
+            "players.player": user.id,
+            gameover: false,
+          }).populate("createdby");
+          return allroundtablegames;
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    ),
+  },
 
   Mutation: {
     createroundtablegame: requiresAuth.createResolver(
@@ -45,7 +59,7 @@ const resolvers = {
           const newRoundTableGame = await GameRoundTable.findOne({
             _id: roundTableGame._id,
           });
-          console.log("newRoundTableGame", newRoundTableGame);
+
           return newRoundTableGame;
         } catch (error) {
           console.error(error);
