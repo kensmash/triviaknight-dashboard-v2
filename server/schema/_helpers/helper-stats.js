@@ -1283,7 +1283,6 @@ const questLastWeekWinners = async () => {
 
     //find last week's topic
     const allPreviousWinners = await User.find({
-      showonleaderboards: true,
       questhighscores: { $exists: true, $ne: [] },
     }).sort({ "questhighscores.date": -1 });
 
@@ -1301,19 +1300,24 @@ const questLastWeekWinners = async () => {
 
     //return results
     if (winners.length) {
-      results = winners.map((winner) => {
-        const lasthighscore =
-          winner.questhighscores[winner.questhighscores.length - 1];
-        return {
-          topic: lasthighscore.topic,
-          id: winner._id,
-          name: winner.name,
-          rank: winner.rank,
-          avatar: winner.avatar,
-          avatarBackgroundColor: winner.avatarBackgroundColor,
-          highscore: lasthighscore.score,
-        };
-      });
+      const notShyWinners = winners.filter(
+        (winner) => winner.showonleaderboards
+      );
+      if (notShyWinners.length) {
+        results = notShyWinners.map((winner) => {
+          const lasthighscore =
+            winner.questhighscores[winner.questhighscores.length - 1];
+          return {
+            topic: lasthighscore.topic,
+            id: winner._id,
+            name: winner.name,
+            rank: winner.rank,
+            avatar: winner.avatar,
+            avatarBackgroundColor: winner.avatarBackgroundColor,
+            highscore: lasthighscore.score,
+          };
+        });
+      }
     }
 
     return results;
