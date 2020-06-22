@@ -20,6 +20,7 @@ const typeDef = gql`
     showaspopular: Boolean
     joustexclusive: Boolean
     questactive: Boolean
+    questdescription: String
     nextquestactive: Boolean
   }
 
@@ -66,6 +67,7 @@ const typeDef = gql`
     showaspopular: Boolean
     joustexclusive: Boolean
     nextquestactive: Boolean
+    questdescription: String
   }
 
   extend type Query {

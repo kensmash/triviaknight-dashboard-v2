@@ -18,6 +18,7 @@ const categorySchema = new Schema(
     partycategory: { type: Boolean, default: false },
     joustexclusive: { type: Boolean, default: false },
     questactive: { type: Boolean, default: false },
+    questdescription: { type: String, trim: true },
     nextquestactive: { type: Boolean, default: false },
     published: { type: Boolean, default: false },
     popular: { type: Boolean, default: false },

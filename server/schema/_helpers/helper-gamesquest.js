@@ -17,6 +17,7 @@ const currentQuestTopic = async () => {
         id: catTopic._id,
         type: "Category",
         topic: catTopic.name,
+        description: catTopic.questdescription,
       };
     }
     //also in category types
@@ -28,6 +29,7 @@ const currentQuestTopic = async () => {
         id: catTypeTopic._id,
         type: "Category Type",
         topic: catTypeTopic.name,
+        description: "",
       };
     }
     //and in genres
@@ -39,6 +41,7 @@ const currentQuestTopic = async () => {
         id: catGenreTopic._id,
         type: "Genre",
         topic: catGenreTopic.name,
+        description: "",
       };
     }
 

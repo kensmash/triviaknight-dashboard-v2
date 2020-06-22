@@ -11,6 +11,7 @@ const typeDef = gql`
     hasgenres: Boolean
     categories: [Category]
     questactive: Boolean
+    questdescription: String
     nextquestactive: Boolean
   }
 

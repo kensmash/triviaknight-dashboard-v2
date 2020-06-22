@@ -29,6 +29,7 @@ const CategoryForm = (props) => {
     showaspopular: false,
     joustexclusive: false,
     nextquestactive: false,
+    questdescription: "",
   };
 
   const [fields, setFields] = useState(initialState);
@@ -48,6 +49,7 @@ const CategoryForm = (props) => {
   useEffect(() => {
     if (props.pageType === "edit") {
       const { category } = props;
+      console.log(category);
       setFields({
         categoryname: category.name,
         categorytype: category.type._id,
@@ -61,6 +63,7 @@ const CategoryForm = (props) => {
         showaspopular: category.showaspopular || false,
         joustexclusive: category.joustexclusive || false,
         nextquestactive: category.nextquestactive || false,
+        questdescription: category.questdescription || "",
       });
     }
   }, [props]);
@@ -179,6 +182,7 @@ const CategoryForm = (props) => {
           showasupdated: fields.showasupdated,
           joustexclusive: fields.joustexclusive,
           nextquestactive: fields.nextquestactive,
+          questdescription: fields.questdescription,
         },
       },
       refetchQueries: [
@@ -282,6 +286,17 @@ const CategoryForm = (props) => {
           errormessage={fieldErrors.categorydescription}
         />
       </Form.Field>
+
+      <Form.Field>
+        <Form.TextArea
+          id="questdescription"
+          label="Quest Description"
+          placeholder="Enter Quest description..."
+          value={fields.questdescription}
+          onChange={(event) => inputChangedHandler(event)}
+        />
+      </Form.Field>
+
       {props.pageType !== "question" && (
         <FormSuccessMessage
           reveal={submittedCategoryName !== ""}

@@ -8,6 +8,7 @@ const typeDef = gql`
     categorytypes: [CategoryType]
     categories: [Category]
     questactive: Boolean
+    questdescription: String
     nextquestactive: Boolean
   }
 

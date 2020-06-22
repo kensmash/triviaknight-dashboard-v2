@@ -22,6 +22,7 @@ export default gql`
       showaspopular
       showasupdated
       joustexclusive
+      questdescription
       nextquestactive
     }
   }

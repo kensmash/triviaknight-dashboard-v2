@@ -9,6 +9,7 @@ const categoryTypeSchema = new Schema(
     hasgenres: { type: Boolean, required: true, default: true },
     playable: { type: Boolean, default: false },
     questactive: { type: Boolean, default: false },
+    questdescription: { type: String, trim: true },
     nextquestactive: { type: Boolean, default: false },
   },
   { timestamps: true }

@@ -6,6 +6,7 @@ const categoryGenreSchema = new Schema(
     name: { type: String, required: true, minlength: 3, trim: true },
     playable: { type: Boolean, default: false },
     questactive: { type: Boolean, default: false },
+    questdescription: { type: String, trim: true },
     nextquestactive: { type: Boolean, default: false },
     categorytypes: [
       { type: Schema.Types.ObjectId, ref: "categorytype", required: true },

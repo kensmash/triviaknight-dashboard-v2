@@ -58,6 +58,7 @@ const typeDef = gql`
     id: ID
     type: String
     topic: String
+    description: String
   }
 
   extend type Mutation {
