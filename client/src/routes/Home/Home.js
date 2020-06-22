@@ -5,7 +5,7 @@ import logo from "../../images/site-logo.png"; // Tell Webpack this JS file uses
 
 const Home = () => {
   return (
-    <main className="homepage-bg">
+    <main className="homepage-container">
       <section className="homepage-top">
         <div className="logo-container">
           <img src={logo} alt="Logo" />

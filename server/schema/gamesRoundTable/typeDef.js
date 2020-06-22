@@ -27,6 +27,7 @@ const typeDef = gql`
     cancelled: Boolean
     expired: Boolean
     createdAt: String
+    updatedAt: String
   }
 
   type PlayerRoundTable {
