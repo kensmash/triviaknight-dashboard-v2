@@ -121,17 +121,12 @@ const typeDef = gql`
     inviteplayers(
       gameid: ID!
       players: [RoundTablePlayerInput!]
-      playerExpoPushTokens: [String]
     ): GameRoundTable
     removeplayer(gameid: ID!, playerid: ID!): GameRoundTable
     joinroundtablegame(gameid: ID!): GameRoundTable
     declineroundtablegame(gameid: ID!): GameRoundTable
     addgamecategories(gameid: ID!, categories: [ID!]): GameRoundTable
-    startroundtablegame(
-      gameid: ID!
-      categories: [ID!]
-      playerExpoPushTokens: [String]!
-    ): GameRoundTable
+    startroundtablegame(gameid: ID!, categories: [ID!]): GameRoundTable
     setcurrentroundtablequestion(
       gameid: ID!
       category: ID!

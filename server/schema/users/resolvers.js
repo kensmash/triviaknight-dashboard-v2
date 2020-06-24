@@ -471,6 +471,21 @@ const resolvers = {
       }
     ),
 
+    adduserfriends: requiresAuth.createResolver(
+      async (parent, { playerids }, { user }) => {
+        try {
+          const editedUser = await User.findOneAndUpdate(
+            { _id: user.id },
+            { $addToSet: { friends: playerids } },
+            { new: true }
+          ).populate("categories");
+          return editedUser;
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    ),
+
     removeuserfriend: requiresAuth.createResolver(
       (parent, { playerid }, { user }) => {
         return removeUserFriend(user.id, playerid);

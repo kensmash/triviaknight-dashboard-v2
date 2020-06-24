@@ -1,6 +1,4 @@
 const GameRoundTable = require("../../models/GameRoundTable");
-const ExpoPushTicket = require("../../models/ExpoPushTicket");
-const Expo = require("expo-server-sdk");
 //auth helpers
 const { requiresAuth } = require("../_helpers/helper-permissions");
 //game helpers
@@ -68,72 +66,16 @@ const resolvers = {
     ),
 
     inviteplayers: requiresAuth.createResolver(
-      async (
-        parent,
-        { gameid, players, playerExpoPushTokens },
-        { user, expo, pubsub }
-      ) => {
+      async (parent, { gameid, players }, { pubsub }) => {
         try {
           const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid },
             {
-              $set: { players },
+              $addToSet: { players },
             },
             { new: true }
           ).populate("players.player");
-          //push notifications
-          //Create the messages that you want to send to clents
-          let messages = [];
-          const pushTokens = playerExpoPushTokens;
-          for (let pushToken of pushTokens) {
-            // Check that all your push tokens appear to be valid Expo push tokens
-            if (!Expo.isExpoPushToken(pushToken)) {
-              console.error(
-                `Push token ${pushToken} is not a valid Expo push token`
-              );
-              continue;
-            }
-            messages.push({
-              to: pushToken,
-              sound: "default",
-              body: `${user.name} has invited you to a Hosted game!`,
-              data: {
-                title: "Party Game!",
-                text: `${user.name} has invited you to a Hosted game!`,
-                type: "HostedInvitation",
-                gameid: gameid,
-              },
-              channelId: "game-messages",
-            });
-          }
-          //send push notifications in chunks
-          let chunks = expo.chunkPushNotifications(messages);
-          //receive tickets in response
-          let tickets = [];
-          (async () => {
-            for (let chunk of chunks) {
-              try {
-                let ticketChunk = await expo.sendPushNotificationsAsync(chunk);
-                tickets.push(...ticketChunk);
-              } catch (error) {
-                console.error(error);
-              }
-              //add types
-              const ticketsWithTypes = tickets.map((ticket) => ({
-                type: "Invite Hosted Player",
-                ...ticket,
-              }));
-              //save tickets to database for later retrieval
-              for (let ticket of ticketsWithTypes) {
-                try {
-                  const newticket = new ExpoPushTicket(ticket);
-                  await newticket.save();
-                } catch (error) {
-                  console.error(error);
-                }
-              }
-            }
-          })();
+
           pubsub.publish(USERGAME_ADDED, {
             usergameadded: true,
           });
@@ -237,11 +179,7 @@ const resolvers = {
     ),
 
     startroundtablegame: requiresAuth.createResolver(
-      async (
-        parent,
-        { gameid, categories, playerExpoPushTokens },
-        { user, pubsub, expo }
-      ) => {
+      async (parent, { gameid, categories }, { user, pubsub }) => {
         //select an initial category
         const firstCategory =
           categories[Math.floor(Math.random() * categories.length)];
@@ -265,59 +203,7 @@ const resolvers = {
             })
             .populate("selectedcategories")
             .populate("selectedquestions");
-          //push notifications
-          //Create the messages that you want to send to clents
-          let messages = [];
-          const pushTokens = playerExpoPushTokens;
-          for (let pushToken of pushTokens) {
-            // Check that all your push tokens appear to be valid Expo push tokens
-            if (!Expo.isExpoPushToken(pushToken)) {
-              console.error(
-                `Push token ${pushToken} is not a valid Expo push token`
-              );
-              continue;
-            }
-            messages.push({
-              to: pushToken,
-              sound: "default",
-              body: `${user.name} has started the hosted game!`,
-              data: {
-                title: "Hosted Game Started!",
-                text: `${user.name} has started the hosted game!`,
-                type: "HostedGameStart",
-                gameid: updatedGame._id,
-              },
-              channelId: "game-messages",
-            });
-          }
-          //send push notifications in chunks
-          let chunks = expo.chunkPushNotifications(messages);
-          //receive tickets in response
-          let tickets = [];
-          (async () => {
-            for (let chunk of chunks) {
-              try {
-                let ticketChunk = await expo.sendPushNotificationsAsync(chunk);
-                tickets.push(...ticketChunk);
-              } catch (error) {
-                console.error(error);
-              }
-              //add types
-              const ticketsWithTypes = tickets.map((ticket) => ({
-                type: "Start Hosted Game",
-                ...ticket,
-              }));
-              //save tickets to database for later retrieval
-              for (let ticket of ticketsWithTypes) {
-                try {
-                  const newticket = new ExpoPushTicket(ticket);
-                  const savedTicket = await newticket.save();
-                } catch (error) {
-                  console.error(error);
-                }
-              }
-            }
-          })();
+
           pubsub.publish(USERGAME_ADDED, {
             usergameadded: true,
           });
