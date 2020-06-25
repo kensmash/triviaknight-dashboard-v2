@@ -32,6 +32,7 @@ const typeDef = gql`
 
   type PlayerRoundTable {
     player: User!
+    host: Boolean
     joined: Boolean
     declined: Boolean
     hasselectedcategories: Boolean

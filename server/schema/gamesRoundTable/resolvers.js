@@ -28,7 +28,9 @@ const resolvers = {
           const allroundtablegames = await GameRoundTable.find({
             "players.player": user.id,
             gameover: false,
-          }).populate("createdby");
+          })
+            .populate("createdby")
+            .populate("players.player");
           return allroundtablegames;
         } catch (error) {
           console.error(error);
@@ -49,6 +51,7 @@ const resolvers = {
             players: [
               {
                 player: user.id,
+                host: true,
                 joined: true,
               },
             ],

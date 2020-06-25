@@ -2,8 +2,12 @@ const User = require("../../models/User");
 const GameJoust = require("../../models/GameJoust");
 const GameSolo = require("../../models/GameSolo");
 const GameQuest = require("../../models/GameQuest");
-//auth helpers
-const { questionsAnswered } = require("../_helpers/helper-stats");
+//stats helpers
+const {
+  questionsAnswered,
+  questionStats,
+  joustRecordStats,
+} = require("../_helpers/helper-stats");
 const {
   joustLeaderThisWeekStats,
   joustLeaderAllTimeStats,
@@ -51,7 +55,6 @@ const resolvers = {
     currentUser: (parent, args, { user }) => {
       if (user) {
         return User.findOne({ _id: user.id })
-
           .populate({
             path: "categories",
             populate: { path: "type" },
@@ -72,6 +75,33 @@ const resolvers = {
 
     questionsanswered: requiresAuth.createResolver((parent, args, { user }) => {
       return questionsAnswered(user.id);
+    }),
+
+    playerprofile: requiresAuth.createResolver(async (parent, { id }) => {
+      const player = await User.findOne({ _id: id }).populate({
+        path: "categories",
+        populate: { path: "type" },
+      });
+      const questions = await questionStats(id);
+      const jouststats = await joustRecordStats(id);
+      const profileresponse = {
+        id: player._id,
+        name: player.name,
+        rank: player.rank,
+        avatar: player.avatar,
+        avatarBackgroundColor: player.avatarBackgroundColor,
+        favoritecategories: player.categories,
+        questionsanswered: questions.questionsanswered,
+        correct: questions.correctanswers,
+        incorrect: questions.incorrectanswers,
+        percentcorrect: questions.percentcorrect,
+        joustwins: jouststats.wins,
+        joustlosses: jouststats.losses,
+        joustties: jouststats.ties,
+        winpercent: jouststats.winpercent,
+        tiespercent: jouststats.tiespercent,
+      };
+      return profileresponse;
     }),
 
     gameOpponent: requiresAuth.createResolver((parent, { id }, { user }) => {

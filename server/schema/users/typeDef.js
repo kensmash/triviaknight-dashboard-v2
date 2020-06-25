@@ -78,9 +78,28 @@ const typeDef = gql`
     highscore: Int
   }
 
+  type PlayerProfileReponse {
+    id: ID!
+    name: String!
+    rank: String!
+    avatar: String!
+    avatarBackgroundColor: String!
+    favoritecategories: [Category]
+    questionsanswered: Int
+    correct: Int
+    incorrect: Int
+    percentcorrect: Int
+    joustwins: Int
+    joustlosses: Int
+    joustties: Int
+    winpercent: Int
+    tiespercent: Int
+  }
+
   extend type Query {
     currentUser: User
     userwidget: UserWidgetResponse
+    playerprofile(id: ID!): PlayerProfileReponse!
     gameOpponent(id: ID!): User
     randomOpponent: User
     userGames: User

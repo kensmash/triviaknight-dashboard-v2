@@ -5,6 +5,7 @@ const RoundTableRoundResultsSchema = require("./RoundTableRoundResults");
 const PlayerRoundTableSchema = new Schema(
   {
     player: { type: Schema.Types.ObjectId, ref: "user", required: true },
+    host: { type: Boolean, default: false },
     joined: { type: Boolean, default: false },
     declined: { type: Boolean, default: false },
     hasselectedcategories: { type: Boolean, default: false },
