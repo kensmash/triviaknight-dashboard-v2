@@ -8,17 +8,18 @@ const { gameQuestion } = require("../_helpers/helper-questions");
 const { withFilter } = require("graphql-subscriptions");
 
 const USERGAME_ADDED = "USERGAME_ADDED";
-const HOSTEDPLAYER_JOINED = "HOSTEDPLAYER_JOINED";
+const ROUNDTABLEPLAYER_JOINED = "ROUNDTABLEPLAYER_JOINED";
 const CATEGORY_ADDED = "CATEGORY_ADDED";
-const HOSTEDPLAYER_SELECTEDCATEGORIES = "HOSTEDPLAYER_SELECTEDCATEGORIES";
+const ROUNDTABLEPLAYER_SELECTEDCATEGORIES =
+  "ROUNDTABLEPLAYER_SELECTEDCATEGORIES";
 const PLAYER_REMOVED = "PLAYER_REMOVED";
-const HOSTEDGAME_STARTED = "HOSTEDGAME_STARTED";
-const HOSTEDGAME_UPDATED = "HOSTEDGAME_UPDATED";
-const HOSTEDGAME_SHOWQUESTION = "HOSTEDGAME_SHOWQUESTION";
-const HOSTEDPLAYER_UPDATED = "HOSTEDPLAYER_UPDATED";
-const HOSTEDGAME_TIED = "HOSTEDGAME_TIED";
-const HOSTEDGAME_OVER = "HOSTEDGAME_OVER";
-const HOSTEDGAME_CANCELLED = "HOSTEDGAME_CANCELLED";
+const ROUNDTABLEGAME_STARTED = "ROUNDTABLEGAME_STARTED";
+const ROUNDTABLEGAME_UPDATED = "ROUNDTABLEGAME_UPDATED";
+const ROUNDTABLEGAME_SHOWQUESTION = "ROUNDTABLEGAME_SHOWQUESTION";
+const ROUNDTABLEPLAYER_UPDATED = "ROUNDTABLEPLAYER_UPDATED";
+const ROUNDTABLEGAME_TIED = "ROUNDTABLEGAME_TIED";
+const ROUNDTABLEGAME_OVER = "ROUNDTABLEGAME_OVER";
+const ROUNDTABLEGAME_CANCELLED = "ROUNDTABLEGAME_CANCELLED";
 
 const resolvers = {
   Query: {
@@ -32,6 +33,37 @@ const resolvers = {
             .populate("createdby")
             .populate("players.player");
           return allroundtablegames;
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    ),
+
+    currentroundtablegame: requiresAuth.createResolver(
+      async (parent, { id }, { user }) => {
+        try {
+          const currentroundtablegame = await GameRoundTable.findOne({
+            _id: id,
+            $or: [{ "players.player": user.id }, { createdby: user.id }],
+          })
+            .populate("createdby")
+            .populate("players.player")
+            .populate({
+              path: "players.roundresults.question",
+            })
+            .populate({
+              path: "categories",
+              populate: { path: "type" },
+            })
+            .populate({
+              path: "currentcategory",
+              populate: { path: "type" },
+            })
+            .populate("currentquestion")
+            .populate("selectedcategories")
+            .populate("selectedquestions");
+
+          return currentroundtablegame;
         } catch (error) {
           console.error(error);
         }
@@ -117,8 +149,8 @@ const resolvers = {
             { new: true }
           ).populate("players.player");
           //subscription
-          pubsub.publish(HOSTEDPLAYER_JOINED, {
-            hostedplayerjoined: updatedGame,
+          pubsub.publish(ROUNDTABLEPLAYER_JOINED, {
+            roundtableplayerjoined: updatedGame,
           });
           return updatedGame;
         } catch (error) {
@@ -780,9 +812,9 @@ const resolvers = {
   Subscription: {
     roundtableplayerjoined: {
       subscribe: withFilter(
-        (_, __, { pubsub }) => pubsub.asyncIterator(HOSTEDPLAYER_JOINED),
+        (_, __, { pubsub }) => pubsub.asyncIterator(ROUNDTABLEPLAYER_JOINED),
         (payload, variables) => {
-          return payload.hostedplayerjoined._id === variables.gameid;
+          return payload.roundtableplayerjoined._id === variables.gameid;
         }
       ),
     },
@@ -799,7 +831,7 @@ const resolvers = {
     playerselectedcategories: {
       subscribe: withFilter(
         (_, __, { pubsub }) =>
-          pubsub.asyncIterator(HOSTEDPLAYER_SELECTEDCATEGORIES),
+          pubsub.asyncIterator(ROUNDTABLEPLAYER_SELECTEDCATEGORIES),
         (payload, variables) => {
           return payload.playerselectedcategories._id === variables.gameid;
         }
@@ -817,25 +849,26 @@ const resolvers = {
 
     roundtablegamestarted: {
       subscribe: withFilter(
-        (_, __, { pubsub }) => pubsub.asyncIterator(HOSTEDGAME_STARTED),
+        (_, __, { pubsub }) => pubsub.asyncIterator(ROUNDTABLEGAME_STARTED),
         (payload, variables) => {
-          return payload.hostedgamestarted._id === variables.gameid;
+          return payload.roundtablegamestarted._id === variables.gameid;
         }
       ),
     },
 
     roundtablegameupdated: {
       subscribe: withFilter(
-        (_, __, { pubsub }) => pubsub.asyncIterator(HOSTEDGAME_UPDATED),
+        (_, __, { pubsub }) => pubsub.asyncIterator(ROUNDTABLEGAME_UPDATED),
         (payload, variables) => {
-          return payload.hostedgameupdated._id === variables.gameid;
+          return payload.roundtablegameupdated._id === variables.gameid;
         }
       ),
     },
 
     hostshowquestion: {
       subscribe: withFilter(
-        (_, __, { pubsub }) => pubsub.asyncIterator(HOSTEDGAME_SHOWQUESTION),
+        (_, __, { pubsub }) =>
+          pubsub.asyncIterator(ROUNDTABLEGAME_SHOWQUESTION),
         (payload, variables) => {
           return payload.hostshowquestion._id === variables.gameid;
         }
@@ -844,36 +877,36 @@ const resolvers = {
 
     roundtableplayerupdated: {
       subscribe: withFilter(
-        (_, __, { pubsub }) => pubsub.asyncIterator(HOSTEDPLAYER_UPDATED),
+        (_, __, { pubsub }) => pubsub.asyncIterator(ROUNDTABLEPLAYER_UPDATED),
         (payload, variables) => {
-          return payload.hostedplayerupdated._id === variables.gameid;
+          return payload.roundtableplayerupdated._id === variables.gameid;
         }
       ),
     },
 
     roundtablegametied: {
       subscribe: withFilter(
-        (_, __, { pubsub }) => pubsub.asyncIterator(HOSTEDGAME_TIED),
+        (_, __, { pubsub }) => pubsub.asyncIterator(ROUNDTABLEGAME_TIED),
         (payload, variables) => {
-          return payload.hostedgametied._id === variables.gameid;
+          return payload.roundtablegametied._id === variables.gameid;
         }
       ),
     },
 
     roundtablegameover: {
       subscribe: withFilter(
-        (_, __, { pubsub }) => pubsub.asyncIterator(HOSTEDGAME_OVER),
+        (_, __, { pubsub }) => pubsub.asyncIterator(ROUNDTABLEGAME_OVER),
         (payload, variables) => {
-          return payload.hostedgameover._id === variables.gameid;
+          return payload.roundtablegameover._id === variables.gameid;
         }
       ),
     },
 
     roundtablegamecancelled: {
       subscribe: withFilter(
-        (_, __, { pubsub }) => pubsub.asyncIterator(HOSTEDGAME_CANCELLED),
+        (_, __, { pubsub }) => pubsub.asyncIterator(ROUNDTABLEGAME_CANCELLED),
         (payload, variables) => {
-          return payload.hostedgamecancelled._id === variables.gameid;
+          return payload.roundtablegamecancelled._id === variables.gameid;
         }
       ),
     },
