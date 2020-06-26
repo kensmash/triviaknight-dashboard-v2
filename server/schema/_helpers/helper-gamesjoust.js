@@ -28,7 +28,7 @@ const changeJoustTurn = async (gameid, player, opponent, expo) => {
 
     const opponentInfo = await User.findOne({
       _id: opponent.player._id,
-      acceptsgamepushnotifications: true,
+      "preferences.acceptsgamepushnotifications": true,
     });
     const pushTokens = opponentInfo.expoPushTokens;
 
@@ -161,7 +161,7 @@ const endJoustGame = async (gameid, player, opponent, expo) => {
 
     const opponentInfo = await User.findOne({
       _id: opponent.player._id,
-      acceptsgamepushnotifications: true,
+      "preferences.acceptsgamepushnotifications": true,
     });
     const pushTokens = opponentInfo.expoPushTokens;
 
