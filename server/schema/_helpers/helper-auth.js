@@ -71,8 +71,10 @@ const trySignup = async (
       avatar: "castle",
       roles: ["player"],
       expoPushTokens: expoPushToken ? [expoPushToken] : [],
-      acceptsgamepushnotifications: expoPushToken ? true : false,
-      acceptsweeklypushnotifications: expoPushToken ? true : false,
+      preferences: {
+        acceptsgamepushnotifications: expoPushToken ? true : false,
+        acceptsweeklypushnotifications: expoPushToken ? true : false,
+      },
     });
     await newUser.save();
     const user = await User.findOne({ email });
