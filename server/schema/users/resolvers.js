@@ -596,7 +596,37 @@ const resolvers = {
         try {
           const editedUser = await User.findOneAndUpdate(
             { _id: user.id },
-            { $set: { showonleaderboards: preference } },
+            { $set: { "preferences.showonleaderboards": preference } },
+            { new: true }
+          );
+          return editedUser;
+        } catch (err) {
+          return err;
+        }
+      }
+    ),
+
+    updatesoundpreference: requiresAuth.createResolver(
+      async (parent, { preference }, { user }) => {
+        try {
+          const editedUser = await User.findOneAndUpdate(
+            { _id: user.id },
+            { $set: { "preferences.playsounds": preference } },
+            { new: true }
+          );
+          return editedUser;
+        } catch (err) {
+          return err;
+        }
+      }
+    ),
+
+    updatevibrationpreference: requiresAuth.createResolver(
+      async (parent, { preference }, { user }) => {
+        try {
+          const editedUser = await User.findOneAndUpdate(
+            { _id: user.id },
+            { $set: { "preferences.allowvibrations": preference } },
             { new: true }
           );
           return editedUser;
@@ -611,7 +641,9 @@ const resolvers = {
         try {
           const editedUser = await User.findOneAndUpdate(
             { _id: user.id },
-            { $set: { acceptsgamepushnotifications: preference } },
+            {
+              $set: { "preferences.acceptsgamepushnotifications": preference },
+            },
             { new: true }
           );
           return editedUser;
@@ -626,7 +658,11 @@ const resolvers = {
         try {
           const editedUser = await User.findOneAndUpdate(
             { _id: user.id },
-            { $set: { acceptsweeklypushnotifications: preference } },
+            {
+              $set: {
+                "preferences.acceptsweeklypushnotifications": preference,
+              },
+            },
             { new: true }
           );
           return editedUser;

@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 const bcrypt = require("bcrypt");
+const UserPreferencesSchema = require("./UserPreferences");
 const PlayerQuestHighScoresSchema = require("./PlayerQuestHighScores");
 
 //Define the model
@@ -38,9 +39,7 @@ const userSchema = new Schema(
     expoPushTokens: [{ type: String }],
     questhighscores: [PlayerQuestHighScoresSchema],
     gems: { type: Number, default: 20 },
-    showonleaderboards: { type: Boolean, default: true },
-    acceptsgamepushnotifications: { type: Boolean, default: true },
-    acceptsweeklypushnotifications: { type: Boolean, default: true },
+    preferences: UserPreferencesSchema,
   },
   { timestamps: true }
 );
