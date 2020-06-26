@@ -24,7 +24,7 @@ const newCategories = schedule.scheduleJob(
       const catnames = trimmedcats.map((cat) => cat.name).join(", ");
       //find users in database
       const users = await User.find({
-        acceptsweeklypushnotifications: { $eq: true },
+        "preferences.acceptsweeklypushnotifications": true,
       });
       //get their expoPushTokens
       if (users.length) {
@@ -128,7 +128,7 @@ const updatedCategories = schedule.scheduleJob(
       const catnames = trimmedcats.map((cat) => cat.name).join(", ");
       //find users in database
       const users = await User.find({
-        acceptsweeklypushnotifications: { $eq: true },
+        "preferences.acceptsweeklypushnotifications": true,
       });
       //get their expoPushTokens
       if (users.length) {

@@ -146,6 +146,7 @@ const typeDef = gql`
     adduserfriends(playerids: [ID]!): User
     removeuserfriend(playerid: ID!): User
     addexpopushtoken(token: String!): User
+    replaceexpopushtoken(newtoken: String!, previoustoken: String!): User
     sendforgotpasswordemail(email: String!): Boolean
     resetpasswordcode(email: String!, code: Int!): Boolean
     updatepassword(email: String!, password: String!): Boolean

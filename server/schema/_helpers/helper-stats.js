@@ -550,12 +550,12 @@ const categoryRankings = async (catId) => {
   //tracks
   try {
     const categoryrankings = await User.aggregate([
-      //filter out non-TK users
+      //filter out party users
       {
         $match: {
           roles: { $nin: ["reviewer"] },
           access: { $eq: "paid" },
-          showonleaderboards: true,
+          "preferences.showonleaderboards": { $eq: true },
         },
       },
       //find all games per user
@@ -1247,8 +1247,8 @@ const questGameStats = async () => {
           _id: 0,
           topic: currentTopic.topic,
           id: { $arrayElemAt: ["$player._id", 0] },
-          showonleaderboards: {
-            $arrayElemAt: ["$player.showonleaderboards", 0],
+          preferences: {
+            $arrayElemAt: ["$player.preferences", 0],
           },
           name: { $arrayElemAt: ["$player.name", 0] },
           rank: { $arrayElemAt: ["$player.rank", 0] },
@@ -1261,7 +1261,7 @@ const questGameStats = async () => {
         },
       },
       {
-        $match: { showonleaderboards: true },
+        $match: { "preferences.showonleaderboards": { $eq: true } },
       },
       { $sort: { highscore: -1 } },
     ]);
@@ -1301,7 +1301,7 @@ const questLastWeekWinners = async () => {
     //return results
     if (winners.length) {
       const notShyWinners = winners.filter(
-        (winner) => winner.showonleaderboards
+        (winner) => winner.preferences.showonleaderboards
       );
       if (notShyWinners.length) {
         results = notShyWinners.map((winner) => {
@@ -1331,7 +1331,7 @@ const questAllTimeWinners = async () => {
   try {
     let results = [];
     const winners = await User.find({
-      showonleaderboards: true,
+      "preferences.showonleaderboards": true,
       "questhighscores.date": { $exists: true },
     });
     if (winners.length) {

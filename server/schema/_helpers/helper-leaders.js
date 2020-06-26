@@ -69,8 +69,8 @@ const joustLeaderThisWeekStats = async () => {
           _id: 0,
           joustsevendayid: { $arrayElemAt: ["$player._id", 0] },
           name: { $arrayElemAt: ["$player.name", 0] },
-          showonleaderboards: {
-            $arrayElemAt: ["$player.showonleaderboards", 0],
+          preferences: {
+            $arrayElemAt: ["$player.preferences", 0],
           },
           rank: { $arrayElemAt: ["$player.rank", 0] },
           avatar: { $arrayElemAt: ["$player.avatar", 0] },
@@ -84,7 +84,7 @@ const joustLeaderThisWeekStats = async () => {
         },
       },
       {
-        $match: { showonleaderboards: true },
+        $match: { "preferences.showonleaderboards": true },
       },
       { $sort: { gamesplayed: -1, wins: -1 } },
     ]);
@@ -151,8 +151,8 @@ const joustLeaderAllTimeStats = async () => {
         $project: {
           _id: 0,
           joustid: { $arrayElemAt: ["$player._id", 0] },
-          showonleaderboards: {
-            $arrayElemAt: ["$player.showonleaderboards", 0],
+          preferences: {
+            $arrayElemAt: ["$player.preferences", 0],
           },
           name: { $arrayElemAt: ["$player.name", 0] },
           rank: { $arrayElemAt: ["$player.rank", 0] },
@@ -167,7 +167,7 @@ const joustLeaderAllTimeStats = async () => {
         },
       },
       {
-        $match: { showonleaderboards: true },
+        $match: { "preferences.showonleaderboards": true },
       },
       { $sort: { gamesplayed: -1, wins: -1 } },
     ]);

@@ -471,6 +471,22 @@ const resolvers = {
       }
     ),
 
+    replaceexpopushtoken: requiresAuth.createResolver(
+      async (parent, { newtoken, previoustoken }, { user }) => {
+        try {
+          const editedUser = User.findOneAndUpdate(
+            { _id: user.id, expoPushTokens: previoustoken },
+            { $set: { "expoPushTokens.$": newtoken } },
+            { new: true }
+          );
+
+          return editedUser;
+        } catch (err) {
+          return err;
+        }
+      }
+    ),
+
     removeusercategory: requiresAuth.createResolver(
       async (parent, { catid }, { user }) => {
         try {
