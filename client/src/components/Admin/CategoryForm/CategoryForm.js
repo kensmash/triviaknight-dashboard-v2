@@ -49,7 +49,7 @@ const CategoryForm = (props) => {
   useEffect(() => {
     if (props.pageType === "edit") {
       const { category } = props;
-      console.log(category);
+
       setFields({
         categoryname: category.name,
         categorytype: category.type._id,

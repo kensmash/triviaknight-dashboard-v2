@@ -168,8 +168,8 @@ const resolvers = {
             { new: true }
           ).populate("players.player");
           //subscription
-          pubsub.publish(HOSTEDPLAYER_JOINED, {
-            hostedplayerjoined: updatedGame,
+          pubsub.publish(ROUNDTABLEPLAYER_JOINED, {
+            roundtableplayerjoined: updatedGame,
           });
           return updatedGame;
         } catch (error) {
@@ -202,7 +202,7 @@ const resolvers = {
           pubsub.publish(USERGAME_ADDED, {
             usergameadded: true,
           });
-          pubsub.publish(HOSTEDPLAYER_SELECTEDCATEGORIES, {
+          pubsub.publish(ROUNDTABLEPLAYER_SELECTEDCATEGORIES, {
             playerselectedcategories: updatedGame,
           });
 
@@ -242,8 +242,8 @@ const resolvers = {
           pubsub.publish(USERGAME_ADDED, {
             usergameadded: true,
           });
-          pubsub.publish(HOSTEDGAME_STARTED, {
-            hostedgamestarted: updatedGame,
+          pubsub.publish(ROUNDTABLEGAME_STARTED, {
+            roundtablegamestarted: updatedGame,
           });
           return updatedGame;
         } catch (error) {
@@ -280,8 +280,8 @@ const resolvers = {
               populate: { path: "type" },
             });
           //sub
-          pubsub.publish(HOSTEDGAME_UPDATED, {
-            hostedgameupdated: updatedGame,
+          pubsub.publish(ROUNDTABLEGAME_UPDATED, {
+            roundtablegameupdated: updatedGame,
           });
           return updatedGame;
         } catch (error) {
@@ -315,8 +315,8 @@ const resolvers = {
               populate: { path: "type" },
             });
           //sub
-          pubsub.publish(HOSTEDGAME_UPDATED, {
-            hostedgameupdated: updatedGame,
+          pubsub.publish(ROUNDTABLEGAME_UPDATED, {
+            roundtablegameupdated: updatedGame,
           });
           return updatedGame;
         } catch (error) {
@@ -338,8 +338,8 @@ const resolvers = {
               path: "players.roundresults.question",
             });
           //sub
-          pubsub.publish(HOSTEDPLAYER_UPDATED, {
-            hostedplayerupdated: updatedGame,
+          pubsub.publish(ROUNDTABLEPLAYER_UPDATED, {
+            roundtableplayerupdated: updatedGame,
           });
           return updatedGame;
         } catch (error) {
@@ -389,8 +389,8 @@ const resolvers = {
             { new: true }
           ).populate("players.player");
           //sub
-          pubsub.publish(HOSTEDPLAYER_UPDATED, {
-            hostedplayerupdated: updatedGame,
+          pubsub.publish(ROUNDTABLEPLAYER_UPDATED, {
+            roundtableplayerupdated: updatedGame,
           });
           return updatedGame;
         } catch (error) {
@@ -418,8 +418,8 @@ const resolvers = {
               path: "players.roundresults.question",
             });
           //sub
-          pubsub.publish(HOSTEDPLAYER_UPDATED, {
-            hostedplayerupdated: updatedGame,
+          pubsub.publish(ROUNDTABLEPLAYER_UPDATED, {
+            roundtableplayerupdated: updatedGame,
           });
           return updatedGame;
         } catch (error) {
@@ -456,8 +456,8 @@ const resolvers = {
               path: "players.roundresults.question",
             });
           //sub
-          pubsub.publish(HOSTEDPLAYER_UPDATED, {
-            hostedplayerupdated: updatedGame,
+          pubsub.publish(ROUNDTABLEPLAYER_UPDATED, {
+            roundtableplayerupdated: updatedGame,
           });
           return updatedGame;
         } catch (error) {
@@ -492,8 +492,8 @@ const resolvers = {
               path: "players.roundresults.question",
             });
           //sub
-          pubsub.publish(HOSTEDPLAYER_UPDATED, {
-            hostedplayerupdated: updatedGame,
+          pubsub.publish(ROUNDTABLEPLAYER_UPDATED, {
+            roundtableplayerupdated: updatedGame,
           });
           return updatedGame;
         } catch (error) {
@@ -510,7 +510,7 @@ const resolvers = {
       ) => {
         try {
           //first remove last element in round results array
-          const removeArrayElement = await GameRoundTable.findOneAndUpdate(
+          await GameRoundTable.findOneAndUpdate(
             { _id: gameid, "players.player": playerid },
             {
               $pop: { "players.$.roundresults": 1 },
@@ -539,8 +539,8 @@ const resolvers = {
               path: "players.roundresults.question",
             });
           //sub
-          pubsub.publish(HOSTEDPLAYER_UPDATED, {
-            hostedplayerupdated: updateTheThings,
+          pubsub.publish(ROUNDTABLEPLAYER_UPDATED, {
+            roundtableplayerupdated: updateTheThings,
           });
           return updateTheThings;
         } catch (error) {
@@ -558,7 +558,7 @@ const resolvers = {
             { new: true }
           );
           //sub
-          pubsub.publish(HOSTEDGAME_SHOWQUESTION, {
+          pubsub.publish(ROUNDTABLEGAME_SHOWQUESTION, {
             hostshowquestion: updatedGame,
           });
           return updatedGame;
@@ -586,8 +586,8 @@ const resolvers = {
               populate: { path: "type" },
             });
           //sub
-          pubsub.publish(HOSTEDGAME_UPDATED, {
-            hostedgameupdated: updatedGame,
+          pubsub.publish(ROUNDTABLEGAME_UPDATED, {
+            roundtablegameupdated: updatedGame,
           });
           return updatedGame;
         } catch (error) {
@@ -669,8 +669,8 @@ const resolvers = {
             })
             .populate("selectedcategories");
           //sub
-          pubsub.publish(HOSTEDGAME_UPDATED, {
-            hostedgameupdated: updatedGame,
+          pubsub.publish(ROUNDTABLEGAME_UPDATED, {
+            roundtablegameupdated: updatedGame,
           });
           return updatedGame;
         } catch (error) {
@@ -690,8 +690,8 @@ const resolvers = {
             { new: true }
           ).populate("players.player");
           //sub
-          pubsub.publish(HOSTEDGAME_TIED, {
-            hostedgametied: updatedGame,
+          pubsub.publish(ROUNDTABLEGAME_TIED, {
+            roundtablegametied: updatedGame,
           });
           return updatedGame;
         } catch (error) {
@@ -711,8 +711,8 @@ const resolvers = {
             { new: true }
           ).populate("players.player");
           //sub
-          pubsub.publish(HOSTEDPLAYER_UPDATED, {
-            hostedplayerupdated: updatedGame,
+          pubsub.publish(ROUNDTABLEPLAYER_UPDATED, {
+            roundtableplayerupdated: updatedGame,
           });
           return updatedGame;
         } catch (error) {
@@ -750,8 +750,8 @@ const resolvers = {
           ).populate("players.player");
 
           //sub
-          pubsub.publish(HOSTEDGAME_TIED, {
-            hostedgametied: updatedGame,
+          pubsub.publish(ROUNDTABLEGAME_TIED, {
+            roundtablegametied: updatedGame,
           });
           return updatedGame;
         } catch (error) {
@@ -771,8 +771,8 @@ const resolvers = {
             { new: true }
           ).populate("players.player");
           //sub
-          pubsub.publish(HOSTEDGAME_OVER, {
-            hostedgameover: updatedGame,
+          pubsub.publish(ROUNDTABLEGAME_OVER, {
+            roundtablegameover: updatedGame,
           });
           return updatedGame;
         } catch (error) {
@@ -798,8 +798,8 @@ const resolvers = {
             { new: true }
           ).populate("createdby");
           //subscription
-          pubsub.publish(HOSTEDGAME_CANCELLED, {
-            hostedgamecancelled: updatedGame,
+          pubsub.publish(ROUNDTABLEGAME_CANCELLED, {
+            roundtablegamecancelled: updatedGame,
           });
           return updatedGame;
         } catch (error) {
