@@ -14,9 +14,9 @@ const Home = () => {
           <img src={logo} alt="Logo" />
         </div>
         <div className="content-container">
-          <Grid columns={2}>
+          <Grid stackable columns={2}>
             <Grid.Row>
-              <Grid.Column width={12}>
+              <Grid.Column mobile={16} tablet={16} computer={12}>
                 <p className="homepage-subhead text-shadow">
                   A fun trivia game that you can play on your own or with
                   friends. Over 150 categories and more than 10,000 questions!
@@ -24,15 +24,23 @@ const Home = () => {
                   statistics and leaderboards.
                 </p>
               </Grid.Column>
-              <Grid.Column width={4}>
+              <Grid.Column
+                mobile={16}
+                tablet={16}
+                computer={4}
+                style={{ paddingTop: 10 }}
+              >
                 <Image
                   src={appStore}
+                  fluid
                   as="a"
                   href="https://apps.apple.com/us/app/id1449601925"
                   target="_blank"
                   className="appstore-button"
                 />
+
                 <Image
+                  fluid
                   src={googlePlay}
                   as="a"
                   href="https://play.google.com/store/apps/details?id=trivia.knight.android"
@@ -50,18 +58,30 @@ const Home = () => {
         <Card.Group itemsPerRow={3} stackable={true} doubling={true}>
           <Card fluid>
             <Card.Content>
+              <Image
+                circular
+                floated="left"
+                size="mini"
+                src={require("../../images/icon-solo.png")}
+              />
               <Card.Header>Solo</Card.Header>
-
+              <Card.Meta>Single Player</Card.Meta>
               <Card.Description>
-                See how you do in general categories such as Movies, Television
-                and Music.
+                Test your knowledge in topics such as Movies, Television and
+                Music.
               </Card.Description>
             </Card.Content>
           </Card>
           <Card fluid>
             <Card.Content>
+              <Image
+                circular
+                floated="left"
+                size="mini"
+                src={require("../../images/icon-joust.png")}
+              />
               <Card.Header>Joust</Card.Header>
-
+              <Card.Meta>Two Players</Card.Meta>
               <Card.Description>
                 Challenge a friend in any category.
               </Card.Description>
@@ -69,8 +89,14 @@ const Home = () => {
           </Card>
           <Card fluid>
             <Card.Content>
+              <Image
+                circular
+                floated="left"
+                size="mini"
+                src={require("../../images/icon-quest.png")}
+              />
               <Card.Header>Quest</Card.Header>
-
+              <Card.Meta>Single Player Daily</Card.Meta>
               <Card.Description>
                 Play once a day in a weekly topic. Correct answers earn gems!
               </Card.Description>

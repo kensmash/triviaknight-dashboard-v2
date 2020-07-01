@@ -48,10 +48,6 @@ img {
   background-size: cover;
 }
 
-.homepage-container {
-  min-height: 100vh;
-}
-
 .privacy-container {
   padding: 3em 0;
 }
@@ -71,9 +67,23 @@ img {
   max-width: 80%;
 }
 
-@media screen and (min-width: 768px) {
+.content-container {
+  padding: 1em;
+}
+
+@media screen and (min-width: 800px) {
+  .homepage-container {
+    min-height: 100vh;
+  }
+
   .logo-container img {
     max-width: 84%;
+  }
+
+  .content-container {
+    width: 80%;
+
+    margin: auto;
   }
 }
 
@@ -83,19 +93,13 @@ img {
   }
 }
 
-.content-container {
-  width: 80%;
-  padding: 1em;
-  margin: auto;
-}
-
 .text-shadow {
   text-shadow: 1px 1px black;
 }
 
 .homepage-subhead {
   color: #fff;
-  font-size: 1.25em;
+  font-size: 1.5em;
   padding-left: 0.35em;
 }
 
