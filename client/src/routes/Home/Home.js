@@ -30,23 +30,25 @@ const Home = () => {
                 computer={4}
                 style={{ paddingTop: 10 }}
               >
-                <Image
-                  src={appStore}
-                  fluid
-                  as="a"
-                  href="https://apps.apple.com/us/app/id1449601925"
-                  target="_blank"
-                  className="appstore-button"
-                />
+                <div className="appstore-buttons-container">
+                  <Image
+                    src={appStore}
+                    fluid
+                    as="a"
+                    href="https://apps.apple.com/us/app/id1449601925"
+                    target="_blank"
+                    className="appstore-button"
+                  />
 
-                <Image
-                  fluid
-                  src={googlePlay}
-                  as="a"
-                  href="https://play.google.com/store/apps/details?id=trivia.knight.android"
-                  target="_blank"
-                  className="appstore-button"
-                />
+                  <Image
+                    fluid
+                    src={googlePlay}
+                    as="a"
+                    href="https://play.google.com/store/apps/details?id=trivia.knight.android"
+                    target="_blank"
+                    className="appstore-button"
+                  />
+                </div>
               </Grid.Column>
             </Grid.Row>
           </Grid>

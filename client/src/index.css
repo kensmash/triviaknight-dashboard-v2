@@ -71,6 +71,12 @@ img {
   padding: 1em;
 }
 
+.appstore-buttons-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 @media screen and (min-width: 800px) {
   .homepage-container {
     min-height: 100vh;
@@ -82,8 +88,13 @@ img {
 
   .content-container {
     width: 80%;
-
     margin: auto;
+  }
+}
+
+@media screen and (min-width: 975px) {
+  .appstore-buttons-container {
+    display: block;
   }
 }
 
