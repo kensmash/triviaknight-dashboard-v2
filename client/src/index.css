@@ -95,7 +95,24 @@ img {
 
 .homepage-subhead {
   color: #fff;
-  font-size: 2em;
+  font-size: 1.25em;
+}
+
+@media screen and (min-width: 768px) {
+  .homepage-subhead {
+    font-size: 1.9em;
+    margin-right: 1em;
+  }
+}
+
+@media screen and (min-width: 1000px) {
+  .homepage-subhead {
+    font-size: 2.5em;
+  }
+}
+
+.appstore-button {
+  margin: 0.35em 0 0.5em;
 }
 
 .bullet-container {

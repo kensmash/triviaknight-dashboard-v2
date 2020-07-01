@@ -170,6 +170,7 @@ const joustLeaderAllTimeStats = async () => {
         $match: { "preferences.showonleaderboards": true },
       },
       { $sort: { gamesplayed: -1, wins: -1 } },
+      { $limit: 25 },
     ]);
     //console.log("jouststats", jouststats);
     return jouststats;

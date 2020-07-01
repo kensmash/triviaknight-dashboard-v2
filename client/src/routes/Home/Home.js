@@ -1,7 +1,10 @@
 import React from "react";
-import { Card } from "semantic-ui-react";
+import { Image, Card, Container, Grid } from "semantic-ui-react";
 import Footer from "../../components/Footer/Footer";
 import logo from "../../images/site-logo.png"; // Tell Webpack this JS file uses this image
+
+const googlePlay = require("../../images/button-googleplay.png");
+const appStore = require("../../images/button-appstore.png");
 
 const Home = () => {
   return (
@@ -11,12 +14,35 @@ const Home = () => {
           <img src={logo} alt="Logo" />
         </div>
         <div className="content-container">
-          <p className="homepage-subhead text-shadow">
-            A fun trivia game that you can play on your own or with friends.
-            Over 150 categories and more than 10,000 questions! Challenge your
-            friends and track your stats.
-          </p>
-          <h2 class="text-shadow">Game Modes</h2>
+          <Grid columns={2}>
+            <Grid.Row>
+              <Grid.Column width={12}>
+                <p className="homepage-subhead text-shadow">
+                  A fun trivia game that you can play on your own or with
+                  friends. Over 150 categories and more than 10,000 questions!
+                  Challenge your friends and track your stats.
+                </p>
+              </Grid.Column>
+              <Grid.Column width={4}>
+                <Image
+                  src={appStore}
+                  as="a"
+                  href="https://apps.apple.com/us/app/id1449601925"
+                  target="_blank"
+                  className="appstore-button"
+                />
+                <Image
+                  src={googlePlay}
+                  as="a"
+                  href="https://play.google.com/store/apps/details?id=trivia.knight.android"
+                  target="_blank"
+                  className="appstore-button"
+                />
+              </Grid.Column>
+            </Grid.Row>
+          </Grid>
+
+          <h2 className="text-shadow">Game Modes</h2>
         </div>
       </section>
       <section className="homepage-middle content-container">
