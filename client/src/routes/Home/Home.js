@@ -1,5 +1,5 @@
 import React from "react";
-import { Image, Card, Container, Grid } from "semantic-ui-react";
+import { Image, Card, Grid } from "semantic-ui-react";
 import Footer from "../../components/Footer/Footer";
 import logo from "../../images/site-logo.png"; // Tell Webpack this JS file uses this image
 
@@ -106,6 +106,12 @@ const Home = () => {
           </Card>
         </Card.Group>
       </section>
+      <p className="homepage-mail-link text-shadow">
+        For questions or assistance, contact{" "}
+        <a href={"mailto:support@triviaknightapp.com."}>
+          support@triviaknightapp.com.
+        </a>
+      </p>
       <section className="homepage-bottom">
         <Footer />
       </section>

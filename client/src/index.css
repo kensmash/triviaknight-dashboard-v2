@@ -77,11 +77,13 @@ img {
   justify-content: center;
 }
 
-@media screen and (min-width: 800px) {
+@media screen and (min-width: 1024px) and (max-width: 1100px) {
   .homepage-container {
     min-height: 100vh;
   }
+}
 
+@media screen and (min-width: 800px) {
   .logo-container img {
     max-width: 84%;
   }
@@ -102,6 +104,17 @@ img {
   .logo-container img {
     max-width: 90%;
   }
+}
+
+.homepage-mail-link {
+  color: white;
+  text-align: center;
+  margin-top: 2.25em;
+  font-size: 1.25em;
+}
+
+.homepage-mail-link a {
+  color: white;
 }
 
 .text-shadow {
@@ -147,6 +160,7 @@ img {
 
 .publicfooter a {
   color: #fff;
+  margin-bottom: 1em;
 }
 
 .admincontent {
