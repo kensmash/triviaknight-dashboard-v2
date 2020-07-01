@@ -20,7 +20,8 @@ const Home = () => {
                 <p className="homepage-subhead text-shadow">
                   A fun trivia game that you can play on your own or with
                   friends. Over 150 categories and more than 10,000 questions!
-                  Challenge your friends and track your stats.
+                  Challenge your friends and follow your progress with
+                  statistics and leaderboards.
                 </p>
               </Grid.Column>
               <Grid.Column width={4}>
@@ -62,7 +63,7 @@ const Home = () => {
               <Card.Header>Joust</Card.Header>
 
               <Card.Description>
-                Challenge a friend in any category!
+                Challenge a friend in any category.
               </Card.Description>
             </Card.Content>
           </Card>
