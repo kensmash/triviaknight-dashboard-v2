@@ -108,7 +108,7 @@ const Home = () => {
       </section>
       <p className="homepage-mail-link text-shadow">
         For questions or assistance, contact{" "}
-        <a href={"mailto:support@triviaknightapp.com."}>
+        <a href={"mailto:support@triviaknightapp.com"}>
           support@triviaknightapp.com.
         </a>
       </p>
