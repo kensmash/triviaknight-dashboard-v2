@@ -150,19 +150,19 @@ const typeDef = gql`
     playerentermultchoice(
       gameid: ID!
       answer: String!
-      roundresults: RoundResultsInput!
+      roundresults: RoundTableRoundResultsInput!
     ): GameRoundTable
     hostenterguess(
       gameid: ID!
       playerid: ID!
-      roundresults: RoundResultsInput!
+      roundresults: RoundTableRoundResultsInput!
     ): GameRoundTable
     hostupdateguess(
       gameid: ID!
       playerid: ID!
       score: Int!
       correct: Boolean!
-      roundresults: RoundResultsInput!
+      roundresults: RoundTableRoundResultsInput!
     ): GameRoundTable
     playerreceiveguessfeedback(gameid: ID!): GameRoundTable
     hostshowquestion(gameid: ID!): GameRoundTable

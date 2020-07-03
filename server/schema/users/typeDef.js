@@ -29,7 +29,9 @@ const typeDef = gql`
     acceptsgamepushnotifications: Boolean
     acceptsweeklypushnotifications: Boolean
     playsounds: Boolean
+    playpartysounds: Boolean
     allowvibrations: Boolean
+    allowpartyvibrations: Boolean
   }
 
   type UserPageResponse {
