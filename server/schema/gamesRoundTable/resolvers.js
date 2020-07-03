@@ -87,6 +87,9 @@ const resolvers = {
                 joined: true,
               },
             ],
+            selectedquestions: input.previousquestions
+              ? input.previousquestions
+              : [],
           });
           const roundTableGame = await newgame.save();
           const newRoundTableGame = await GameRoundTable.findOne({

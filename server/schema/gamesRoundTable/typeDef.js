@@ -89,6 +89,7 @@ const typeDef = gql`
     pointsgoal: Int!
     categoriestype: String!
     categoriesperplayer: Int
+    previousquestions: [ID]
   }
 
   type QuestionSelectedSubscriptionResponse {
