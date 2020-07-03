@@ -302,6 +302,33 @@ const questQuestions = async (topictype, topicid) => {
   }
 };
 
+//round table
+const roundTableGameQuestion = async (catid, previousquestions) => {
+  const questionIds = previousquestions.map((question) =>
+    mongoose.Types.ObjectId(question)
+  );
+
+  try {
+    const question = await Question.aggregate([
+      {
+        $match: {
+          published: { $eq: true },
+          category: { $eq: mongoose.Types.ObjectId(catid) },
+          difficulty: { $eq: "Normal" },
+          type: { $eq: "Multiple Choice" },
+          guessable: { $eq: true },
+          _id: { $nin: questionIds },
+        },
+      },
+      { $sample: { size: 1 } },
+    ]);
+
+    return question[0];
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 //different question advantage
 const differentQuestion = async (catid, currentquestions) => {
   const questionIds = currentquestions.map((question) =>
@@ -331,5 +358,6 @@ module.exports = {
   soloQuestions,
   joustQuestions,
   questQuestions,
+  roundTableGameQuestion,
   differentQuestion,
 };

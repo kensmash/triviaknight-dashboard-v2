@@ -2,11 +2,9 @@ const GameRoundTable = require("../../models/GameRoundTable");
 //auth helpers
 const { requiresAuth } = require("../_helpers/helper-permissions");
 //game helpers
-const { gameQuestion } = require("../_helpers/helper-questions");
-
+const { roundTableGameQuestion } = require("../_helpers/helper-questions");
 //subscription
 const { withFilter } = require("graphql-subscriptions");
-
 const USERGAME_ADDED = "USERGAME_ADDED";
 const ROUNDTABLEPLAYER_JOINED = "ROUNDTABLEPLAYER_JOINED";
 const CATEGORY_ADDED = "CATEGORY_ADDED";
@@ -31,7 +29,8 @@ const resolvers = {
             gameover: false,
           })
             .populate("createdby")
-            .populate("players.player");
+            .populate("players.player")
+            .populate("currentcategory");
           return allroundtablegames;
         } catch (error) {
           console.error(error);
@@ -256,12 +255,10 @@ const resolvers = {
     ),
 
     setcurrentroundtablequestion: requiresAuth.createResolver(
-      async (parent, { gameid, category, previousquestions }, { pubsub }) => {
+      async (parent, { gameid, catid, previousquestions }, { pubsub }) => {
         try {
-          const currentquestion = await gameQuestion(
-            category,
-            "Normal",
-            "Multiple Choice",
+          const currentquestion = await roundTableGameQuestion(
+            catid,
             previousquestions
           );
           const updatedGame = await GameRoundTable.findOneAndUpdate(
@@ -294,12 +291,10 @@ const resolvers = {
     ),
 
     fetchdifferentroundtablequestion: requiresAuth.createResolver(
-      async (parent, { gameid, category, previousquestions }, { pubsub }) => {
+      async (parent, { gameid, catid, previousquestions }, { pubsub }) => {
         try {
-          const currentquestion = await gameQuestion(
-            category,
-            "Normal",
-            "Multiple Choice",
+          const currentquestion = await roundTableGameQuestion(
+            catid,
             previousquestions
           );
           const updatedGame = await GameRoundTable.findOneAndUpdate(

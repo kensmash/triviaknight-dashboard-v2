@@ -131,12 +131,12 @@ const typeDef = gql`
     startroundtablegame(gameid: ID!, categories: [ID!]): GameRoundTable
     setcurrentroundtablequestion(
       gameid: ID!
-      category: ID!
+      catid: ID!
       previousquestions: [ID]
     ): GameRoundTable
     fetchdifferentroundtablequestion(
       gameid: ID!
-      category: ID!
+      catid: ID!
       previousquestions: [ID]
     ): GameRoundTable
     setplayeranswermode(gameid: ID!, answermode: String!): GameRoundTable
