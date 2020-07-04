@@ -167,14 +167,11 @@ const typeDef = gql`
     playerreceiveguessfeedback(gameid: ID!): GameRoundTable
     hostshowquestion(gameid: ID!): GameRoundTable
     hostshowanswer(gameid: ID!): GameRoundTable
-    playernextround(gameid: ID!, playerid: ID!): GameRoundTable
     gamenextround(
       gameid: ID!
       category: ID!
       tiebreakerround: Int!
     ): GameRoundTable
-    setroundtabletie(gameid: ID!, playerid: ID!): GameRoundTable
-    removeroundtabletie(gameid: ID!, playerid: ID!): GameRoundTable
     setroundtablewinner(gameid: ID!, playerid: ID!): GameRoundTable
     roundtableresultsseen(gameid: ID!): GameRoundTable
     tieroundtablegame(gameid: ID!): GameRoundTable

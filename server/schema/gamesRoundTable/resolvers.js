@@ -613,30 +613,6 @@ const resolvers = {
       }
     ),
 
-    playernextround: requiresAuth.createResolver(
-      async (parent, { gameid, playerid }) => {
-        try {
-          const updatedGame = await GameRoundTable.findOneAndUpdate(
-            { _id: gameid, "players.player": playerid },
-            {
-              $set: {
-                "players.$.answermode": "null",
-                "players.$.answered": false,
-                "players.$.correct": false,
-                "players.$.answer": "",
-                "players.$.answerrecorded": false,
-                "players.$.guessfeedbackreceived": false,
-              },
-            },
-            { new: true }
-          );
-          return updatedGame;
-        } catch (error) {
-          console.error(error);
-        }
-      }
-    ),
-
     gamenextround: requiresAuth.createResolver(
       async (parent, { gameid, category, tiebreakerround }, { pubsub }) => {
         try {
@@ -644,6 +620,12 @@ const resolvers = {
             { _id: gameid },
             {
               $set: {
+                "players.$[].answermode": "null",
+                "players.$[].answered": false,
+                "players.$[].correct": false,
+                "players.$[].answer": "",
+                "players.$[].answerrecorded": false,
+                "players.$[].guessfeedbackreceived": false,
                 hasquestion: false,
                 showquestiontoplayers: false,
                 showanswertoplayers: false,
@@ -669,48 +651,6 @@ const resolvers = {
           //sub
           pubsub.publish(ROUNDTABLEGAME_UPDATED, {
             roundtablegameupdated: updatedGame,
-          });
-          return updatedGame;
-        } catch (error) {
-          console.error(error);
-        }
-      }
-    ),
-
-    setroundtabletie: requiresAuth.createResolver(
-      async (parent, { gameid, playerid }, { pubsub }) => {
-        try {
-          const updatedGame = await GameRoundTable.findOneAndUpdate(
-            { _id: gameid, "players.player": playerid },
-            {
-              $set: { "players.$.tied": true },
-            },
-            { new: true }
-          ).populate("players.player");
-          //sub
-          pubsub.publish(ROUNDTABLEGAME_TIED, {
-            roundtablegametied: updatedGame,
-          });
-          return updatedGame;
-        } catch (error) {
-          console.error(error);
-        }
-      }
-    ),
-
-    removeroundtabletie: requiresAuth.createResolver(
-      async (parent, { gameid, playerid }, { pubsub }) => {
-        try {
-          const updatedGame = await GameRoundTable.findOneAndUpdate(
-            { _id: gameid, "players.player": playerid },
-            {
-              $set: { "players.$.tied": false },
-            },
-            { new: true }
-          ).populate("players.player");
-          //sub
-          pubsub.publish(ROUNDTABLEPLAYER_UPDATED, {
-            roundtableplayerupdated: updatedGame,
           });
           return updatedGame;
         } catch (error) {
