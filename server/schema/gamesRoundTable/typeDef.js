@@ -165,7 +165,6 @@ const typeDef = gql`
       roundresults: RoundTableRoundResultsInput!
     ): GameRoundTable
     playerreceiveguessfeedback(gameid: ID!): GameRoundTable
-    hostshowquestion(gameid: ID!): GameRoundTable
     hostshowanswer(gameid: ID!): GameRoundTable
     gamenextround(
       gameid: ID!
@@ -175,7 +174,6 @@ const typeDef = gql`
     setroundtablewinner(gameid: ID!, playerid: ID!): GameRoundTable
     roundtableresultsseen(gameid: ID!): GameRoundTable
     tieroundtablegame(gameid: ID!): GameRoundTable
-    starttiebreakerrounds(gameid: ID!): GameRoundTable
     endroundtablegame(gameid: ID!): GameRoundTable
     expireroundtablegame(gameid: ID!): GameRoundTable
     cancelroundtablegame(gameid: ID!): GameRoundTable
@@ -188,7 +186,6 @@ const typeDef = gql`
     roundtablegamestarted(gameid: ID!): GameRoundTable
     roundtablegameupdated(gameid: ID!): GameRoundTable
     roundtableplayerupdated(gameid: ID!): GameRoundTable
-    hostshowquestion(gameid: ID!): GameRoundTable
     roundtablegametied(gameid: ID!): GameRoundTable
     roundtablegameover(gameid: ID!): GameRoundTable
     playerremoved(gameid: ID!): GameRoundTable

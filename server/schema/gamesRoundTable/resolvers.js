@@ -13,7 +13,6 @@ const ROUNDTABLEPLAYER_SELECTEDCATEGORIES =
 const PLAYER_REMOVED = "PLAYER_REMOVED";
 const ROUNDTABLEGAME_STARTED = "ROUNDTABLEGAME_STARTED";
 const ROUNDTABLEGAME_UPDATED = "ROUNDTABLEGAME_UPDATED";
-const ROUNDTABLEGAME_SHOWQUESTION = "ROUNDTABLEGAME_SHOWQUESTION";
 const ROUNDTABLEPLAYER_UPDATED = "ROUNDTABLEPLAYER_UPDATED";
 const ROUNDTABLEGAME_TIED = "ROUNDTABLEGAME_TIED";
 const ROUNDTABLEGAME_OVER = "ROUNDTABLEGAME_OVER";
@@ -547,25 +546,6 @@ const resolvers = {
       }
     ),
 
-    hostshowquestion: requiresAuth.createResolver(
-      async (parent, { gameid }, { pubsub }) => {
-        try {
-          const updatedGame = await GameRoundTable.findOneAndUpdate(
-            { _id: gameid },
-            { $set: { showquestiontoplayers: true } },
-            { new: true }
-          );
-          //sub
-          pubsub.publish(ROUNDTABLEGAME_SHOWQUESTION, {
-            hostshowquestion: updatedGame,
-          });
-          return updatedGame;
-        } catch (error) {
-          console.error(error);
-        }
-      }
-    ),
-
     hostshowanswer: requiresAuth.createResolver(
       async (parent, { gameid }, { pubsub }) => {
         try {
@@ -627,7 +607,6 @@ const resolvers = {
                 "players.$[].answerrecorded": false,
                 "players.$[].guessfeedbackreceived": false,
                 hasquestion: false,
-                showquestiontoplayers: false,
                 showanswertoplayers: false,
                 currentcategory: category,
                 differentquestionfetchedcount: 0,
@@ -799,16 +778,6 @@ const resolvers = {
         (_, __, { pubsub }) => pubsub.asyncIterator(ROUNDTABLEGAME_UPDATED),
         (payload, variables) => {
           return payload.roundtablegameupdated._id === variables.gameid;
-        }
-      ),
-    },
-
-    hostshowquestion: {
-      subscribe: withFilter(
-        (_, __, { pubsub }) =>
-          pubsub.asyncIterator(ROUNDTABLEGAME_SHOWQUESTION),
-        (payload, variables) => {
-          return payload.hostshowquestion._id === variables.gameid;
         }
       ),
     },
