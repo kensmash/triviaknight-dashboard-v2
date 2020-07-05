@@ -42,7 +42,6 @@ const typeDef = gql`
     correct: Boolean
     answerrecorded: Boolean
     guessfeedbackreceived: Boolean
-    alwaysseequestion: Boolean
     score: Int!
     tied: Boolean
     winner: Boolean
@@ -127,7 +126,11 @@ const typeDef = gql`
     joinroundtablegame(gameid: ID!): GameRoundTable
     declineroundtablegame(gameid: ID!): GameRoundTable
     addgamecategories(gameid: ID!, categories: [ID!]): GameRoundTable
-    startroundtablegame(gameid: ID!, categories: [ID!]): GameRoundTable
+    startroundtablegame(
+      gameid: ID!
+      categories: [ID!]
+      previousquestions: [ID]
+    ): GameRoundTable
     fetchdifferentroundtablequestion(
       gameid: ID!
       catid: ID!
@@ -159,11 +162,12 @@ const typeDef = gql`
       roundresults: RoundTableRoundResultsInput!
     ): GameRoundTable
     playerreceiveguessfeedback(gameid: ID!): GameRoundTable
+    hostshowquestion(gameid: ID!): GameRoundTable
     hostshowanswer(gameid: ID!): GameRoundTable
     gamenextround(
       gameid: ID!
       category: ID!
-      previousquestions: [ID]!
+      previousquestions: [ID!]
     ): GameRoundTable
     setroundtablewinner(gameid: ID!, playerid: ID!): GameRoundTable
     roundtableresultsseen(gameid: ID!): GameRoundTable
@@ -176,6 +180,7 @@ const typeDef = gql`
   extend type Subscription {
     roundtableplayerjoined(gameid: ID!): GameRoundTable
     gamecategoryadded(gameid: ID!): GameRoundTable
+    roundtableshowquestion(gameid: ID!): GameRoundTable
     playerselectedcategories(gameid: ID!): GameRoundTable
     roundtablegamestarted(gameid: ID!): GameRoundTable
     roundtablegameupdated(gameid: ID!): GameRoundTable

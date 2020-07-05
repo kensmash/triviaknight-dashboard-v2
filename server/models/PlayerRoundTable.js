@@ -16,7 +16,6 @@ const PlayerRoundTableSchema = new Schema(
     correct: { type: Boolean, default: false },
     answerrecorded: { type: Boolean, default: false },
     guessfeedbackreceived: { type: Boolean, default: false },
-    alwaysseequestion: { type: Boolean, default: false },
     score: { type: Number, default: 0 },
     tied: { type: Boolean, default: false },
     winner: { type: Boolean, default: false },

@@ -13,6 +13,7 @@ const ROUNDTABLEPLAYER_SELECTEDCATEGORIES =
 const PLAYER_REMOVED = "PLAYER_REMOVED";
 const ROUNDTABLEGAME_STARTED = "ROUNDTABLEGAME_STARTED";
 const ROUNDTABLEGAME_UPDATED = "ROUNDTABLEGAME_UPDATED";
+const ROUNDTABLEGAME_SHOWQUESTION = "ROUNDTABLEGAME_SHOWQUESTION";
 const ROUNDTABLEPLAYER_UPDATED = "ROUNDTABLEPLAYER_UPDATED";
 const ROUNDTABLEGAME_TIED = "ROUNDTABLEGAME_TIED";
 const ROUNDTABLEGAME_OVER = "ROUNDTABLEGAME_OVER";
@@ -215,12 +216,12 @@ const resolvers = {
     ),
 
     startroundtablegame: requiresAuth.createResolver(
-      async (parent, { gameid, categories }, { user, pubsub }) => {
+      async (parent, { gameid, categories, previousquestions }, { pubsub }) => {
         //select an initial category
         const firstCategory =
           categories[Math.floor(Math.random() * categories.length)];
         const currentquestion = await roundTableGameQuestion(
-          catid,
+          firstCategory,
           previousquestions
         );
         try {
@@ -443,7 +444,6 @@ const resolvers = {
               $set: {
                 "players.$.answerrecorded": true,
                 "players.$.correct": roundresults.points === 0 ? false : true,
-                lastplayed: new Date(),
               },
               $inc: { "players.$.score": roundresults.points },
               $push: {
@@ -517,6 +517,25 @@ const resolvers = {
       }
     ),
 
+    hostshowquestion: requiresAuth.createResolver(
+      async (parent, { gameid }, { pubsub }) => {
+        try {
+          const updatedGame = await GameRoundTable.findOneAndUpdate(
+            { _id: gameid },
+            { $set: { showquestiontoplayers: true } },
+            { new: true }
+          );
+          //sub
+          pubsub.publish(ROUNDTABLEGAME_SHOWQUESTION, {
+            roundtableshowquestion: updatedGame,
+          });
+          return updatedGame;
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    ),
+
     hostshowanswer: requiresAuth.createResolver(
       async (parent, { gameid }, { pubsub }) => {
         try {
@@ -556,7 +575,7 @@ const resolvers = {
               },
             },
             { new: true }
-          );
+          ).populate("players.player");
           return updatedGame;
         } catch (error) {
           console.error(error);
@@ -581,6 +600,7 @@ const resolvers = {
                 "players.$[].answer": "",
                 "players.$[].answerrecorded": false,
                 "players.$[].guessfeedbackreceived": false,
+                showquestiontoplayers: false,
                 showanswertoplayers: false,
                 currentcategory: category,
                 currentquestion,
@@ -748,6 +768,16 @@ const resolvers = {
         (_, __, { pubsub }) => pubsub.asyncIterator(ROUNDTABLEGAME_STARTED),
         (payload, variables) => {
           return payload.roundtablegamestarted._id === variables.gameid;
+        }
+      ),
+    },
+
+    roundtableshowquestion: {
+      subscribe: withFilter(
+        (_, __, { pubsub }) =>
+          pubsub.asyncIterator(ROUNDTABLEGAME_SHOWQUESTION),
+        (payload, variables) => {
+          return payload.roundtablegameupdated._id === variables.gameid;
         }
       ),
     },
