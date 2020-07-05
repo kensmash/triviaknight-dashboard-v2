@@ -565,10 +565,10 @@ const resolvers = {
     ),
 
     gamenextround: requiresAuth.createResolver(
-      async (parent, { gameid, category, tiebreakerround }, { pubsub }) => {
+      async (parent, { gameid, category, previousquestions }, { pubsub }) => {
         try {
           const currentquestion = await roundTableGameQuestion(
-            catid,
+            category,
             previousquestions
           );
           const updatedGame = await GameRoundTable.findOneAndUpdate(
@@ -585,7 +585,6 @@ const resolvers = {
                 currentcategory: category,
                 currentquestion,
                 differentquestionfetchedcount: 0,
-                tiebreakerround: tiebreakerround,
               },
               $push: {
                 selectedcategories: category,

@@ -163,7 +163,7 @@ const typeDef = gql`
     gamenextround(
       gameid: ID!
       category: ID!
-      tiebreakerround: Int!
+      previousquestions: [ID]!
     ): GameRoundTable
     setroundtablewinner(gameid: ID!, playerid: ID!): GameRoundTable
     roundtableresultsseen(gameid: ID!): GameRoundTable
