@@ -17,7 +17,6 @@ const typeDef = gql`
     currentquestion: Question
     selectedcategories: [Category]
     selectedquestions: [Question]
-    hasquestion: Boolean
     showquestiontoplayers: Boolean
     differentquestionfetchedcount: Int
     showanswertoplayers: Boolean
@@ -129,11 +128,6 @@ const typeDef = gql`
     declineroundtablegame(gameid: ID!): GameRoundTable
     addgamecategories(gameid: ID!, categories: [ID!]): GameRoundTable
     startroundtablegame(gameid: ID!, categories: [ID!]): GameRoundTable
-    setcurrentroundtablequestion(
-      gameid: ID!
-      catid: ID!
-      previousquestions: [ID]
-    ): GameRoundTable
     fetchdifferentroundtablequestion(
       gameid: ID!
       catid: ID!

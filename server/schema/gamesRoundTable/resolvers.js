@@ -219,6 +219,10 @@ const resolvers = {
         //select an initial category
         const firstCategory =
           categories[Math.floor(Math.random() * categories.length)];
+        const currentquestion = await roundTableGameQuestion(
+          catid,
+          previousquestions
+        );
         try {
           const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid },
@@ -227,7 +231,9 @@ const resolvers = {
                 started: true,
                 currentcategory: firstCategory,
                 selectedcategories: [firstCategory],
+                currentquestion,
               },
+              $push: { selectedquestions: currentquestion },
             },
             { new: true }
           )
@@ -238,6 +244,7 @@ const resolvers = {
               populate: { path: "type" },
             })
             .populate("selectedcategories")
+            .populate("currentquestion")
             .populate("selectedquestions");
 
           pubsub.publish(USERGAME_ADDED, {
@@ -245,42 +252,6 @@ const resolvers = {
           });
           pubsub.publish(ROUNDTABLEGAME_STARTED, {
             roundtablegamestarted: updatedGame,
-          });
-          return updatedGame;
-        } catch (error) {
-          console.error(error);
-        }
-      }
-    ),
-
-    setcurrentroundtablequestion: requiresAuth.createResolver(
-      async (parent, { gameid, catid, previousquestions }, { pubsub }) => {
-        try {
-          const currentquestion = await roundTableGameQuestion(
-            catid,
-            previousquestions
-          );
-          const updatedGame = await GameRoundTable.findOneAndUpdate(
-            { _id: gameid },
-            {
-              $set: {
-                hasquestion: true,
-                currentquestion,
-              },
-              $push: { selectedquestions: currentquestion },
-            },
-            { new: true }
-          )
-            .populate("currentquestion")
-            .populate("selectedquestions")
-            .populate("players.player")
-            .populate({
-              path: "currentcategory",
-              populate: { path: "type" },
-            });
-          //sub
-          pubsub.publish(ROUNDTABLEGAME_UPDATED, {
-            roundtablegameupdated: updatedGame,
           });
           return updatedGame;
         } catch (error) {
@@ -596,6 +567,10 @@ const resolvers = {
     gamenextround: requiresAuth.createResolver(
       async (parent, { gameid, category, tiebreakerround }, { pubsub }) => {
         try {
+          const currentquestion = await roundTableGameQuestion(
+            catid,
+            previousquestions
+          );
           const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid },
             {
@@ -606,13 +581,16 @@ const resolvers = {
                 "players.$[].answer": "",
                 "players.$[].answerrecorded": false,
                 "players.$[].guessfeedbackreceived": false,
-                hasquestion: false,
                 showanswertoplayers: false,
                 currentcategory: category,
+                currentquestion,
                 differentquestionfetchedcount: 0,
                 tiebreakerround: tiebreakerround,
               },
-              $push: { selectedcategories: category },
+              $push: {
+                selectedcategories: category,
+                selectedquestions: currentquestion,
+              },
               $inc: { currentround: 1 },
             },
             { new: true }
@@ -626,7 +604,9 @@ const resolvers = {
               path: "currentcategory",
               populate: { path: "type" },
             })
-            .populate("selectedcategories");
+            .populate("selectedcategories")
+            .populate("currentquestion")
+            .populate("selectedquestions");
           //sub
           pubsub.publish(ROUNDTABLEGAME_UPDATED, {
             roundtablegameupdated: updatedGame,

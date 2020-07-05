@@ -27,7 +27,6 @@ const gameRoundTableSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "question",
     },
-    hasquestion: { type: Boolean, default: false },
     showquestiontoplayers: {
       type: Boolean,
       default: false,
