@@ -637,37 +637,19 @@ const resolvers = {
       }
     ),
 
-    setroundtablewinner: requiresAuth.createResolver(
-      async (parent, { gameid, playerid }) => {
+    winroundtablegame: requiresAuth.createResolver(
+      async (parent, { gameid, playerid }, { pubsub }) => {
         try {
           const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid, "players.player": playerid },
             {
-              $set: { "players.$.winner": true },
+              $set: { "players.$.winner": true, gameover: true },
             },
             { new: true }
           );
-          return updatedGame;
-        } catch (error) {
-          console.error(error);
-        }
-      }
-    ),
-
-    tieroundtablegame: requiresAuth.createResolver(
-      async (parent, { gameid }, { pubsub }) => {
-        try {
-          const updatedGame = await GameRoundTable.findOneAndUpdate(
-            { _id: gameid },
-            {
-              $set: { showanswertoplayers: false, tied: true },
-            },
-            { new: true }
-          ).populate("players.player");
-
           //sub
-          pubsub.publish(ROUNDTABLEGAME_TIED, {
-            roundtablegametied: updatedGame,
+          pubsub.publish(ROUNDTABLEGAME_OVER, {
+            roundtablegameover: updatedGame,
           });
           return updatedGame;
         } catch (error) {
@@ -676,19 +658,20 @@ const resolvers = {
       }
     ),
 
-    endroundtablegame: requiresAuth.createResolver(
-      async (parent, { gameid }, { pubsub }) => {
+    tieroundtablegame: requiresAuth.createResolver(
+      async (parent, { gameid, playerids }, { pubsub }) => {
         try {
           const updatedGame = await GameRoundTable.findOneAndUpdate(
-            { _id: gameid },
+            { _id: gameid, "players.player": playerids },
             {
-              $set: { gameover: true, endeddate: new Date() },
+              $set: { "players.$.tied": true, tied: true },
             },
             { new: true }
           ).populate("players.player");
+
           //sub
-          pubsub.publish(ROUNDTABLEGAME_OVER, {
-            roundtablegameover: updatedGame,
+          pubsub.publish(ROUNDTABLEGAME_TIED, {
+            roundtablegametied: updatedGame,
           });
           return updatedGame;
         } catch (error) {

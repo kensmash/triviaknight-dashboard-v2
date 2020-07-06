@@ -169,10 +169,9 @@ const typeDef = gql`
       category: ID!
       previousquestions: [ID!]
     ): GameRoundTable
-    setroundtablewinner(gameid: ID!, playerid: ID!): GameRoundTable
+    winroundtablegame(gameid: ID!, playerid: ID!): GameRoundTable
+    tieroundtablegame(gameid: ID!, playerids: [ID!]): GameRoundTable
     roundtableresultsseen(gameid: ID!): GameRoundTable
-    tieroundtablegame(gameid: ID!): GameRoundTable
-    endroundtablegame(gameid: ID!): GameRoundTable
     expireroundtablegame(gameid: ID!): GameRoundTable
     cancelroundtablegame(gameid: ID!): GameRoundTable
   }
