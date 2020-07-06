@@ -381,7 +381,10 @@ const resolvers = {
             expo
           );
           pubsub.publish(JOUST_UPDATE, {
-            joustgamesupdate: { playerid: opponent.player._id, updated: true },
+            joustgamesupdate: {
+              playerid: opponent.player._id,
+              gameadded: true,
+            },
           });
           return endedGame;
         } catch (error) {

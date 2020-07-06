@@ -15,7 +15,6 @@ const ROUNDTABLEGAME_STARTED = "ROUNDTABLEGAME_STARTED";
 const ROUNDTABLEGAME_UPDATED = "ROUNDTABLEGAME_UPDATED";
 const ROUNDTABLEGAME_SHOWQUESTION = "ROUNDTABLEGAME_SHOWQUESTION";
 const ROUNDTABLEPLAYER_UPDATED = "ROUNDTABLEPLAYER_UPDATED";
-const ROUNDTABLEGAME_TIED = "ROUNDTABLEGAME_TIED";
 const ROUNDTABLEGAME_OVER = "ROUNDTABLEGAME_OVER";
 const ROUNDTABLEGAME_CANCELLED = "ROUNDTABLEGAME_CANCELLED";
 
@@ -103,7 +102,7 @@ const resolvers = {
     ),
 
     inviteplayers: requiresAuth.createResolver(
-      async (parent, { gameid, players }, { pubsub }) => {
+      async (parent, { gameid, players }, { user, pubsub }) => {
         try {
           const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid },
@@ -114,7 +113,7 @@ const resolvers = {
           ).populate("players.player");
 
           pubsub.publish(USERGAME_ADDED, {
-            usergameadded: true,
+            usergameadded: { playerid: user.id, updated: true },
           });
           return updatedGame;
         } catch (error) {
@@ -524,10 +523,19 @@ const resolvers = {
             { _id: gameid },
             { $set: { showquestiontoplayers: true } },
             { new: true }
-          );
+          )
+            .populate("players.player")
+            .populate({
+              path: "players.roundresults.question",
+            })
+            .populate("currentquestion")
+            .populate({
+              path: "currentcategory",
+              populate: { path: "type" },
+            });
           //sub
-          pubsub.publish(ROUNDTABLEGAME_SHOWQUESTION, {
-            roundtableshowquestion: updatedGame,
+          pubsub.publish(ROUNDTABLEGAME_UPDATED, {
+            roundtablegameupdated: updatedGame,
           });
           return updatedGame;
         } catch (error) {
@@ -668,10 +676,9 @@ const resolvers = {
             },
             { new: true }
           ).populate("players.player");
-
           //sub
-          pubsub.publish(ROUNDTABLEGAME_TIED, {
-            roundtablegametied: updatedGame,
+          pubsub.publish(ROUNDTABLEGAME_OVER, {
+            roundtablegameover: updatedGame,
           });
           return updatedGame;
         } catch (error) {
@@ -709,6 +716,15 @@ const resolvers = {
   },
 
   Subscription: {
+    usergameadded: {
+      subscribe: withFilter(
+        (_, __, { pubsub }) => pubsub.asyncIterator(USERGAME_ADDED),
+        (payload, variables) => {
+          return payload.usergameadded.playerid === variables.playerid;
+        }
+      ),
+    },
+
     roundtableplayerjoined: {
       subscribe: withFilter(
         (_, __, { pubsub }) => pubsub.asyncIterator(ROUNDTABLEPLAYER_JOINED),
@@ -779,15 +795,6 @@ const resolvers = {
         (_, __, { pubsub }) => pubsub.asyncIterator(ROUNDTABLEPLAYER_UPDATED),
         (payload, variables) => {
           return payload.roundtableplayerupdated._id === variables.gameid;
-        }
-      ),
-    },
-
-    roundtablegametied: {
-      subscribe: withFilter(
-        (_, __, { pubsub }) => pubsub.asyncIterator(ROUNDTABLEGAME_TIED),
-        (payload, variables) => {
-          return payload.roundtablegametied._id === variables.gameid;
         }
       ),
     },

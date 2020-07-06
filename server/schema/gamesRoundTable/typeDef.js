@@ -106,6 +106,11 @@ const typeDef = gql`
     hasMore: Boolean
   }
 
+  type RoundTableGameAddedSubscriptionResponse {
+    playerid: ID!
+    gameadded: Boolean!
+  }
+
   extend type Query {
     currentroundtablegames: [GameRoundTable]
     endedroundtablegames(
@@ -177,6 +182,7 @@ const typeDef = gql`
   }
 
   extend type Subscription {
+    usergameadded(playerid: ID!): RoundTableGameAddedSubscriptionResponse
     roundtableplayerjoined(gameid: ID!): GameRoundTable
     gamecategoryadded(gameid: ID!): GameRoundTable
     roundtableshowquestion(gameid: ID!): GameRoundTable
@@ -184,7 +190,6 @@ const typeDef = gql`
     roundtablegamestarted(gameid: ID!): GameRoundTable
     roundtablegameupdated(gameid: ID!): GameRoundTable
     roundtableplayerupdated(gameid: ID!): GameRoundTable
-    roundtablegametied(gameid: ID!): GameRoundTable
     roundtablegameover(gameid: ID!): GameRoundTable
     playerremoved(gameid: ID!): GameRoundTable
     roundtablegamecancelled(gameid: ID!): GameRoundTable
