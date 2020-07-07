@@ -235,7 +235,8 @@ const resolvers = {
                 currentquestion,
               },
               $push: { selectedquestions: currentquestion },
-            }
+            },
+            { new: true }
           )
             .populate("createdby")
             .populate("players.player")
@@ -373,7 +374,6 @@ const resolvers = {
               $set: {
                 "players.$.answered": true,
                 "players.$.answer": guess,
-                lastplayed: new Date(),
               },
             },
             { new: true }
@@ -404,7 +404,6 @@ const resolvers = {
                 "players.$.answer": answer,
                 "players.$.correct": roundresults.points === 0 ? false : true,
                 "players.$.answerrecorded": true,
-                lastplayed: new Date(),
               },
               $inc: { "players.$.score": roundresults.points },
               $push: {
@@ -590,7 +589,7 @@ const resolvers = {
 
     gamenextround: requiresAuth.createResolver(
       async (
-        parent,
+        _parent,
         { gameid, category, previousquestions, nexthostid },
         { pubsub }
       ) => {
@@ -599,14 +598,14 @@ const resolvers = {
             category,
             previousquestions
           );
-          const updatedGame = await GameRoundTable.findOneAndUpdate(
+          await GameRoundTable.findOneAndUpdate(
             { _id: gameid },
             {
               $set: {
                 "players.$[].answermode": "null",
                 "players.$[].answered": false,
                 "players.$[].correct": false,
-                //"players.$[].host": false,
+                "players.$[].host": false,
                 "players.$[].answer": "",
                 "players.$[].answerrecorded": false,
                 "players.$[].guessfeedbackreceived": false,
@@ -621,6 +620,15 @@ const resolvers = {
                 selectedquestions: currentquestion,
               },
               $inc: { currentround: 1 },
+            }
+          );
+
+          const updatedGameHost = await GameRoundTable.findOneAndUpdate(
+            { _id: gameid, "players.player": nexthostid },
+            {
+              $set: {
+                "players.$.host": "true",
+              },
             },
             { new: true }
           )
@@ -637,21 +645,11 @@ const resolvers = {
             .populate("currentquestion")
             .populate("selectedquestions");
 
-          const updatedGameHost = await GameRoundTable.findOneAndUpdate(
-            { _id: gameid, "players.player": nexthostid },
-            {
-              $set: {
-                "players.$.host": "true",
-              },
-            },
-            { new: true }
-          );
-
           //sub
           pubsub.publish(ROUNDTABLEGAME_UPDATED, {
-            roundtablegameupdated: updatedGame,
+            roundtablegameupdated: updatedGameHost,
           });
-          return updatedGame;
+          return updatedGameHost;
         } catch (error) {
           console.error(error);
         }
@@ -701,8 +699,17 @@ const resolvers = {
     ),
 
     roundtableresultsseen: requiresAuth.createResolver(
-      (parent, { gameid }, { user }) => {
-        return hostedResultsSeen(gameid, user.id);
+      async (parent, { gameid }, { user }) => {
+        try {
+          const updatedGame = await GameRoundTable.findOneAndUpdate(
+            { _id: gameid, "players.player": user.id },
+            { $set: { "players.$.resultsseen": true } },
+            { new: true }
+          );
+          return updatedGame;
+        } catch (error) {
+          console.error(error);
+        }
       }
     ),
 
@@ -712,7 +719,7 @@ const resolvers = {
           const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid },
             {
-              $set: { cancelled: true, endeddate: new Date() },
+              $set: { cancelled: true },
             },
             { new: true }
           ).populate("createdby");

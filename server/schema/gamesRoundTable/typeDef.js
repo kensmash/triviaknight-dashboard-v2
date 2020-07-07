@@ -113,10 +113,7 @@ const typeDef = gql`
 
   extend type Query {
     currentroundtablegames: [GameRoundTable]
-    endedroundtablegames(
-      limit: Int!
-      endeddate: String
-    ): RoundTableEndedPaginationResponse
+    endedroundtablegames(limit: Int): RoundTableEndedPaginationResponse
     currentroundtablegame(id: ID!): GameRoundTable
     currentroundtablegameplayerinfo(id: ID!): GameRoundTable
   }
