@@ -103,6 +103,9 @@ const resolvers = {
 
     inviteplayers: requiresAuth.createResolver(
       async (parent, { gameid, players }, { user, pubsub }) => {
+        const playerids = players.map((player) => {
+          return player.player;
+        });
         try {
           const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid },
@@ -113,7 +116,7 @@ const resolvers = {
           ).populate("players.player");
 
           pubsub.publish(USERGAME_ADDED, {
-            usergameadded: { playerid: user.id, updated: true },
+            usergameadded: { playerids: playerids, gameadded: true },
           });
           return updatedGame;
         } catch (error) {
@@ -200,9 +203,6 @@ const resolvers = {
           pubsub.publish(CATEGORY_ADDED, {
             gamecategoryadded: updatedGame,
           });
-          pubsub.publish(USERGAME_ADDED, {
-            usergameadded: true,
-          });
           pubsub.publish(ROUNDTABLEPLAYER_SELECTEDCATEGORIES, {
             playerselectedcategories: updatedGame,
           });
@@ -223,6 +223,7 @@ const resolvers = {
           firstCategory,
           previousquestions
         );
+
         try {
           const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid },
@@ -234,8 +235,7 @@ const resolvers = {
                 currentquestion,
               },
               $push: { selectedquestions: currentquestion },
-            },
-            { new: true }
+            }
           )
             .populate("createdby")
             .populate("players.player")
@@ -247,9 +247,6 @@ const resolvers = {
             .populate("currentquestion")
             .populate("selectedquestions");
 
-          pubsub.publish(USERGAME_ADDED, {
-            usergameadded: true,
-          });
           pubsub.publish(ROUNDTABLEGAME_STARTED, {
             roundtablegamestarted: updatedGame,
           });
@@ -592,7 +589,11 @@ const resolvers = {
     ),
 
     gamenextround: requiresAuth.createResolver(
-      async (parent, { gameid, category, previousquestions }, { pubsub }) => {
+      async (
+        parent,
+        { gameid, category, previousquestions, nexthostid },
+        { pubsub }
+      ) => {
         try {
           const currentquestion = await roundTableGameQuestion(
             category,
@@ -605,6 +606,7 @@ const resolvers = {
                 "players.$[].answermode": "null",
                 "players.$[].answered": false,
                 "players.$[].correct": false,
+                //"players.$[].host": false,
                 "players.$[].answer": "",
                 "players.$[].answerrecorded": false,
                 "players.$[].guessfeedbackreceived": false,
@@ -634,6 +636,17 @@ const resolvers = {
             .populate("selectedcategories")
             .populate("currentquestion")
             .populate("selectedquestions");
+
+          const updatedGameHost = await GameRoundTable.findOneAndUpdate(
+            { _id: gameid, "players.player": nexthostid },
+            {
+              $set: {
+                "players.$.host": "true",
+              },
+            },
+            { new: true }
+          );
+
           //sub
           pubsub.publish(ROUNDTABLEGAME_UPDATED, {
             roundtablegameupdated: updatedGame,
@@ -654,7 +667,7 @@ const resolvers = {
               $set: { "players.$.winner": true, gameover: true },
             },
             { new: true }
-          );
+          ).populate("players.player");
           //sub
           pubsub.publish(ROUNDTABLEGAME_OVER, {
             roundtablegameover: updatedGame,
@@ -720,7 +733,9 @@ const resolvers = {
       subscribe: withFilter(
         (_, __, { pubsub }) => pubsub.asyncIterator(USERGAME_ADDED),
         (payload, variables) => {
-          return payload.usergameadded.playerid === variables.playerid;
+          return payload.usergameadded.playerids.some(
+            (player) => player === variables.playerid
+          );
         }
       ),
     },

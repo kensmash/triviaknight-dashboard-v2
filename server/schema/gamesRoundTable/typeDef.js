@@ -107,7 +107,7 @@ const typeDef = gql`
   }
 
   type RoundTableGameAddedSubscriptionResponse {
-    playerid: ID!
+    playerids: [ID!]
     gameadded: Boolean!
   }
 
@@ -173,6 +173,7 @@ const typeDef = gql`
       gameid: ID!
       category: ID!
       previousquestions: [ID!]
+      nexthostid: ID!
     ): GameRoundTable
     winroundtablegame(gameid: ID!, playerid: ID!): GameRoundTable
     tieroundtablegame(gameid: ID!, playerids: [ID!]): GameRoundTable
