@@ -8,6 +8,7 @@ const RoundTableRoundResultsSchema = new Schema(
     category: { type: Schema.Types.ObjectId, ref: "category", required: true },
     answer: String,
     correct: Boolean,
+    correctAnswer: String,
     points: Number,
     answertype: String,
   },

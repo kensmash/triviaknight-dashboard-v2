@@ -56,6 +56,7 @@ const typeDef = gql`
     answer: String
     answertype: String
     correct: Boolean
+    correctAnswer: String
     points: Int
   }
 
@@ -79,6 +80,7 @@ const typeDef = gql`
     category: ID
     answer: String
     correct: Boolean
+    correctAnswer: String
     points: Int
     answertype: String
   }
@@ -113,7 +115,10 @@ const typeDef = gql`
 
   extend type Query {
     currentroundtablegames: [GameRoundTable]
-    endedroundtablegames(limit: Int): RoundTableEndedPaginationResponse
+    endedroundtablegames(
+      limit: Int
+      updatedAt: String
+    ): RoundTableEndedPaginationResponse
     currentroundtablegame(id: ID!): GameRoundTable
     currentroundtablegameplayerinfo(id: ID!): GameRoundTable
   }

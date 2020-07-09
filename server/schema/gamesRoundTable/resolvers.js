@@ -47,9 +47,6 @@ const resolvers = {
             .populate("createdby")
             .populate("players.player")
             .populate({
-              path: "players.roundresults.question",
-            })
-            .populate({
               path: "categories",
               populate: { path: "type" },
             })
@@ -67,6 +64,40 @@ const resolvers = {
         }
       }
     ),
+
+    endedroundtablegames: async (_parent, { limit, updatedAt }, { user }) => {
+      const queryBuilder = (user, updatedAt) => {
+        const query = {
+          "players.player": user.id,
+          gameover: true,
+        };
+        if (updatedAt) {
+          query.updatedAt = { $lt: new Date(updatedAt) };
+        }
+        return query;
+      };
+      try {
+        let hasMore = false;
+        let endedgames = await GameRoundTable.find(
+          queryBuilder(user, updatedAt)
+        )
+          .sort({ updatedAt: -1 })
+          .limit(limit + 1)
+          .populate("createdby")
+          .populate("selectedquestions");
+        if (endedgames.length === limit + 1) {
+          //if there are more items than the limit, trim the last item from the array and set hasMore to true
+          endedgames.pop();
+          hasMore = true;
+        }
+        return {
+          items: endedgames,
+          hasMore,
+        };
+      } catch (error) {
+        console.error(error);
+      }
+    },
   },
 
   Mutation: {
@@ -279,7 +310,8 @@ const resolvers = {
             .populate({
               path: "currentcategory",
               populate: { path: "type" },
-            });
+            })
+            .populate("selectedquestions");
           //sub
           pubsub.publish(ROUNDTABLEGAME_UPDATED, {
             roundtablegameupdated: updatedGame,
@@ -298,11 +330,7 @@ const resolvers = {
             { _id: gameid, "players.player": user.id },
             { $set: { "players.$.answermode": answermode } },
             { new: true }
-          )
-            .populate("players.player")
-            .populate({
-              path: "players.roundresults.question",
-            });
+          ).populate("players.player");
           //sub
           pubsub.publish(ROUNDTABLEPLAYER_UPDATED, {
             roundtableplayerupdated: updatedGame,
@@ -377,11 +405,7 @@ const resolvers = {
               },
             },
             { new: true }
-          )
-            .populate("players.player")
-            .populate({
-              path: "players.roundresults.question",
-            });
+          ).populate("players.player");
           //sub
           pubsub.publish(ROUNDTABLEPLAYER_UPDATED, {
             roundtableplayerupdated: updatedGame,
@@ -414,11 +438,7 @@ const resolvers = {
               },
             },
             { new: true }
-          )
-            .populate("players.player")
-            .populate({
-              path: "players.roundresults.question",
-            });
+          ).populate("players.player");
           //sub
           pubsub.publish(ROUNDTABLEPLAYER_UPDATED, {
             roundtableplayerupdated: updatedGame,
@@ -449,11 +469,7 @@ const resolvers = {
               },
             },
             { new: true }
-          )
-            .populate("players.player")
-            .populate({
-              path: "players.roundresults.question",
-            });
+          ).populate("players.player");
           //sub
           pubsub.publish(ROUNDTABLEPLAYER_UPDATED, {
             roundtableplayerupdated: updatedGame,
@@ -496,11 +512,7 @@ const resolvers = {
               },
             },
             { new: true }
-          )
-            .populate("players.player")
-            .populate({
-              path: "players.roundresults.question",
-            });
+          ).populate("players.player");
           //sub
           pubsub.publish(ROUNDTABLEPLAYER_UPDATED, {
             roundtableplayerupdated: updateTheThings,
@@ -521,14 +533,12 @@ const resolvers = {
             { new: true }
           )
             .populate("players.player")
-            .populate({
-              path: "players.roundresults.question",
-            })
             .populate("currentquestion")
             .populate({
               path: "currentcategory",
               populate: { path: "type" },
-            });
+            })
+            .populate("selectedquestions");
           //sub
           pubsub.publish(ROUNDTABLEGAME_UPDATED, {
             roundtablegameupdated: updatedGame,
@@ -549,14 +559,12 @@ const resolvers = {
             { new: true }
           )
             .populate("players.player")
-            .populate({
-              path: "players.roundresults.question",
-            })
             .populate("currentquestion")
             .populate({
               path: "currentcategory",
               populate: { path: "type" },
-            });
+            })
+            .populate("selectedquestions");
           //sub
           pubsub.publish(ROUNDTABLEGAME_UPDATED, {
             roundtablegameupdated: updatedGame,
@@ -634,9 +642,6 @@ const resolvers = {
           )
             .populate("createdby")
             .populate("players.player")
-            .populate({
-              path: "players.roundresults.question",
-            })
             .populate({
               path: "currentcategory",
               populate: { path: "type" },
