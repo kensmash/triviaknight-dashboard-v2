@@ -5,6 +5,8 @@ const typeDef = gql`
     _id: ID!
     createdby: User
     categoriestype: String
+    categorytype: ID
+    categorygenre: ID
     difficulty: String
     players: [PlayerRoundTable]!
     pointsgoal: Int
@@ -92,6 +94,15 @@ const typeDef = gql`
     previousquestions: [ID]
   }
 
+  input startRoundTableGameInput {
+    gameid: ID!
+    categories: [ID]
+    previousquestions: [ID]
+    categoriestype: String!
+    categorygenre: [ID]
+    categorytype: [ID]
+  }
+
   type QuestionSelectedSubscriptionResponse {
     gameid: ID!
     questionselected: Boolean
@@ -125,6 +136,8 @@ const typeDef = gql`
 
   extend type Mutation {
     createroundtablegame(input: createRoundTableGameInput!): GameRoundTable
+    selectcategorytype(gameid: ID!, categorytype: ID!): GameRoundTable
+    selectcategorygenre(gameid: ID!, categorygenre: ID!): GameRoundTable
     inviteplayers(
       gameid: ID!
       players: [RoundTablePlayerInput!]
@@ -133,11 +146,7 @@ const typeDef = gql`
     joinroundtablegame(gameid: ID!): GameRoundTable
     declineroundtablegame(gameid: ID!): GameRoundTable
     addgamecategories(gameid: ID!, categories: [ID!]): GameRoundTable
-    startroundtablegame(
-      gameid: ID!
-      categories: [ID!]
-      previousquestions: [ID]
-    ): GameRoundTable
+    startroundtablegame(input: startRoundTableGameInput!): GameRoundTable
     fetchdifferentroundtablequestion(
       gameid: ID!
       catid: ID!

@@ -246,9 +246,26 @@ const resolvers = {
     ),
 
     startroundtablegame: requiresAuth.createResolver(
-      async (parent, { gameid, categories, previousquestions }, { pubsub }) => {
+      async (
+        parent,
+        {
+          gameid,
+          categories,
+          previousquestions,
+          categoriestype,
+          categorygenre,
+          categorytype,
+        },
+        { pubsub }
+      ) => {
+        //TODO: add logic that grabs categories and adds them to game if categoriestype is not players
+        let fetchedCategories = [];
+        if (categoriestype !== "players") {
+          console.log("got to get some categories");
+        }
         //select an initial category
-        const firstCategory =
+        let firstCategory;
+        firstCategory =
           categories[Math.floor(Math.random() * categories.length)];
         const currentquestion = await roundTableGameQuestion(
           firstCategory,
