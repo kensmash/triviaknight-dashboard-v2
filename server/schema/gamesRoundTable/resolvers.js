@@ -245,6 +245,42 @@ const resolvers = {
       }
     ),
 
+    selectcategorytype: requiresAuth.createResolver(
+      async (_parent, { gameid, categorytype }) => {
+        try {
+          const updatedGame = await GameRoundTable.findOneAndUpdate(
+            { _id: gameid },
+            {
+              $set: { categorytype },
+            },
+            { new: true }
+          );
+
+          return updatedGame;
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    ),
+
+    selectcategorygenre: requiresAuth.createResolver(
+      async (_parent, { gameid, categorygenre }) => {
+        try {
+          const updatedGame = await GameRoundTable.findOneAndUpdate(
+            { _id: gameid },
+            {
+              $set: { categorygenre },
+            },
+            { new: true }
+          );
+
+          return updatedGame;
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    ),
+
     startroundtablegame: requiresAuth.createResolver(
       async (
         parent,
