@@ -275,7 +275,7 @@ const resolvers = {
             try {
               fetchedCategories = await Category.find({
                 published: { $eq: true },
-                genre: { $eq: input.categoriestypeid },
+                genres: { $in: input.categoriestypeid },
               }).distinct("_id");
               await GameRoundTable.findOneAndUpdate(
                 { _id: input.gameid },

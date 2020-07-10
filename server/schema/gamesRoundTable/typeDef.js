@@ -3,6 +3,7 @@ const { gql } = require("apollo-server-express");
 const typeDef = gql`
   type GameRoundTable {
     _id: ID!
+    title: String
     createdby: User
     categoriestype: String
     categoriestypename: String
