@@ -203,6 +203,7 @@ const typeDef = gql`
   extend type Subscription {
     usergameadded(playerid: ID!): RoundTableGameAddedSubscriptionResponse
     roundtableplayerjoined(gameid: ID!): GameRoundTable
+    roundtabledifferentquestionfetched(gameid: ID!): GameRoundTable
     gamecategoryadded(gameid: ID!): GameRoundTable
     roundtableshowquestion(gameid: ID!): GameRoundTable
     playerselectedcategories(gameid: ID!): GameRoundTable

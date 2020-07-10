@@ -13,6 +13,8 @@ const ROUNDTABLEPLAYER_SELECTEDCATEGORIES =
   "ROUNDTABLEPLAYER_SELECTEDCATEGORIES";
 const PLAYER_REMOVED = "PLAYER_REMOVED";
 const ROUNDTABLEGAME_STARTED = "ROUNDTABLEGAME_STARTED";
+const ROUNDTABLEPLAYER_DIFFERENTQUESTIONFETCHED =
+  "ROUNDTABLEPLAYER_DIFFERENTQUESTIONFETCHED";
 const ROUNDTABLEGAME_UPDATED = "ROUNDTABLEGAME_UPDATED";
 const ROUNDTABLEGAME_SHOWQUESTION = "ROUNDTABLEGAME_SHOWQUESTION";
 const ROUNDTABLEPLAYER_UPDATED = "ROUNDTABLEPLAYER_UPDATED";
@@ -866,6 +868,16 @@ const resolvers = {
       subscribe: withFilter(
         (_, __, { pubsub }) =>
           pubsub.asyncIterator(ROUNDTABLEGAME_SHOWQUESTION),
+        (payload, variables) => {
+          return payload.roundtablegameupdated._id === variables.gameid;
+        }
+      ),
+    },
+
+    roundtabledifferentquestionfetched: {
+      subscribe: withFilter(
+        (_, __, { pubsub }) =>
+          pubsub.asyncIterator(OUNDTABLEPLAYER_DIFFERENTQUESTIONFETCHED),
         (payload, variables) => {
           return payload.roundtablegameupdated._id === variables.gameid;
         }
