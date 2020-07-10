@@ -247,12 +247,12 @@ const resolvers = {
     ),
 
     selectcategoriestypeid: requiresAuth.createResolver(
-      async (_parent, { gameid, categoriestypeid }) => {
+      async (_parent, { gameid, categoriestypename, categoriestypeid }) => {
         try {
           const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid },
             {
-              $set: { categoriestypeid },
+              $set: { categoriestypename, categoriestypeid },
             },
             { new: true }
           );
@@ -276,11 +276,7 @@ const resolvers = {
               fetchedCategories = await Category.find({
                 published: { $eq: true },
                 genre: { $eq: input.categoriestypeid },
-              })
-                .project({
-                  _id: 1,
-                })
-                .toArray();
+              }).distinct("_id");
               await GameRoundTable.findOneAndUpdate(
                 { _id: input.gameid },
                 {
@@ -297,11 +293,7 @@ const resolvers = {
               fetchedCategories = await Category.find({
                 published: { $eq: true },
                 type: { $eq: input.categoriestypeid },
-              })
-                .project({
-                  _id: 1,
-                })
-                .toArray();
+              }).distinct("_id");
               await GameRoundTable.findOneAndUpdate(
                 { _id: input.gameid },
                 {
@@ -329,7 +321,7 @@ const resolvers = {
 
         const currentquestion = await roundTableGameQuestion(
           firstCategory,
-          previousquestions
+          input.previousquestions
         );
 
         try {

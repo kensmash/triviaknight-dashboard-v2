@@ -5,8 +5,10 @@ const PlayerRoundTableSchema = require("./PlayerRoundTable");
 const gameRoundTableSchema = new Schema(
   {
     type: { type: String, required: true, default: "RoundTable" },
+    title: { type: String },
     createdby: { type: Schema.Types.ObjectId, ref: "user", required: true },
     categoriestype: { type: String, default: "player" },
+    categoriestypename: { type: String },
     categoriestypeid: { type: Schema.Types.ObjectId },
     topic: { type: String },
     difficulty: { type: String, default: "Normal" },
