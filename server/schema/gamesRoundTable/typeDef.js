@@ -168,6 +168,10 @@ const typeDef = gql`
       answer: String!
       roundresults: RoundTableRoundResultsInput!
     ): GameRoundTable
+    playertimedout(
+      gameid: ID!
+      roundresults: RoundTableRoundResultsInput!
+    ): GameRoundTable
     hostenterguess(
       gameid: ID!
       playerid: ID!

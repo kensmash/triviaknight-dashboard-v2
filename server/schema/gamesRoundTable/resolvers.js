@@ -349,6 +349,7 @@ const resolvers = {
             .populate("currentquestion")
             .populate("selectedquestions");
 
+          //sub
           pubsub.publish(ROUNDTABLEGAME_STARTED, {
             roundtablegamestarted: updatedGame,
           });
@@ -382,10 +383,7 @@ const resolvers = {
               populate: { path: "type" },
             })
             .populate("selectedquestions");
-          //sub
-          pubsub.publish(ROUNDTABLEGAME_UPDATED, {
-            roundtablegameupdated: updatedGame,
-          });
+
           return updatedGame;
         } catch (error) {
           console.error(error);
@@ -401,10 +399,7 @@ const resolvers = {
             { $set: { "players.$.answermode": answermode } },
             { new: true }
           ).populate("players.player");
-          //sub
-          pubsub.publish(ROUNDTABLEPLAYER_UPDATED, {
-            roundtableplayerupdated: updatedGame,
-          });
+
           return updatedGame;
         } catch (error) {
           console.error(error);
@@ -452,10 +447,7 @@ const resolvers = {
             },
             { new: true }
           ).populate("players.player");
-          //sub
-          pubsub.publish(ROUNDTABLEPLAYER_UPDATED, {
-            roundtableplayerupdated: updatedGame,
-          });
+
           return updatedGame;
         } catch (error) {
           console.error(error);
@@ -476,10 +468,7 @@ const resolvers = {
             },
             { new: true }
           ).populate("players.player");
-          //sub
-          pubsub.publish(ROUNDTABLEPLAYER_UPDATED, {
-            roundtableplayerupdated: updatedGame,
-          });
+
           return updatedGame;
         } catch (error) {
           console.error(error);
@@ -509,10 +498,37 @@ const resolvers = {
             },
             { new: true }
           ).populate("players.player");
-          //sub
-          pubsub.publish(ROUNDTABLEPLAYER_UPDATED, {
-            roundtableplayerupdated: updatedGame,
-          });
+
+          return updatedGame;
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    ),
+
+    playertimedout: requiresAuth.createResolver(
+      async (parent, { gameid, roundresults }, { user, pubsub }) => {
+        try {
+          const updatedGame = await GameRoundTable.findOneAndUpdate(
+            { _id: gameid, "players.player": user.id },
+            {
+              $set: {
+                "players.$.answered": true,
+                "players.$.answer": "Timed Out",
+                "players.$.correct": 0,
+                "players.$.answerrecorded": true,
+              },
+              $inc: { "players.$.score": roundresults.points },
+              $push: {
+                "players.$.roundresults": {
+                  ...roundresults,
+                  answertype: "timed out",
+                },
+              },
+            },
+            { new: true }
+          ).populate("players.player");
+
           return updatedGame;
         } catch (error) {
           console.error(error);
@@ -540,10 +556,7 @@ const resolvers = {
             },
             { new: true }
           ).populate("players.player");
-          //sub
-          pubsub.publish(ROUNDTABLEPLAYER_UPDATED, {
-            roundtableplayerupdated: updatedGame,
-          });
+
           return updatedGame;
         } catch (error) {
           console.error(error);
@@ -583,10 +596,7 @@ const resolvers = {
             },
             { new: true }
           ).populate("players.player");
-          //sub
-          pubsub.publish(ROUNDTABLEPLAYER_UPDATED, {
-            roundtableplayerupdated: updateTheThings,
-          });
+
           return updateTheThings;
         } catch (error) {
           console.error(error);
@@ -609,10 +619,7 @@ const resolvers = {
               populate: { path: "type" },
             })
             .populate("selectedquestions");
-          //sub
-          pubsub.publish(ROUNDTABLEGAME_UPDATED, {
-            roundtablegameupdated: updatedGame,
-          });
+
           return updatedGame;
         } catch (error) {
           console.error(error);
@@ -635,10 +642,7 @@ const resolvers = {
               populate: { path: "type" },
             })
             .populate("selectedquestions");
-          //sub
-          pubsub.publish(ROUNDTABLEGAME_UPDATED, {
-            roundtablegameupdated: updatedGame,
-          });
+
           return updatedGame;
         } catch (error) {
           console.error(error);
@@ -720,10 +724,6 @@ const resolvers = {
             .populate("currentquestion")
             .populate("selectedquestions");
 
-          //sub
-          pubsub.publish(ROUNDTABLEGAME_UPDATED, {
-            roundtablegameupdated: updatedGameHost,
-          });
           return updatedGameHost;
         } catch (error) {
           console.error(error);
@@ -741,10 +741,7 @@ const resolvers = {
             },
             { new: true }
           ).populate("players.player");
-          //sub
-          pubsub.publish(ROUNDTABLEGAME_OVER, {
-            roundtablegameover: updatedGame,
-          });
+
           return updatedGame;
         } catch (error) {
           console.error(error);
@@ -762,10 +759,7 @@ const resolvers = {
             },
             { new: true }
           ).populate("players.player");
-          //sub
-          pubsub.publish(ROUNDTABLEGAME_OVER, {
-            roundtablegameover: updatedGame,
-          });
+
           return updatedGame;
         } catch (error) {
           console.error(error);
