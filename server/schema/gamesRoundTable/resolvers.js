@@ -1,4 +1,5 @@
 const GameRoundTable = require("../../models/GameRoundTable");
+const Category = require("../../models/Category");
 //auth helpers
 const { requiresAuth } = require("../_helpers/helper-permissions");
 //game helpers
@@ -245,31 +246,13 @@ const resolvers = {
       }
     ),
 
-    selectcategorytype: requiresAuth.createResolver(
-      async (_parent, { gameid, categorytype }) => {
+    selectcategoriestypeid: requiresAuth.createResolver(
+      async (_parent, { gameid, categoriestypeid }) => {
         try {
           const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid },
             {
-              $set: { categorytype },
-            },
-            { new: true }
-          );
-
-          return updatedGame;
-        } catch (error) {
-          console.error(error);
-        }
-      }
-    ),
-
-    selectcategorygenre: requiresAuth.createResolver(
-      async (_parent, { gameid, categorygenre }) => {
-        try {
-          const updatedGame = await GameRoundTable.findOneAndUpdate(
-            { _id: gameid },
-            {
-              $set: { categorygenre },
+              $set: { categoriestypeid },
             },
             { new: true }
           );
@@ -282,27 +265,68 @@ const resolvers = {
     ),
 
     startroundtablegame: requiresAuth.createResolver(
-      async (
-        parent,
-        {
-          gameid,
-          categories,
-          previousquestions,
-          categoriestype,
-          categorygenre,
-          categorytype,
-        },
-        { pubsub }
-      ) => {
-        //TODO: add logic that grabs categories and adds them to game if categoriestype is not players
+      async (_parent, { input }, { pubsub }) => {
+        //get categories and adds them to game if categoriestype is not players
         let fetchedCategories = [];
-        if (categoriestype !== "players") {
-          console.log("got to get some categories");
+        if (input.categoriestype !== "players") {
+          if (input.categoriestype === "genre") {
+            //fetch all published cats in the genre
+            //then add those cats to game
+            try {
+              fetchedCategories = await Category.find({
+                published: { $eq: true },
+                genre: { $eq: input.categoriestypeid },
+              })
+                .project({
+                  _id: 1,
+                })
+                .toArray();
+              await GameRoundTable.findOneAndUpdate(
+                { _id: input.gameid },
+                {
+                  $set: { categories: fetchedCategories },
+                }
+              );
+            } catch (error) {
+              console.error(error);
+            }
+          } else {
+            //fetch all published cats in the type
+            //then add those cats to game
+            try {
+              fetchedCategories = await Category.find({
+                published: { $eq: true },
+                type: { $eq: input.categoriestypeid },
+              })
+                .project({
+                  _id: 1,
+                })
+                .toArray();
+              await GameRoundTable.findOneAndUpdate(
+                { _id: input.gameid },
+                {
+                  $set: { categories: fetchedCategories },
+                }
+              );
+            } catch (error) {
+              console.error(error);
+            }
+          }
         }
         //select an initial category
         let firstCategory;
-        firstCategory =
-          categories[Math.floor(Math.random() * categories.length)];
+        if (input.categoriestype !== "players") {
+          firstCategory =
+            fetchedCategories[
+              Math.floor(Math.random() * fetchedCategories.length)
+            ];
+        } else {
+          firstCategory =
+            input.categories[
+              Math.floor(Math.random() * input.categories.length)
+            ];
+        }
+
         const currentquestion = await roundTableGameQuestion(
           firstCategory,
           previousquestions
@@ -310,7 +334,7 @@ const resolvers = {
 
         try {
           const updatedGame = await GameRoundTable.findOneAndUpdate(
-            { _id: gameid },
+            { _id: input.gameid },
             {
               $set: {
                 started: true,
@@ -328,6 +352,7 @@ const resolvers = {
               path: "currentcategory",
               populate: { path: "type" },
             })
+            .populate("categories")
             .populate("selectedcategories")
             .populate("currentquestion")
             .populate("selectedquestions");
