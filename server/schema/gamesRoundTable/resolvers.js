@@ -814,7 +814,7 @@ const resolvers = {
           const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid, "players.player": playerids },
             {
-              $set: { "players.$.tied": true, tied: true },
+              $set: { "players.$.tied": true, tied: true, gameover: true },
             },
             { new: true }
           ).populate("players.player");
@@ -850,7 +850,7 @@ const resolvers = {
           const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid },
             {
-              $set: { cancelled: true },
+              $set: { cancelled: true, gameover: true },
             },
             { new: true }
           ).populate("createdby");
