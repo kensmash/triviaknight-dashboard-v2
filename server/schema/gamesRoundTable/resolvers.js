@@ -227,7 +227,7 @@ const resolvers = {
           ).populate("players.player");
           //subscription
           pubsub.publish(ROUNDTABLEPLAYER_UPDATED, {
-            roundtableplayerjoined: updatedGame,
+            roundtableplayerupdated: updatedGame,
           });
           return updatedGame;
         } catch (error) {
@@ -623,7 +623,7 @@ const resolvers = {
             }
           );
           //then perform the updates
-          const updateTheThings = await GameRoundTable.findOneAndUpdate(
+          const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid, "players.player": playerid },
             {
               $set: {
@@ -644,7 +644,7 @@ const resolvers = {
           pubsub.publish(ROUNDTABLEPLAYER_UPDATED, {
             roundtableplayerupdated: updatedGame,
           });
-          return updateTheThings;
+          return updatedGame;
         } catch (error) {
           console.error(error);
         }
