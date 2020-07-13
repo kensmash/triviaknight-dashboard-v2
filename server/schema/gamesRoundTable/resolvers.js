@@ -588,7 +588,7 @@ const resolvers = {
                 "players.$.correct": roundresults.points === 0 ? false : true,
               },
               $inc: { "players.$.score": roundresults.points },
-              $push: {
+              $addToSet: {
                 "players.$.roundresults": {
                   ...roundresults,
                   answertype: "guess",
