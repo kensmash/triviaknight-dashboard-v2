@@ -9,6 +9,7 @@ const PlayerRoundTableSchema = new Schema(
     joined: { type: Boolean, default: false },
     declined: { type: Boolean, default: false },
     hasselectedcategories: { type: Boolean, default: false },
+    started: { type: Boolean, default: false },
     categories: [{ type: Schema.Types.ObjectId, ref: "category" }],
     answermode: { type: String, trim: true },
     answered: { type: Boolean, default: false },
