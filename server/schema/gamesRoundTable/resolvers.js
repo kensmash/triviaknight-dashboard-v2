@@ -75,7 +75,7 @@ const resolvers = {
           gameover: true,
         };
         if (updatedAt) {
-          query.updatedAt = { $lt: new Date(updatedAt) };
+          query.updatedAt = { $lt: new Date(Number(updatedAt)) };
         }
         return query;
       };
