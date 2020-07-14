@@ -303,7 +303,7 @@ const questQuestions = async (topictype, topicid) => {
 };
 
 //round table
-const roundTableGameQuestion = async (catid, previousquestions) => {
+const roundTableGameQuestion = async (catid, difficulty, previousquestions) => {
   const questionIds = previousquestions.map((question) =>
     mongoose.Types.ObjectId(question)
   );
@@ -314,7 +314,7 @@ const roundTableGameQuestion = async (catid, previousquestions) => {
         $match: {
           published: { $eq: true },
           category: { $eq: mongoose.Types.ObjectId(catid) },
-          difficulty: { $eq: "Normal" },
+          difficulty: { $eq: difficulty },
           type: { $eq: "Multiple Choice" },
           guessable: { $eq: true },
           _id: { $nin: questionIds },

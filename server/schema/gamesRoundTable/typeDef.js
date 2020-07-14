@@ -90,9 +90,11 @@ const typeDef = gql`
   }
 
   input createRoundTableGameInput {
+    title: String!
     pointsgoal: Int!
     categoriestype: String!
     categoriesperplayer: Int
+    difficulty: String!
     previousquestions: [ID]
   }
 
@@ -100,6 +102,7 @@ const typeDef = gql`
     gameid: ID!
     categories: [ID]
     categoriestype: String!
+    difficulty: String!
     previousquestions: [ID]
     categoriestypeid: [ID]
   }
@@ -155,6 +158,7 @@ const typeDef = gql`
     fetchdifferentroundtablequestion(
       gameid: ID!
       catid: ID!
+      difficulty: String!
       previousquestions: [ID]
     ): GameRoundTable
     setplayeranswermode(gameid: ID!, answermode: String!): GameRoundTable
@@ -192,6 +196,7 @@ const typeDef = gql`
     gamenextround(
       gameid: ID!
       category: ID!
+      difficulty: String!
       previousquestions: [ID!]
       nexthostid: ID!
     ): GameRoundTable

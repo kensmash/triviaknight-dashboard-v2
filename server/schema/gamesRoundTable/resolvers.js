@@ -109,6 +109,8 @@ const resolvers = {
         try {
           const newgame = new GameRoundTable({
             createdby: user.id,
+            title: input.title,
+            difficulty: input.difficulty,
             pointsgoal: input.pointsgoal,
             categoriestype: input.categoriestype,
             categoriesperplayer: input.categoriesperplayer,
@@ -343,6 +345,7 @@ const resolvers = {
 
         const currentquestion = await roundTableGameQuestion(
           firstCategory,
+          input.difficulty,
           input.previousquestions
         );
 
@@ -383,10 +386,15 @@ const resolvers = {
     ),
 
     fetchdifferentroundtablequestion: requiresAuth.createResolver(
-      async (parent, { gameid, catid, previousquestions }, { pubsub }) => {
+      async (
+        parent,
+        { gameid, catid, difficulty, previousquestions },
+        { pubsub }
+      ) => {
         try {
           const currentquestion = await roundTableGameQuestion(
             catid,
+            difficulty,
             previousquestions
           );
           const updatedGame = await GameRoundTable.findOneAndUpdate(
@@ -725,12 +733,13 @@ const resolvers = {
     gamenextround: requiresAuth.createResolver(
       async (
         _parent,
-        { gameid, category, previousquestions, nexthostid },
+        { gameid, category, difficulty, previousquestions, nexthostid },
         { pubsub }
       ) => {
         try {
           const currentquestion = await roundTableGameQuestion(
             category,
+            difficulty,
             previousquestions
           );
           await GameRoundTable.findOneAndUpdate(
