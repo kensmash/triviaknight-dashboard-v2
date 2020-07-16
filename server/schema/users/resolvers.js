@@ -378,6 +378,27 @@ const resolvers = {
       }
     ),
 
+    pushnotificationoptionseen: requiresAuth.createResolver(
+      async (parent, { acceptsnotifications }, { user }) => {
+        try {
+          const editedUser = await User.findOneAndUpdate(
+            { _id: user.id },
+            {
+              $set: {
+                hasSeenPushNotificationOptions: true,
+                "preferences.acceptsgamepushnotifications": acceptsnotifications,
+                "preferences.acceptsweeklypushnotifications": acceptsnotifications,
+              },
+            },
+            { new: true }
+          );
+          return editedUser;
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    ),
+
     updateavatarandcolor: requiresAuth.createResolver(
       async (parent, { avatar, color }, { user }) => {
         try {
