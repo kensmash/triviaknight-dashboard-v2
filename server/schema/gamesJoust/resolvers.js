@@ -96,8 +96,8 @@ const resolvers = {
     ),
 
     joustopponenthistory: requiresAuth.createResolver(
-      async (parent, { opponentid, limit, updatedAt }, { user }) => {
-        const queryBuilder = (opponentid, updatedAt) => {
+      async (_parent, { opponentid, limit, updatedAt }, { user }) => {
+        const queryBuilder = () => {
           const query = {
             $and: [
               { "players.player": user.id },
@@ -109,13 +109,12 @@ const resolvers = {
           if (updatedAt) {
             query.updatedAt = { $lt: new Date(Number(updatedAt)) };
           }
+
           return query;
         };
         try {
           let hasMore = false;
-          let endedgames = await GameRoundTable.find(
-            queryBuilder(user, updatedAt)
-          )
+          let endedgames = await GameJoust.find(queryBuilder(user, updatedAt))
             .sort({ updatedAt: -1 })
             .limit(limit + 1)
             .populate("players.player")
