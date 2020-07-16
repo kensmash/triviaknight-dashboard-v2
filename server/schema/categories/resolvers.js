@@ -121,12 +121,12 @@ const resolvers = {
         .populate("type");
     }),
 
-    category: requiresAuth.createResolver((parent, { id }) => {
+    category: async (parent, { id }) => {
       return Category.findOne({ _id: id })
         .populate("type")
         .populate("genres")
         .populate("followers");
-    }),
+    },
   },
 
   Mutation: {
