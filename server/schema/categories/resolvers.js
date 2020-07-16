@@ -18,7 +18,7 @@ const resolvers = {
         .populate("genres");
     }),
 
-    categoriesandgroups: requiresAuth.createResolver(async (parent, args) => {
+    categoriesandgroups: async (parent, args) => {
       const categories = await Category.find({
         published: { $eq: true },
         partycategory: { $eq: false },
@@ -34,7 +34,7 @@ const resolvers = {
           populate: { path: "type" },
         });
       return { categories, groups };
-    }),
+    },
 
     categoriespage: requiresAuth.createResolver(async (parent, { input }) => {
       const queryBuilder = (input) => {

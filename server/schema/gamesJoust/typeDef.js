@@ -59,7 +59,11 @@ const typeDef = gql`
   extend type Query {
     alljoustgames: [GameJoust]
     currentjoustgame(id: ID!): GameJoust
-    joustopponenthistory(opponentid: ID!): [GameJoust]
+    joustopponenthistory(
+      opponentid: ID!
+      limit: Int!
+      updatedAt: String
+    ): JoustEndedPaginationResponse
     joustgamepage(
       limit: Int!
       offset: Int!

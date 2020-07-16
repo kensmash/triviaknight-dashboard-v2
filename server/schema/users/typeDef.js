@@ -7,7 +7,9 @@ const typeDef = gql`
     updatedAt: String
     name: String
     email: String
+    access: String
     hasCompletedSignUpFlow: Boolean
+    hasSeenPushNotificationOptions: Boolean
     questionsAnswered: Int
     isAdmin: Boolean
     rank: String

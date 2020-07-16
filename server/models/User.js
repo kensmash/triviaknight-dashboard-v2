@@ -23,6 +23,7 @@ const userSchema = new Schema(
     isAdmin: { type: Boolean, default: false },
     overEighteen: { type: Boolean, default: false },
     hasCompletedSignUpFlow: { type: Boolean, default: false },
+    hasSeenPushNotificationOptions: { type: Boolean, default: false },
     roles: { type: [String] },
     banned: { type: Boolean, default: false },
     rank: { type: String, default: "Page" },

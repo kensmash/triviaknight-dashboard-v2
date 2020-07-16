@@ -96,25 +96,42 @@ const resolvers = {
     ),
 
     joustopponenthistory: requiresAuth.createResolver(
-      async (parent, { opponentid }, { user }) => {
-        try {
-          const joustgames = await GameJoust.find({
+      async (parent, { opponentid, limit, updatedAt }, { user }) => {
+        const queryBuilder = (opponentid, updatedAt) => {
+          const query = {
             $and: [
               { "players.player": user.id },
               { "players.player": opponentid },
             ],
             gameover: { $eq: true },
             timedout: { $eq: false },
-          })
-            .limit(30)
+          };
+          if (updatedAt) {
+            query.updatedAt = { $lt: new Date(Number(updatedAt)) };
+          }
+          return query;
+        };
+        try {
+          let hasMore = false;
+          let endedgames = await GameRoundTable.find(
+            queryBuilder(user, updatedAt)
+          )
             .sort({ updatedAt: -1 })
+            .limit(limit + 1)
             .populate("players.player")
             .populate({
               path: "category",
               populate: { path: "type" },
             });
-
-          return joustgames;
+          if (endedgames.length === limit + 1) {
+            //if there are more items than the limit, trim the last item from the array and set hasMore to true
+            endedgames.pop();
+            hasMore = true;
+          }
+          return {
+            items: endedgames,
+            hasMore,
+          };
         } catch (error) {
           console.error(error);
         }

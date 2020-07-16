@@ -50,9 +50,9 @@ const resolvers = {
       }
     ),
 
-    questgamestats: requiresAuth.createResolver((parent, { args }) => {
+    questgamestats: (parent, args) => {
       return questGameStats();
-    }),
+    },
 
     questlastweekwinners: requiresAuth.createResolver((parent, { args }) => {
       return questLastWeekWinners();

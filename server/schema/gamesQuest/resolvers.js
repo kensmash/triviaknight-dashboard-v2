@@ -75,10 +75,9 @@ const resolvers = {
       }
     ),
 
-    currentquesttopic: requiresAuth.createResolver(async (parent, { args }) => {
-      const results = await currentQuestTopic();
-      return results;
-    }),
+    currentquesttopic: (parent, args) => {
+      return currentQuestTopic();
+    },
 
     nextquesttopic: requiresAuth.createResolver(async (parent, { args }) => {
       const results = await nextQuestTopic();
