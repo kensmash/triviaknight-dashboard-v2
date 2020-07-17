@@ -30,63 +30,66 @@ const changeJoustTurn = async (gameid, player, opponent, expo) => {
       _id: opponent.player._id,
       "preferences.acceptsgamepushnotifications": true,
     });
-    const pushTokens = opponentInfo.expoPushTokens;
 
-    //push notifications
-    let messages = [];
-    let pushType = "JoustChallenge";
-    let pushTitle = `Joust Game vs. ${player.player.name}`;
-    let pushMessage = `${player.player.name} has challenged you to a Joust!`;
+    if (opponentInfo) {
+      const pushTokens = opponentInfo.expoPushTokens;
 
-    for (let pushToken of pushTokens) {
-      // Check that all your push tokens appear to be valid Expo push tokens
-      if (!Expo.isExpoPushToken(pushToken)) {
-        console.error(
-          `Push token ${pushToken} is not a valid Expo push token.`
-        );
-        continue;
-      }
-      messages.push({
-        to: pushToken,
-        sound: "default",
-        body: pushMessage,
-        data: {
-          title: pushTitle,
-          text: pushMessage,
-          type: pushType,
-          gameid: updatedGame._id,
-        },
-        channelId: "game-messages",
-      });
-    }
-    //send push notifications in chunks
-    let chunks = expo.chunkPushNotifications(messages);
-    //receive tickets in response
-    let tickets = [];
-    (async () => {
-      for (let chunk of chunks) {
-        try {
-          let ticketChunk = await expo.sendPushNotificationsAsync(chunk);
-          tickets.push(...ticketChunk);
-        } catch (error) {
-          console.error(error);
+      //push notifications
+      let messages = [];
+      let pushType = "JoustChallenge";
+      let pushTitle = `Joust Game vs. ${player.player.name}`;
+      let pushMessage = `${player.player.name} has challenged you to a Joust!`;
+
+      for (let pushToken of pushTokens) {
+        // Check that all your push tokens appear to be valid Expo push tokens
+        if (!Expo.isExpoPushToken(pushToken)) {
+          console.error(
+            `Push token ${pushToken} is not a valid Expo push token.`
+          );
+          continue;
         }
-        //add types
-        const ticketsWithTypes = tickets.map((ticket) => ({
-          type: "Joust Challenge",
-          ...ticket,
-        }));
-        //save tickets to database for later retrieval
-        for (let ticket of ticketsWithTypes) {
+        messages.push({
+          to: pushToken,
+          sound: "default",
+          body: pushMessage,
+          data: {
+            title: pushTitle,
+            text: pushMessage,
+            type: pushType,
+            gameid: updatedGame._id,
+          },
+          channelId: "game-messages",
+        });
+      }
+      //send push notifications in chunks
+      let chunks = expo.chunkPushNotifications(messages);
+      //receive tickets in response
+      let tickets = [];
+      (async () => {
+        for (let chunk of chunks) {
           try {
-            const newticket = new ExpoPushTicket(ticket);
-            await newticket.save();
+            let ticketChunk = await expo.sendPushNotificationsAsync(chunk);
+            tickets.push(...ticketChunk);
           } catch (error) {
             console.error(error);
           }
+          //add types
+          const ticketsWithTypes = tickets.map((ticket) => ({
+            type: "Joust Challenge",
+            ...ticket,
+          }));
+          //save tickets to database for later retrieval
+          for (let ticket of ticketsWithTypes) {
+            try {
+              const newticket = new ExpoPushTicket(ticket);
+              await newticket.save();
+            } catch (error) {
+              console.error(error);
+            }
+          }
         }
-      }
-    })();
+      })();
+    }
 
     return updatedGame;
   } catch (error) {
@@ -163,57 +166,60 @@ const endJoustGame = async (gameid, player, opponent, expo) => {
       _id: opponent.player._id,
       "preferences.acceptsgamepushnotifications": true,
     });
-    const pushTokens = opponentInfo.expoPushTokens;
 
-    for (let pushToken of pushTokens) {
-      // Check that all your push tokens appear to be valid Expo push tokens
-      if (!Expo.isExpoPushToken(pushToken)) {
-        console.error(
-          `Push token ${pushToken} is not a valid Expo push token.`
-        );
-        continue;
-      }
-      messages.push({
-        to: pushToken,
-        sound: "default",
-        body: pushMessage,
-        data: {
-          title: pushTitle,
-          text: pushMessage,
-          type: pushType,
-          gameid: endedGame._id,
-        },
-        channelId: "game-messages",
-      });
-    }
-    //send push notifications in chunks
-    let chunks = expo.chunkPushNotifications(messages);
-    //receive tickets in response
-    let tickets = [];
-    (async () => {
-      for (let chunk of chunks) {
-        try {
-          let ticketChunk = await expo.sendPushNotificationsAsync(chunk);
-          tickets.push(...ticketChunk);
-        } catch (error) {
-          console.error(error);
+    if (opponentInfo) {
+      const pushTokens = opponentInfo.expoPushTokens;
+
+      for (let pushToken of pushTokens) {
+        // Check that all your push tokens appear to be valid Expo push tokens
+        if (!Expo.isExpoPushToken(pushToken)) {
+          console.error(
+            `Push token ${pushToken} is not a valid Expo push token.`
+          );
+          continue;
         }
-        //add types
-        const ticketsWithTypes = tickets.map((ticket) => ({
-          type: "Joust Ended",
-          ...ticket,
-        }));
-        //save tickets to database for later retrieval
-        for (let ticket of ticketsWithTypes) {
+        messages.push({
+          to: pushToken,
+          sound: "default",
+          body: pushMessage,
+          data: {
+            title: pushTitle,
+            text: pushMessage,
+            type: pushType,
+            gameid: endedGame._id,
+          },
+          channelId: "game-messages",
+        });
+      }
+      //send push notifications in chunks
+      let chunks = expo.chunkPushNotifications(messages);
+      //receive tickets in response
+      let tickets = [];
+      (async () => {
+        for (let chunk of chunks) {
           try {
-            const newticket = new ExpoPushTicket(ticket);
-            newticket.save();
+            let ticketChunk = await expo.sendPushNotificationsAsync(chunk);
+            tickets.push(...ticketChunk);
           } catch (error) {
             console.error(error);
           }
+          //add types
+          const ticketsWithTypes = tickets.map((ticket) => ({
+            type: "Joust Ended",
+            ...ticket,
+          }));
+          //save tickets to database for later retrieval
+          for (let ticket of ticketsWithTypes) {
+            try {
+              const newticket = new ExpoPushTicket(ticket);
+              newticket.save();
+            } catch (error) {
+              console.error(error);
+            }
+          }
         }
-      }
-    })();
+      })();
+    }
 
     return endedGame;
   } catch (error) {
