@@ -46,10 +46,9 @@ const trySignup = async (
 
   try {
     const existingName = await User.findOne({
-      name: { $regex: new RegExp("^" + name + "$", "i"), $options: "i" },
+      name: { $regex: new RegExp("^" + name + "$", "i") },
     });
     if (existingName) {
-      console.log("Sorry, that name is already in use.");
       return {
         error: {
           field: "name",
