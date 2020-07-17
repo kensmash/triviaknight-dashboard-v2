@@ -237,18 +237,36 @@ const resolvers = {
     ),
 
     username: requiresAuth.createResolver(
-      async (parent, { name, access, cursor }, { user }) => {
-        try {
-          const paginatedusers = await User.find({
+      async (parent, { name, access, limit, updatedAt }, { user }) => {
+        const queryBuilder = (user, name, access, updatedAt) => {
+          const query = {
             _id: { $ne: user.id },
             $text: { $search: name },
             roles: { $nin: ["reviewer"] },
-            access: { $eq: access },
             blockedusers: { $nin: [user.id] },
-          });
+          };
+          if (access !== "any") {
+            query.access = { $eq: access };
+          }
+          if (updatedAt) {
+            query.updatedAt = { $lt: new Date(Number(updatedAt)) };
+          }
+          return query;
+        };
+        try {
+          let hasMore = false;
+          let paginatedusers = await User.find(
+            queryBuilder(user, name, access, updatedAt)
+          )
+            .sort({ updatedAt: -1 })
+            .limit(limit + 1);
 
-          //TODO: make user cursor pagination work here
-          return { items: paginatedusers, hasMore: false };
+          if (paginatedusers.length === limit + 1) {
+            //if there are more items than the limit, trim the last item from the array and set hasMore to true
+            paginatedusers.pop();
+            hasMore = true;
+          }
+          return { items: paginatedusers, hasMore };
         } catch (error) {
           console.error(error);
         }

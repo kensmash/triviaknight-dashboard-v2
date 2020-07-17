@@ -122,7 +122,12 @@ const typeDef = gql`
     allusers: [User]!
     questionsanswered: Int!
     challengeusers: [User]!
-    username(name: String, access: String, cursor: ID): UserNameSearchResponse
+    username(
+      name: String
+      access: String!
+      limit: Int!
+      updatedAt: String
+    ): UserNameSearchResponse
     userspage(offset: Int!, limit: Int!, name: String): UserPageResponse
   }
 

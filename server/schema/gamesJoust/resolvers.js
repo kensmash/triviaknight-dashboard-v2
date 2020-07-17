@@ -97,7 +97,7 @@ const resolvers = {
 
     joustopponenthistory: requiresAuth.createResolver(
       async (_parent, { opponentid, limit, updatedAt }, { user }) => {
-        const queryBuilder = () => {
+        const queryBuilder = (user, opponentid, updatedAt) => {
           const query = {
             $and: [
               { "players.player": user.id },
@@ -114,7 +114,9 @@ const resolvers = {
         };
         try {
           let hasMore = false;
-          let endedgames = await GameJoust.find(queryBuilder(user, updatedAt))
+          let endedgames = await GameJoust.find(
+            queryBuilder(user, opponentid, updatedAt)
+          )
             .sort({ updatedAt: -1 })
             .limit(limit + 1)
             .populate("players.player")
