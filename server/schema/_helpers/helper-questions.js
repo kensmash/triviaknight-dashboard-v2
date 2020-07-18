@@ -18,6 +18,19 @@ const soloQuestions = async (cattype) => {
       { $sample: { size: 7 } },
     ]);
 
+    if (categories.length < 7) {
+      categories = await Category.aggregate([
+        {
+          $match: {
+            published: { $eq: true },
+            partycategory: { $eq: false },
+            type: { $eq: mongoose.Types.ObjectId(cattype) },
+          },
+        },
+        { $sample: { size: 7 } },
+      ]);
+    }
+
     //for each category we generated, get a random question
     const firstQuestions = await Promise.all(
       categories.slice(0, 5).map(async (category) => {
