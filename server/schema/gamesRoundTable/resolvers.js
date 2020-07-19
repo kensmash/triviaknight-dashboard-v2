@@ -28,11 +28,12 @@ const resolvers = {
         try {
           const allroundtablegames = await GameRoundTable.find({
             "players.player": user.id,
-            gameover: false,
           })
             .populate("createdby")
             .populate("players.player")
-            .populate("currentcategory");
+            .populate("currentcategory")
+            .sort({ updatedAt: -1 })
+            .limit(12);
           return allroundtablegames;
         } catch (error) {
           console.error(error);

@@ -21,20 +21,6 @@ const JOUST_UPDATE = "JOUST_UPDATE";
 
 const resolvers = {
   Query: {
-    alljoustgames: async (parent, args, { user }) => {
-      try {
-        const alljoustgames = await GameJoust.find({
-          "players.player": user.id,
-        })
-          .populate("createdby")
-          .populate("players.player")
-          .populate("currentcategory");
-        return alljoustgames;
-      } catch (error) {
-        console.error(error);
-      }
-    },
-
     joustgamepage: requiresAuth.createResolver(
       async (parent, { offset, limit, players, gameover }) => {
         const queryBuilder = (players, gameover) => {
