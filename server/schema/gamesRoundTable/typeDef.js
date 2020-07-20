@@ -75,8 +75,6 @@ const typeDef = gql`
     answerrecorded: Boolean
     answer: String
     score: Int
-    host: Boolean
-    started: Boolean
   }
 
   input RoundTableRoundResultsInput {
