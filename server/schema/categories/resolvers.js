@@ -15,7 +15,8 @@ const resolvers = {
       return Category.find({})
         .sort({ createdAt: -1 })
         .populate("type")
-        .populate("genres");
+        .populate("genres")
+        .populate("followers");
     }),
 
     categoriesandgroups: async (parent, args) => {
@@ -99,17 +100,6 @@ const resolvers = {
         console.error(error);
       }
     },
-
-    partycategories: requiresAuth.createResolver(
-      (parent, { args }, { user }) => {
-        return Category.find({
-          published: { $eq: true },
-        })
-          .sort({ name: 1 })
-          .populate("type")
-          .populate("genres");
-      }
-    ),
 
     categorysearch: requiresAuth.createResolver((parent, { name }) => {
       return Category.find({

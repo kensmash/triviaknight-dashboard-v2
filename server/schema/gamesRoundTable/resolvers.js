@@ -13,8 +13,6 @@ const ROUNDTABLEPLAYER_SELECTEDCATEGORIES =
   "ROUNDTABLEPLAYER_SELECTEDCATEGORIES";
 const PLAYER_REMOVED = "PLAYER_REMOVED";
 const ROUNDTABLEGAME_STARTED = "ROUNDTABLEGAME_STARTED";
-const ROUNDTABLEPLAYER_DIFFERENTQUESTIONFETCHED =
-  "ROUNDTABLEPLAYER_DIFFERENTQUESTIONFETCHED";
 const ROUNDTABLEGAME_UPDATED = "ROUNDTABLEGAME_UPDATED";
 const ROUNDTABLEGAME_SHOWQUESTION = "ROUNDTABLEGAME_SHOWQUESTION";
 const ROUNDTABLEPLAYER_UPDATED = "ROUNDTABLEPLAYER_UPDATED";
@@ -74,6 +72,7 @@ const resolvers = {
         const query = {
           "players.player": user.id,
           gameover: true,
+          cancelled: false,
         };
         if (updatedAt) {
           query.updatedAt = { $lt: new Date(Number(updatedAt)) };
@@ -172,8 +171,8 @@ const resolvers = {
             { new: true }
           ).populate("players.player");
           //subscription
-          pubsub.publish(PLAYER_REMOVED, {
-            playerremoved: updatedGame,
+          pubsub.publish(ROUNDTABLEPLAYER_UPDATED, {
+            roundtableplayerupdated: updatedGame,
           });
           return updatedGame;
         } catch (error) {
@@ -863,10 +862,10 @@ const resolvers = {
               $set: { cancelled: true, gameover: true },
             },
             { new: true }
-          ).populate("createdby");
+          ).populate("players.player");
           //subscription
-          pubsub.publish(ROUNDTABLEGAME_CANCELLED, {
-            roundtablegamecancelled: updatedGame,
+          pubsub.publish(ROUNDTABLEGAME_OVER, {
+            roundtablegameover: updatedGame,
           });
           return updatedGame;
         } catch (error) {
