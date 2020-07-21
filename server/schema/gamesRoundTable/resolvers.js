@@ -238,6 +238,25 @@ const resolvers = {
       }
     ),
 
+    playerleavegame: requiresAuth.createResolver(
+      async (parent, { gameid }, { user, pubsub }) => {
+        try {
+          const updatedGame = await GameRoundTable.findOneAndUpdate(
+            { _id: gameid, "players.player": user.id },
+            { $set: { "players.$.leftgame": true } },
+            { new: true }
+          ).populate("players.player");
+          //subscription
+          pubsub.publish(ROUNDTABLEPLAYER_UPDATED, {
+            roundtableplayerupdated: updatedGame,
+          });
+          return updatedGame;
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    ),
+
     addgamecategories: requiresAuth.createResolver(
       async (parent, { gameid, categories }, { user, pubsub }) => {
         try {

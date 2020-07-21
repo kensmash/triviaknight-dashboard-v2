@@ -37,6 +37,7 @@ const typeDef = gql`
     host: Boolean
     joined: Boolean
     declined: Boolean
+    leftgame: Boolean
     hasselectedcategories: Boolean
     started: Boolean
     categories: [Category]
@@ -150,6 +151,7 @@ const typeDef = gql`
       players: [RoundTablePlayerInput!]
     ): GameRoundTable
     removeplayer(gameid: ID!, playerid: ID!): GameRoundTable
+    playerleavegame(gameid: ID!): GameRoundTable
     playerstarted(gameid: ID!): GameRoundTable
     joinroundtablegame(gameid: ID!): GameRoundTable
     declineroundtablegame(gameid: ID!): GameRoundTable

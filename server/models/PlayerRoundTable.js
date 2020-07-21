@@ -8,6 +8,7 @@ const PlayerRoundTableSchema = new Schema(
     host: { type: Boolean, default: false },
     joined: { type: Boolean, default: false },
     declined: { type: Boolean, default: false },
+    leftgame: { type: Boolean, default: false },
     hasselectedcategories: { type: Boolean, default: false },
     started: { type: Boolean, default: false },
     categories: [{ type: Schema.Types.ObjectId, ref: "category" }],
