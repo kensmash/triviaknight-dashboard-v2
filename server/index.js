@@ -16,23 +16,11 @@ const keys = require("./config/keys");
 //schema
 const schema = require("./schema/schema");
 //scheduled jobs
-const { newCategories, updatedCategories } = require("./jobs/jobs-categories");
-const {
-  weeklyQuestTopicNotification,
-  weeklyHighScoreNotification,
-  changeQuestTopic,
-} = require("./jobs/jobs-quest");
-const {
-  deleteDeclinedJoustGames,
-  timeOutJoustGames,
-  deleteTimedOutJoustGames,
-  runningOutOfTime,
-} = require("./jobs/jobs-joustgames");
-const {
-  checkPushReceipts,
-  deletePushTickets,
-  pushTicketErrorCheck,
-} = require("./jobs/jobs-pushnotifications");
+require("./jobs/jobs-categories");
+require("./jobs/jobs-quest");
+require("./jobs/jobs-joustgames");
+require("./jobs/jobs-roundtablegames");
+require("./jobs/jobs-pushnotifications");
 
 mongoose.connect(keys.mongoURI, {
   useUnifiedTopology: true,
