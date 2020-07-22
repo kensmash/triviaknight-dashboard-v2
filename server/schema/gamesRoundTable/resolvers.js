@@ -139,7 +139,7 @@ const resolvers = {
     ),
 
     inviteplayers: requiresAuth.createResolver(
-      async (parent, { gameid, players }, { user, pubsub }) => {
+      async (parent, { gameid, players }, { pubsub }) => {
         const playerids = players.map((player) => {
           return player.player;
         });
@@ -857,7 +857,7 @@ const resolvers = {
       async (parent, { gameid }, { pubsub }) => {
         try {
           const updatedGame = await GameRoundTable.findOneAndUpdate(
-            { _id: gameid, "players.player": playerid },
+            { _id: gameid },
             {
               $set: { tied: true, gameover: true },
             },
