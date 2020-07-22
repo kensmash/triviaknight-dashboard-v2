@@ -203,7 +203,8 @@ const typeDef = gql`
       nexthostid: ID!
     ): GameRoundTable
     winroundtablegame(gameid: ID!, playerid: ID!): GameRoundTable
-    tieroundtablegame(gameid: ID!, playerids: [ID!]): GameRoundTable
+    tieroundtableplayer(gameid: ID!, playerid: ID!): GameRoundTable
+    tieroundtablegame(gameid: ID!): GameRoundTable
     roundtableresultsseen(gameid: ID!): GameRoundTable
     expireroundtablegame(gameid: ID!): GameRoundTable
     cancelroundtablegame(gameid: ID!): GameRoundTable

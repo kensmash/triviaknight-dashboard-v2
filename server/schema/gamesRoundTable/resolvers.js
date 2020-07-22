@@ -836,13 +836,30 @@ const resolvers = {
       }
     ),
 
-    tieroundtablegame: requiresAuth.createResolver(
-      async (parent, { gameid, playerids }, { pubsub }) => {
+    tieroundtableplayer: requiresAuth.createResolver(
+      async (parent, { gameid, playerid }) => {
         try {
           const updatedGame = await GameRoundTable.findOneAndUpdate(
-            { _id: gameid, "players.player": playerids },
+            { _id: gameid, "players.player": playerid },
             {
-              $set: { "players.$.tied": true, tied: true, gameover: true },
+              $set: { "players.$.tied": true },
+            },
+            { new: true }
+          );
+          return updatedGame;
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    ),
+
+    tieroundtablegame: requiresAuth.createResolver(
+      async (parent, { gameid }, { pubsub }) => {
+        try {
+          const updatedGame = await GameRoundTable.findOneAndUpdate(
+            { _id: gameid, "players.player": playerid },
+            {
+              $set: { tied: true, gameover: true },
             },
             { new: true }
           ).populate("players.player");
