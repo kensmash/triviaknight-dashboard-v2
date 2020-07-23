@@ -11,6 +11,7 @@ const ROUNDTABLEPLAYER_JOINED = "ROUNDTABLEPLAYER_JOINED";
 const CATEGORY_ADDED = "CATEGORY_ADDED";
 const ROUNDTABLEPLAYER_SELECTEDCATEGORIES =
   "ROUNDTABLEPLAYER_SELECTEDCATEGORIES";
+const PLAYER_LEFT = "PLAYER_LEFT";
 const PLAYER_REMOVED = "PLAYER_REMOVED";
 const ROUNDTABLEGAME_STARTED = "ROUNDTABLEGAME_STARTED";
 const ROUNDTABLEGAME_UPDATED = "ROUNDTABLEGAME_UPDATED";
@@ -171,8 +172,8 @@ const resolvers = {
             { new: true }
           ).populate("players.player");
           //subscription
-          pubsub.publish(ROUNDTABLEPLAYER_UPDATED, {
-            roundtableplayerupdated: updatedGame,
+          pubsub.publish(PLAYER_REMOVED, {
+            playerremoved: updatedGame,
           });
           return updatedGame;
         } catch (error) {
@@ -783,7 +784,8 @@ const resolvers = {
                 selectedquestions: currentquestion,
               },
               $inc: { currentround: 1 },
-            }
+            },
+            { new: true }
           );
 
           const updatedGameHost = await GameRoundTable.findOneAndUpdate(
@@ -947,6 +949,15 @@ const resolvers = {
           pubsub.asyncIterator(ROUNDTABLEPLAYER_SELECTEDCATEGORIES),
         (payload, variables) => {
           return payload.playerselectedcategories._id === variables.gameid;
+        }
+      ),
+    },
+
+    playerleft: {
+      subscribe: withFilter(
+        (_, __, { pubsub }) => pubsub.asyncIterator(PLAYER_LEFT),
+        (payload, variables) => {
+          return payload.playerleft._id === variables.gameid;
         }
       ),
     },

@@ -64,7 +64,7 @@ const typeDef = gql`
   extend type Query {
     solotopics: [CategoryType]
     allsologames: [GameSolo]
-    newsologame: NewSoloGameResponse
+    solocatsandquestions(type: ID!): NewSoloGameResponse
     currentsologame(id: ID!): GameSolo
   }
 

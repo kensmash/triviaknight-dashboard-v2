@@ -3,7 +3,6 @@ const User = require("../../models/User");
 const CategoryType = require("../../models/CategoryType");
 //auth helpers
 const { requiresAuth } = require("../_helpers/helper-permissions");
-const { userCategoriesQuestions } = require("../_helpers/helper-questions");
 //questions helper
 const {
   soloQuestions,
@@ -37,8 +36,8 @@ const resolvers = {
       }
     ),
 
-    newsologame: requiresAuth.createResolver((parent, { args }, { user }) => {
-      return userCategoriesQuestions(user);
+    solocatsandquestions: requiresAuth.createResolver((parent, { type }) => {
+      return soloQuestions(type);
     }),
 
     currentsologame: requiresAuth.createResolver(

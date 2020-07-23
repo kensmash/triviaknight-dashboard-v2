@@ -221,6 +221,7 @@ const typeDef = gql`
     roundtablegameupdated(gameid: ID!): GameRoundTable
     roundtableplayerupdated(gameid: ID!): GameRoundTable
     roundtablegameover(gameid: ID!): GameRoundTable
+    playerleft(gameid: ID!): GameRoundTable
     playerremoved(gameid: ID!): GameRoundTable
     roundtablegamecancelled(gameid: ID!): GameRoundTable
   }
