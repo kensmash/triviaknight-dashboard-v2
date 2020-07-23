@@ -36,9 +36,9 @@ const resolvers = {
       }
     ),
 
-    solocatsandquestions: requiresAuth.createResolver((parent, { type }) => {
+    solocatsandquestions: (_parent, { type }) => {
       return soloQuestions(type);
-    }),
+    },
 
     currentsologame: requiresAuth.createResolver(
       async (parent, { id }, { user }) => {
