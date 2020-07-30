@@ -28,6 +28,7 @@ mongoose.connect(keys.mongoURI, {
   useNewUrlParser: true,
   useCreateIndex: true,
   serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
+  dbName: keys.databaseName,
 });
 
 const expo = new Expo();

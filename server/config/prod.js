@@ -1,6 +1,7 @@
 // production keys
 module.exports = {
   mongoURI: process.env.MONGOATLAS_URI,
+  databaseName: process.env.DATABASE_NAME,
   //for JWT creation
   secret: process.env.JWT_SECRET,
   //Nodemailer
