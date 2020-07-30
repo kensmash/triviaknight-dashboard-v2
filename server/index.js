@@ -27,6 +27,7 @@ mongoose.connect(keys.mongoURI, {
   useFindAndModify: false,
   useNewUrlParser: true,
   useCreateIndex: true,
+  serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
 });
 
 const expo = new Expo();
