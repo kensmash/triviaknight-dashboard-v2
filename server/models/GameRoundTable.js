@@ -8,9 +8,8 @@ const gameRoundTableSchema = new Schema(
     title: { type: String },
     createdby: { type: Schema.Types.ObjectId, ref: "user", required: true },
     categoriestype: { type: String, default: "player" },
-    categoriestypename: { type: String },
+    categoriestypename: { type: String, default: "Players’ Categories" },
     categoriestypeid: { type: Schema.Types.ObjectId },
-    topic: { type: String },
     difficulty: { type: String, default: "Normal" },
     players: [PlayerRoundTableSchema],
     categories: [

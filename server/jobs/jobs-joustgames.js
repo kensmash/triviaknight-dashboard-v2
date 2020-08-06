@@ -39,21 +39,19 @@ const timeOutJoustGames = schedule.scheduleJob("0 0 * * *", () => {
       timedout: false,
     }, // conditions
     {
-      timedout: true,
-      gameover: true,
+      $set: { timedout: true, gameover: true },
     }
   );
 });
 
 //delete timed out games
-//TODO: just mark the
 const deleteTimedOutJoustGames = schedule.scheduleJob(
   "0 0 * * *", // run everyday at midnight
   () => {
     console.log("joust game delete timed out function called");
     GameJoust.deleteMany(
       {
-        timedout: { $eq: true },
+        timedout: true,
       },
       function (err) {
         if (err) return console.error(err);
@@ -99,7 +97,7 @@ const runningOutOfTime = schedule.scheduleJob(
             },
           }, // conditions
           {
-            timedoutwarningsent: true,
+            $set: { timedoutwarningsent: true },
           }
         );
         let pushTokens = [];

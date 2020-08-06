@@ -101,7 +101,7 @@ const newCategories = schedule.scheduleJob(
           },
         }, // conditions
         {
-          newpushsent: true,
+          $set: { newpushsent: true },
         }
       );
     }
@@ -202,7 +202,7 @@ const updatedCategories = schedule.scheduleJob(
           },
         }, // conditions
         {
-          updatedpushsent: true,
+          $set: { updatedpushsent: true },
         }
       );
     }

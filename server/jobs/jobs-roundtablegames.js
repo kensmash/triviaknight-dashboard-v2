@@ -36,8 +36,7 @@ const expireRoundTableGames = schedule.scheduleJob("0 0 * * *", () => {
       expired: false,
     }, // conditions
     {
-      expired: true,
-      gameover: true,
+      $set: { expired: true, gameover: true },
     }
   );
 });
