@@ -25,18 +25,19 @@ const deleteDeclinedJoustGames = schedule.scheduleJob(
   }
 );
 
-//time out joust games that are haven't been played in 10 days
+//time out joust games three days after time out warning has been sent
 const timeOutJoustGames = schedule.scheduleJob("0 0 * * *", () => {
   console.log("joust game time out function called");
-  var tenDaysAgo = new Date();
-  tenDaysAgo.setDate(tenDaysAgo.getDate() - 10);
+  var threeDaysAgo = new Date();
+  threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
   GameJoust.updateMany(
     {
       updatedAt: {
-        $lte: tenDaysAgo,
+        $lte: threeDaysAgo,
       },
       gameover: false,
       timedout: false,
+      timedoutwarningsent: true,
     }, // conditions
     {
       $set: { timedout: true, gameover: true },
@@ -74,6 +75,21 @@ const runningOutOfTime = schedule.scheduleJob(
       gameover: false,
       timedoutwarningsent: false,
     }).populate("players.player");
+
+    //update the games so we don't send push notifications every day
+    await GameJoust.updateMany(
+      {
+        gameover: false,
+        timedoutwarningsent: false,
+        updatedAt: {
+          $lte: sevenDaysAgo,
+        },
+      }, // conditions
+      {
+        $set: { timedoutwarningsent: true },
+      }
+    );
+
     if (games.length) {
       //get players whose turn it is
       const playerids = games.map((game) => {
@@ -88,18 +104,6 @@ const runningOutOfTime = schedule.scheduleJob(
       });
       //get their expoPushTokens
       if (users.length) {
-        //update the games so we don't send push notifications every day
-        await GameJoust.updateMany(
-          {
-            gameover: false,
-            updatedAt: {
-              $lte: sevenDaysAgo,
-            },
-          }, // conditions
-          {
-            $set: { timedoutwarningsent: true },
-          }
-        );
         let pushTokens = [];
         users.forEach(
           (user) => (pushTokens = pushTokens.concat(user.expoPushTokens))
