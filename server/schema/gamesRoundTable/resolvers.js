@@ -59,8 +59,9 @@ const resolvers = {
             })
             .populate("currentquestion")
             .populate("selectedcategories")
-            .populate("selectedquestions");
-
+            .populate("selectedquestions")
+            .populate("gameroundresults.host")
+            .populate("gameroundresults.players.player");
           return currentroundtablegame;
         } catch (error) {
           console.error(error);
@@ -126,6 +127,7 @@ const resolvers = {
             selectedquestions: input.previousquestions
               ? input.previousquestions
               : [],
+            gameroundresults: [],
           });
           const roundTableGame = await newgame.save();
           const newRoundTableGame = await GameRoundTable.findOne({
@@ -809,14 +811,15 @@ const resolvers = {
           )
             .populate("createdby")
             .populate("players.player")
-
             .populate({
               path: "currentcategory",
               populate: { path: "type" },
             })
             .populate("selectedcategories")
             .populate("currentquestion")
-            .populate("selectedquestions");
+            .populate("selectedquestions")
+            .populate("gameroundresults.host")
+            .populate("gameroundresults.players.player");
           //sub
           pubsub.publish(ROUNDTABLEGAME_UPDATED, {
             roundtablegameupdated: updatedGameHost,

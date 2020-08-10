@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
+const RoundTableGameRoundResultsSchema = require("./RoundTableGameRoundResults");
 const PlayerRoundTableSchema = require("./PlayerRoundTable");
 
 const gameRoundTableSchema = new Schema(
@@ -30,6 +31,7 @@ const gameRoundTableSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "question",
     },
+    gameroundresults: [RoundTableGameRoundResultsSchema],
     showquestiontoplayers: {
       type: Boolean,
       default: false,
