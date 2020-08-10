@@ -90,6 +90,7 @@ const runningOutOfTime = schedule.scheduleJob(
       }
     );
 
+    //send appropriate push notification reminder
     if (games.length) {
       //get players whose turn it is
       const playerids = games.map((game) => {

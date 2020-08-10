@@ -200,7 +200,6 @@ const questionStats = async (userId) => {
       { $match: { "stats.player": new mongoose.Types.ObjectId(userId) } },
       //get a document for each round result
       { $unwind: "$stats.roundresults" },
-      //keep type, figure out questions answered and number correct per game type
       {
         $project: {
           _id: 1,

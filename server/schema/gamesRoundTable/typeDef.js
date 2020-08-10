@@ -13,6 +13,7 @@ const typeDef = gql`
     pointsgoal: Int
     categoriesperplayer: Int
     currentround: Int
+    gameroundresults: [GameRoundTableRoundResults]
     currentroundhost: ID!
     tiebreakerround: Int
     categories: [Category]
@@ -65,6 +66,22 @@ const typeDef = gql`
     points: Int
   }
 
+  type GameRoundTableRoundResults {
+    category: String!
+    question: String!
+    host: User!
+    players: [PlayerRoundTableResult]
+  }
+
+  type PlayerRoundTableResult {
+    player: User!
+    answer: String
+    answertype: String
+    correct: Boolean
+    points: Int
+    score: Int
+  }
+
   input RoundTablePlayerInput {
     player: ID
     joined: Boolean
@@ -106,6 +123,22 @@ const typeDef = gql`
     difficulty: String!
     previousquestions: [ID]
     categoriestypeid: [ID]
+  }
+
+  input GameRoundResultsInput {
+    category: String!
+    question: String!
+    host: ID!
+    players: [GameRoundResultsPlayerInput]!
+  }
+
+  input GameRoundResultsPlayerInput {
+    player: ID!
+    answer: String!
+    answertype: String
+    correct: Boolean!
+    points: Int!
+    score: Int!
   }
 
   type QuestionSelectedSubscriptionResponse {
@@ -201,6 +234,7 @@ const typeDef = gql`
       difficulty: String!
       previousquestions: [ID!]
       nexthostid: ID!
+      gameroundresults: GameRoundResultsInput!
     ): GameRoundTable
     winroundtablegame(gameid: ID!, playerid: ID!): GameRoundTable
     tieroundtableplayer(gameid: ID!, playerid: ID!): GameRoundTable

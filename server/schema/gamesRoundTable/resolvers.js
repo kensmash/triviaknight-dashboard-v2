@@ -428,6 +428,7 @@ const resolvers = {
           )
             .populate("currentquestion")
             .populate("players.player")
+
             .populate({
               path: "currentcategory",
               populate: { path: "type" },
@@ -480,7 +481,6 @@ const resolvers = {
             },
             { new: true }
           ).populate("players.player");
-
           return updatedGame;
         } catch (error) {
           console.error(error);
@@ -753,7 +753,14 @@ const resolvers = {
     gamenextround: requiresAuth.createResolver(
       async (
         _parent,
-        { gameid, category, difficulty, previousquestions, nexthostid },
+        {
+          gameid,
+          category,
+          difficulty,
+          previousquestions,
+          nexthostid,
+          gameroundresults,
+        },
         { pubsub }
       ) => {
         try {
@@ -783,6 +790,9 @@ const resolvers = {
                 selectedcategories: category,
                 selectedquestions: currentquestion,
               },
+              $addToSet: {
+                gameroundresults: gameroundresults,
+              },
               $inc: { currentround: 1 },
             },
             { new: true }
@@ -799,6 +809,7 @@ const resolvers = {
           )
             .populate("createdby")
             .populate("players.player")
+
             .populate({
               path: "currentcategory",
               populate: { path: "type" },
