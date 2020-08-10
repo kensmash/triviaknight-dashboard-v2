@@ -49,6 +49,7 @@ const resolvers = {
           })
             .populate("createdby")
             .populate("players.player")
+            .populate("players.categories")
             .populate({
               path: "categories",
               populate: { path: "type" },
@@ -172,7 +173,9 @@ const resolvers = {
             { _id: gameid, "players.player": playerid },
             { $pull: { players: { player: playerid } } },
             { new: true }
-          ).populate("players.player");
+          )
+            .populate("players.player")
+            .populate("players.categories");
           //subscription
           pubsub.publish(PLAYER_REMOVED, {
             playerremoved: updatedGame,
@@ -248,7 +251,9 @@ const resolvers = {
             { _id: gameid, "players.player": user.id },
             { $set: { "players.$.leftgame": true } },
             { new: true }
-          ).populate("players.player");
+          )
+            .populate("players.player")
+            .populate("players.categories");
           //subscription
           pubsub.publish(ROUNDTABLEPLAYER_UPDATED, {
             roundtableplayerupdated: updatedGame,
@@ -276,7 +281,8 @@ const resolvers = {
               path: "categories",
               populate: { path: "type" },
             })
-            .populate("players.player");
+            .populate("players.player")
+            .populate("players.categories");
 
           pubsub.publish(CATEGORY_ADDED, {
             gamecategoryadded: updatedGame,
@@ -387,6 +393,7 @@ const resolvers = {
           )
             .populate("createdby")
             .populate("players.player")
+            .populate("players.categories")
             .populate({
               path: "currentcategory",
               populate: { path: "type" },
@@ -455,7 +462,9 @@ const resolvers = {
             { _id: gameid, "players.player": user.id },
             { $set: { "players.$.answermode": answermode } },
             { new: true }
-          ).populate("players.player");
+          )
+            .populate("players.player")
+            .populate("players.categories");
           //sub
           pubsub.publish(ROUNDTABLEPLAYER_UPDATED, {
             roundtableplayerupdated: updatedGame,
@@ -482,7 +491,9 @@ const resolvers = {
               },
             },
             { new: true }
-          ).populate("players.player");
+          )
+            .populate("players.player")
+            .populate("players.categories");
           return updatedGame;
         } catch (error) {
           console.error(error);
@@ -505,7 +516,9 @@ const resolvers = {
               },
             },
             { new: true }
-          ).populate("players.player");
+          )
+            .populate("players.player")
+            .populate("players.categories");
           //sub
           pubsub.publish(ROUNDTABLEPLAYER_UPDATED, {
             roundtableplayerupdated: updatedGame,
@@ -529,7 +542,9 @@ const resolvers = {
               },
             },
             { new: true }
-          ).populate("players.player");
+          )
+            .populate("players.player")
+            .populate("players.categories");
           //sub
           pubsub.publish(ROUNDTABLEPLAYER_UPDATED, {
             roundtableplayerupdated: updatedGame,
@@ -562,7 +577,9 @@ const resolvers = {
               },
             },
             { new: true }
-          ).populate("players.player");
+          )
+            .populate("players.player")
+            .populate("players.categories");
           //sub
           pubsub.publish(ROUNDTABLEPLAYER_UPDATED, {
             roundtableplayerupdated: updatedGame,
@@ -595,7 +612,9 @@ const resolvers = {
               },
             },
             { new: true }
-          ).populate("players.player");
+          )
+            .populate("players.player")
+            .populate("players.categories");
           //sub
           pubsub.publish(ROUNDTABLEPLAYER_UPDATED, {
             roundtableplayerupdated: updatedGame,
@@ -626,7 +645,9 @@ const resolvers = {
               },
             },
             { new: true }
-          ).populate("players.player");
+          )
+            .populate("players.player")
+            .populate("players.categories");
           //sub
           pubsub.publish(ROUNDTABLEPLAYER_UPDATED, {
             roundtableplayerupdated: updatedGame,
@@ -669,7 +690,9 @@ const resolvers = {
               },
             },
             { new: true }
-          ).populate("players.player");
+          )
+            .populate("players.player")
+            .populate("players.categories");
           //sub
           pubsub.publish(ROUNDTABLEPLAYER_UPDATED, {
             roundtableplayerupdated: updatedGame,
@@ -811,6 +834,7 @@ const resolvers = {
           )
             .populate("createdby")
             .populate("players.player")
+            .populate("players.categories")
             .populate({
               path: "currentcategory",
               populate: { path: "type" },
@@ -840,7 +864,9 @@ const resolvers = {
               $set: { "players.$.winner": true, gameover: true },
             },
             { new: true }
-          ).populate("players.player");
+          )
+            .populate("players.player")
+            .populate("players.categories");
           //sub
           pubsub.publish(ROUNDTABLEGAME_OVER, {
             roundtablegameover: updatedGame,
