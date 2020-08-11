@@ -14,6 +14,8 @@ const ROUNDTABLEPLAYER_SELECTEDCATEGORIES =
 const PLAYER_LEFT = "PLAYER_LEFT";
 const PLAYER_REMOVED = "PLAYER_REMOVED";
 const ROUNDTABLEGAME_STARTED = "ROUNDTABLEGAME_STARTED";
+const ROUNDTABLEGAME_DIFFERENTQUESTIONFETCHED =
+  "ROUNDTABLEGAME_DIFFERENTQUESTIONFETCHED";
 const ROUNDTABLEGAME_UPDATED = "ROUNDTABLEGAME_UPDATED";
 const ROUNDTABLEGAME_SHOWQUESTION = "ROUNDTABLEGAME_SHOWQUESTION";
 const ROUNDTABLEPLAYER_UPDATED = "ROUNDTABLEPLAYER_UPDATED";
@@ -445,8 +447,8 @@ const resolvers = {
             .populate("selectedquestions");
 
           //sub
-          pubsub.publish(ROUNDTABLEGAME_UPDATED, {
-            roundtablegameupdated: updatedGame,
+          pubsub.publish(ROUNDTABLEGAME_DIFFERENTQUESTIONFETCHED, {
+            roundtabledifferentquestionfetched: updatedGame,
           });
           return updatedGame;
         } catch (error) {
@@ -598,6 +600,7 @@ const resolvers = {
             { _id: gameid, "players.player": user.id },
             {
               $set: {
+                "players.$.answermode": "timedout",
                 "players.$.answered": true,
                 "players.$.answer": "Timed Out",
                 "players.$.correct": 0,
@@ -1020,22 +1023,14 @@ const resolvers = {
       ),
     },
 
-    roundtableshowquestion: {
-      subscribe: withFilter(
-        (_, __, { pubsub }) =>
-          pubsub.asyncIterator(ROUNDTABLEGAME_SHOWQUESTION),
-        (payload, variables) => {
-          return payload.roundtablegameupdated._id === variables.gameid;
-        }
-      ),
-    },
-
     roundtabledifferentquestionfetched: {
       subscribe: withFilter(
         (_, __, { pubsub }) =>
-          pubsub.asyncIterator(OUNDTABLEPLAYER_DIFFERENTQUESTIONFETCHED),
+          pubsub.asyncIterator(ROUNDTABLEGAME_DIFFERENTQUESTIONFETCHED),
         (payload, variables) => {
-          return payload.roundtablegameupdated._id === variables.gameid;
+          return (
+            payload.roundtabledifferentquestionfetched._id === variables.gameid
+          );
         }
       ),
     },
