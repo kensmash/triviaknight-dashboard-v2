@@ -17,7 +17,6 @@ const ROUNDTABLEGAME_STARTED = "ROUNDTABLEGAME_STARTED";
 const ROUNDTABLEGAME_DIFFERENTQUESTIONFETCHED =
   "ROUNDTABLEGAME_DIFFERENTQUESTIONFETCHED";
 const ROUNDTABLEGAME_UPDATED = "ROUNDTABLEGAME_UPDATED";
-const ROUNDTABLEGAME_SHOWQUESTION = "ROUNDTABLEGAME_SHOWQUESTION";
 const ROUNDTABLEPLAYER_UPDATED = "ROUNDTABLEPLAYER_UPDATED";
 const ROUNDTABLEGAME_OVER = "ROUNDTABLEGAME_OVER";
 const ROUNDTABLEGAME_CANCELLED = "ROUNDTABLEGAME_CANCELLED";
@@ -217,6 +216,7 @@ const resolvers = {
             { new: true }
           ).populate("players.player");
           //subscription
+
           pubsub.publish(ROUNDTABLEPLAYER_JOINED, {
             roundtableplayerjoined: updatedGame,
           });
@@ -257,8 +257,8 @@ const resolvers = {
             .populate("players.player")
             .populate("players.categories");
           //subscription
-          pubsub.publish(ROUNDTABLEPLAYER_UPDATED, {
-            roundtableplayerupdated: updatedGame,
+          pubsub.publish(PLAYER_LEFT, {
+            playerleft: updatedGame,
           });
           return updatedGame;
         } catch (error) {
