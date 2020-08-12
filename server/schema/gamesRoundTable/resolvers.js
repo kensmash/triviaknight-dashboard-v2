@@ -227,25 +227,6 @@ const resolvers = {
       }
     ),
 
-    playerstarted: requiresAuth.createResolver(
-      async (parent, { gameid }, { user, pubsub }) => {
-        try {
-          const updatedGame = await GameRoundTable.findOneAndUpdate(
-            { _id: gameid, "players.player": user.id },
-            { $set: { "players.$.started": true } },
-            { new: true }
-          ).populate("players.player");
-          //subscription
-          pubsub.publish(ROUNDTABLEPLAYER_UPDATED, {
-            roundtableplayerupdated: updatedGame,
-          });
-          return updatedGame;
-        } catch (error) {
-          console.error(error);
-        }
-      }
-    ),
-
     playerleavegame: requiresAuth.createResolver(
       async (parent, { gameid }, { user, pubsub }) => {
         try {

@@ -185,7 +185,6 @@ const typeDef = gql`
     ): GameRoundTable
     removeplayer(gameid: ID!, playerid: ID!): GameRoundTable
     playerleavegame(gameid: ID!): GameRoundTable
-    playerstarted(gameid: ID!): GameRoundTable
     joinroundtablegame(gameid: ID!): GameRoundTable
     declineroundtablegame(gameid: ID!): GameRoundTable
     addgamecategories(gameid: ID!, categories: [ID!]): GameRoundTable
