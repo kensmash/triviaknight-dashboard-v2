@@ -27,6 +27,10 @@ const gameRoundTableSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "category",
     },
+    savedcategory: {
+      type: Schema.Types.ObjectId,
+      ref: "category",
+    },
     currentquestion: {
       type: Schema.Types.ObjectId,
       ref: "question",

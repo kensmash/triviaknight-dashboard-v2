@@ -840,17 +840,22 @@ const resolvers = {
     ),
 
     winroundtablegame: requiresAuth.createResolver(
-      async (parent, { gameid, playerid }, { pubsub }) => {
+      async (parent, { gameid, playerid, gameroundresults }, { pubsub }) => {
         try {
           const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid, "players.player": playerid },
             {
               $set: { "players.$.winner": true, gameover: true },
+              $addToSet: {
+                gameroundresults: gameroundresults,
+              },
             },
             { new: true }
           )
             .populate("players.player")
-            .populate("players.categories");
+            .populate("players.categories")
+            .populate("gameroundresults.host")
+            .populate("gameroundresults.players.player");
           //sub
           pubsub.publish(ROUNDTABLEGAME_OVER, {
             roundtablegameover: updatedGame,
@@ -880,15 +885,21 @@ const resolvers = {
     ),
 
     tieroundtablegame: requiresAuth.createResolver(
-      async (parent, { gameid }, { pubsub }) => {
+      async (parent, { gameid, gameroundresults }, { pubsub }) => {
         try {
           const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid },
             {
               $set: { tied: true, gameover: true },
+              $addToSet: {
+                gameroundresults: gameroundresults,
+              },
             },
             { new: true }
-          ).populate("players.player");
+          )
+            .populate("players.player")
+            .populate("gameroundresults.host")
+            .populate("gameroundresults.players.player");
           //sub
           pubsub.publish(ROUNDTABLEGAME_OVER, {
             roundtablegameover: updatedGame,

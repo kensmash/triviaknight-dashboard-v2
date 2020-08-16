@@ -18,6 +18,7 @@ const typeDef = gql`
     tiebreakerround: Int
     categories: [Category]
     currentcategory: Category
+    savedcategory: Category
     currentquestion: Question
     selectedcategories: [Category]
     selectedquestions: [Question]
@@ -235,9 +236,16 @@ const typeDef = gql`
       nexthostid: ID!
       gameroundresults: GameRoundResultsInput!
     ): GameRoundTable
-    winroundtablegame(gameid: ID!, playerid: ID!): GameRoundTable
+    winroundtablegame(
+      gameid: ID!
+      playerid: ID!
+      gameroundresults: GameRoundResultsInput!
+    ): GameRoundTable
     tieroundtableplayer(gameid: ID!, playerid: ID!): GameRoundTable
-    tieroundtablegame(gameid: ID!): GameRoundTable
+    tieroundtablegame(
+      gameid: ID!
+      gameroundresults: GameRoundResultsInput!
+    ): GameRoundTable
     roundtableresultsseen(gameid: ID!): GameRoundTable
     expireroundtablegame(gameid: ID!): GameRoundTable
     cancelroundtablegame(gameid: ID!): GameRoundTable

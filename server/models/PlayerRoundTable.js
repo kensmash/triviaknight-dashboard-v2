@@ -19,6 +19,7 @@ const PlayerRoundTableSchema = new Schema(
     answerrecorded: { type: Boolean, default: false },
     guessfeedbackreceived: { type: Boolean, default: false },
     score: { type: Number, default: 0 },
+    extrapointsadvantage: { type: Number, default: 0 },
     tied: { type: Boolean, default: false },
     winner: { type: Boolean, default: false },
     resultsseen: { type: Boolean, default: false },
