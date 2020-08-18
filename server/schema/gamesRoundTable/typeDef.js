@@ -42,6 +42,8 @@ const typeDef = gql`
     leftgame: Boolean
     hasselectedcategories: Boolean
     extrapointsadvantage: Int
+    hasskippedhosting: Boolean
+    hassavedcategory: Boolean
     categories: [Category]
     answermode: String
     answered: Boolean

@@ -612,7 +612,7 @@ const resolvers = {
 
           //reset player points advantage
           const player = updatedGame.players.find(
-            (player) => player.player._id === playerid
+            (player) => player.player._id === user.id
           );
 
           if (player.extrapointsadvantage > 0 && roundresults.points > 0) {
