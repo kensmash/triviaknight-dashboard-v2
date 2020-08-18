@@ -457,7 +457,7 @@ const resolvers = {
     ),
 
     stealpointsadvantage: requiresAuth.createResolver(
-      async (parent, { gameid, leader }, { user }) => {
+      async (parent, { gameid, leader }, { user, pubsub }) => {
         try {
           await GameRoundTable.findOneAndUpdate(
             { _id: gameid, "players.player": leader },
@@ -612,7 +612,7 @@ const resolvers = {
 
           //reset player points advantage
           const player = updatedGame.players.find(
-            (player) => player.player._id === user.id
+            (player) => player.player._id == user.id
           );
 
           if (player.extrapointsadvantage > 0 && roundresults.points > 0) {
@@ -702,7 +702,7 @@ const resolvers = {
 
           //reset player points advantage
           const player = updatedGame.players.find(
-            (player) => player.player._id === playerid
+            (player) => player.player._id == playerid
           );
 
           if (player.extrapointsadvantage > 0 && roundresults.points > 0) {
@@ -759,7 +759,7 @@ const resolvers = {
 
           //reset player points advantage
           const player = updatedGame.players.find(
-            (player) => player.player._id === playerid
+            (player) => player.player._id == playerid
           );
 
           if (player.extrapointsadvantage > 0 && correct) {
