@@ -41,7 +41,7 @@ const typeDef = gql`
     declined: Boolean
     leftgame: Boolean
     hasselectedcategories: Boolean
-    started: Boolean
+    extrapointsadvantage: Int
     categories: [Category]
     answermode: String
     answered: Boolean
@@ -196,6 +196,8 @@ const typeDef = gql`
       difficulty: String!
       previousquestions: [ID]
     ): GameRoundTable
+    questionpointsadvantage(gameid: ID!, points: Int!): GameRoundTable
+    stealpointsadvantage(gameid: ID!, leader: ID!): GameRoundTable
     setplayeranswermode(gameid: ID!, answermode: String!): GameRoundTable
     resetplayerresponse(gameid: ID!, playerid: ID!): GameRoundTable
     removeplayerroundresults(

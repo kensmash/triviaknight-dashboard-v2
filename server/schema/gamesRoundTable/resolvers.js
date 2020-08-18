@@ -438,6 +438,52 @@ const resolvers = {
       }
     ),
 
+    questionpointsadvantage: requiresAuth.createResolver(
+      async (parent, { gameid, points }, { user }) => {
+        try {
+          const updatedGame = await GameRoundTable.findOneAndUpdate(
+            { _id: gameid, "players.player": user.id },
+            { $set: { "players.$.extrapointsadvantage": points } },
+            { new: true }
+          )
+            .populate("players.player")
+            .populate("players.categories");
+
+          return updatedGame;
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    ),
+
+    stealpointsadvantage: requiresAuth.createResolver(
+      async (parent, { gameid, leader }, { user }) => {
+        try {
+          await GameRoundTable.findOneAndUpdate(
+            { _id: gameid, "players.player": leader },
+            { $inc: { "players.$.score": -3 } }
+          );
+
+          const updatedGame = await GameRoundTable.findOneAndUpdate(
+            { _id: gameid, "players.player": user.id },
+            { $inc: { "players.$.score": 3 } },
+            { new: true }
+          )
+            .populate("players.player")
+            .populate("players.categories");
+
+          //sub
+          pubsub.publish(ROUNDTABLEPLAYER_UPDATED, {
+            roundtableplayerupdated: updatedGame,
+          });
+
+          return updatedGame;
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    ),
+
     setplayeranswermode: requiresAuth.createResolver(
       async (parent, { gameid, answermode }, { user, pubsub }) => {
         try {
@@ -563,6 +609,23 @@ const resolvers = {
           )
             .populate("players.player")
             .populate("players.categories");
+
+          //reset player points advantage
+          const player = updatedGame.players.find(
+            (player) => player.player._id === playerid
+          );
+
+          if (player.extrapointsadvantage > 0 && roundresults.points > 0) {
+            await GameRoundTable.findOneAndUpdate(
+              { _id: gameid, "players.player": user.id },
+              {
+                $set: {
+                  "players.$.extrapointsadvantage": 0,
+                },
+              }
+            );
+          }
+
           //sub
           pubsub.publish(ROUNDTABLEPLAYER_UPDATED, {
             roundtableplayerupdated: updatedGame,
@@ -636,6 +699,22 @@ const resolvers = {
           pubsub.publish(ROUNDTABLEPLAYER_UPDATED, {
             roundtableplayerupdated: updatedGame,
           });
+
+          //reset player points advantage
+          const player = updatedGame.players.find(
+            (player) => player.player._id === playerid
+          );
+
+          if (player.extrapointsadvantage > 0 && roundresults.points > 0) {
+            await GameRoundTable.findOneAndUpdate(
+              { _id: gameid, "players.player": playerid },
+              {
+                $set: {
+                  "players.$.extrapointsadvantage": 0,
+                },
+              }
+            );
+          }
           return updatedGame;
         } catch (error) {
           console.error(error);
@@ -677,6 +756,23 @@ const resolvers = {
           )
             .populate("players.player")
             .populate("players.categories");
+
+          //reset player points advantage
+          const player = updatedGame.players.find(
+            (player) => player.player._id === playerid
+          );
+
+          if (player.extrapointsadvantage > 0 && correct) {
+            await GameRoundTable.findOneAndUpdate(
+              { _id: gameid, "players.player": playerid },
+              {
+                $set: {
+                  "players.$.extrapointsadvantage": 0,
+                },
+              }
+            );
+          }
+
           //sub
           pubsub.publish(ROUNDTABLEPLAYER_UPDATED, {
             roundtableplayerupdated: updatedGame,
