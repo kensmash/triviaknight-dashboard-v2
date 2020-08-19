@@ -422,7 +422,6 @@ const resolvers = {
           )
             .populate("currentquestion")
             .populate("players.player")
-
             .populate({
               path: "currentcategory",
               populate: { path: "type" },
@@ -511,17 +510,25 @@ const resolvers = {
     ),
 
     savecategory: requiresAuth.createResolver(
-      async (_parent, { gameid, category }) => {
+      async (_parent, { gameid, savedcategory, newcategory }, { user }) => {
         try {
           const updatedGameHost = await GameRoundTable.findOneAndUpdate(
-            { _id: gameid },
+            { _id: gameid, "players.player": user.id },
             {
               $set: {
-                savedcategory: category,
+                currentcategory: newcategory,
+                savedcategory,
+                "players.$.hassavedcategory": "true",
               },
             },
             { new: true }
-          ).populate("savedcategory");
+          )
+            .populate("players.player")
+            .populate({
+              path: "currentcategory",
+              populate: { path: "type" },
+            })
+            .populate("savedcategory");
 
           return updatedGameHost;
         } catch (error) {
