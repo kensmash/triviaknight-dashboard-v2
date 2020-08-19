@@ -486,7 +486,7 @@ const resolvers = {
     ),
 
     skiphosting: requiresAuth.createResolver(
-      async (_parent, { gameid, nexthostid }, { pubsub }) => {
+      async (_parent, { gameid, nexthostid }) => {
         try {
           const updatedGameHost = await GameRoundTable.findOneAndUpdate(
             { _id: gameid, "players.player": nexthostid },
@@ -500,20 +500,48 @@ const resolvers = {
           )
             .populate("createdby")
             .populate("players.player")
-            .populate("players.categories")
-            .populate({
-              path: "currentcategory",
-              populate: { path: "type" },
-            })
-            .populate("selectedcategories")
-            .populate("currentquestion")
-            .populate("selectedquestions")
-            .populate("gameroundresults.host")
-            .populate("gameroundresults.players.player");
-          //sub
-          pubsub.publish(ROUNDTABLEGAME_UPDATED, {
-            roundtablegameupdated: updatedGameHost,
-          });
+            .populate("players.categories");
+
+          return updatedGameHost;
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    ),
+
+    savecategory: requiresAuth.createResolver(
+      async (_parent, { gameid, category }) => {
+        try {
+          const updatedGameHost = await GameRoundTable.findOneAndUpdate(
+            { _id: gameid },
+            {
+              $set: {
+                savedcategory: category,
+              },
+            },
+            { new: true }
+          ).populate("savedcategory");
+
+          return updatedGameHost;
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    ),
+
+    clearsavedcategory: requiresAuth.createResolver(
+      async (_parent, { gameid }) => {
+        try {
+          const updatedGameHost = await GameRoundTable.findOneAndUpdate(
+            { _id: gameid },
+            {
+              $set: {
+                savedcategory: {},
+              },
+            },
+            { new: true }
+          );
+
           return updatedGameHost;
         } catch (error) {
           console.error(error);
@@ -927,7 +955,6 @@ const resolvers = {
                 currentcategory: category,
                 currentquestion,
                 differentquestionfetchedcount: 0,
-                savedcategory: {},
               },
               $push: {
                 selectedcategories: category,
