@@ -484,6 +484,41 @@ const resolvers = {
       }
     ),
 
+    skiphosting: requiresAuth.createResolver(
+      async (_parent, { gameid, nexthostid }, { pubsub }) => {
+        try {
+          const updatedGameHost = await GameRoundTable.findOneAndUpdate(
+            { _id: gameid, "players.player": nexthostid },
+            {
+              $set: {
+                "players.$.host": "true",
+              },
+            },
+            { new: true }
+          )
+            .populate("createdby")
+            .populate("players.player")
+            .populate("players.categories")
+            .populate({
+              path: "currentcategory",
+              populate: { path: "type" },
+            })
+            .populate("selectedcategories")
+            .populate("currentquestion")
+            .populate("selectedquestions")
+            .populate("gameroundresults.host")
+            .populate("gameroundresults.players.player");
+          //sub
+          pubsub.publish(ROUNDTABLEGAME_UPDATED, {
+            roundtablegameupdated: updatedGameHost,
+          });
+          return updatedGameHost;
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    ),
+
     setplayeranswermode: requiresAuth.createResolver(
       async (parent, { gameid, answermode }, { user, pubsub }) => {
         try {
