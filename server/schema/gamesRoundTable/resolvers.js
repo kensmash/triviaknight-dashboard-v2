@@ -59,6 +59,7 @@ const resolvers = {
               path: "currentcategory",
               populate: { path: "type" },
             })
+            .populate("savedcategory")
             .populate("currentquestion")
             .populate("selectedcategories")
             .populate("selectedquestions")
@@ -529,26 +530,6 @@ const resolvers = {
       }
     ),
 
-    clearsavedcategory: requiresAuth.createResolver(
-      async (_parent, { gameid }) => {
-        try {
-          const updatedGameHost = await GameRoundTable.findOneAndUpdate(
-            { _id: gameid },
-            {
-              $set: {
-                savedcategory: {},
-              },
-            },
-            { new: true }
-          );
-
-          return updatedGameHost;
-        } catch (error) {
-          console.error(error);
-        }
-      }
-    ),
-
     setplayeranswermode: requiresAuth.createResolver(
       async (parent, { gameid, answermode }, { user, pubsub }) => {
         try {
@@ -955,6 +936,7 @@ const resolvers = {
                 currentcategory: category,
                 currentquestion,
                 differentquestionfetchedcount: 0,
+                savedcategory: {},
               },
               $push: {
                 selectedcategories: category,

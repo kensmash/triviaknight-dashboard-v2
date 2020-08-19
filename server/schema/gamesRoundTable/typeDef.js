@@ -202,7 +202,6 @@ const typeDef = gql`
     stealpointsadvantage(gameid: ID!, leader: ID!): GameRoundTable
     skiphosting(gameid: ID!, nexthostid: ID!): GameRoundTable
     savecategory(gameid: ID!, category: ID!): GameRoundTable
-    clearsavedcategory(gameid: ID!): GameRoundTable
     setplayeranswermode(gameid: ID!, answermode: String!): GameRoundTable
     resetplayerresponse(gameid: ID!, playerid: ID!): GameRoundTable
     removeplayerroundresults(
