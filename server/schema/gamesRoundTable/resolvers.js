@@ -119,7 +119,7 @@ const resolvers = {
             pointsgoal: input.pointsgoal,
             categoriestype: input.categoriestype,
             categoriesperplayer: input.categoriesperplayer,
-            savedcategory: {},
+            savedcategory: null,
             players: [
               {
                 player: user.id,
@@ -486,8 +486,17 @@ const resolvers = {
     ),
 
     skiphosting: requiresAuth.createResolver(
-      async (_parent, { gameid, nexthostid }) => {
+      async (_parent, { gameid, nexthostid }, { user }) => {
         try {
+          await GameRoundTable.findOneAndUpdate(
+            { _id: gameid, "players.player": user.id },
+            {
+              $set: {
+                "players.$.host": "false",
+              },
+            }
+          );
+
           const updatedGameHost = await GameRoundTable.findOneAndUpdate(
             { _id: gameid, "players.player": nexthostid },
             {
@@ -943,7 +952,7 @@ const resolvers = {
                 currentcategory: category,
                 currentquestion,
                 differentquestionfetchedcount: 0,
-                savedcategory: {},
+                savedcategory: null,
               },
               $push: {
                 selectedcategories: category,
