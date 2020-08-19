@@ -118,6 +118,7 @@ const resolvers = {
             pointsgoal: input.pointsgoal,
             categoriestype: input.categoriestype,
             categoriesperplayer: input.categoriesperplayer,
+            savedcategory: {},
             players: [
               {
                 player: user.id,
@@ -492,6 +493,7 @@ const resolvers = {
             {
               $set: {
                 "players.$.host": "true",
+                "players.$.hasskippedhosting": "true",
               },
             },
             { new: true }
@@ -925,6 +927,7 @@ const resolvers = {
                 currentcategory: category,
                 currentquestion,
                 differentquestionfetchedcount: 0,
+                savedcategory: {},
               },
               $push: {
                 selectedcategories: category,
