@@ -545,15 +545,33 @@ const resolvers = {
               },
             },
             { new: true }
+          ).populate("selectedquestions");
+
+          const newquestion = await roundTableGameQuestion(
+            newcategory,
+            updatedGameHost.difficulty,
+            updatedGameHost.selectedquestions.map((question) => {
+              return question._id;
+            })
+          );
+          const updatedGame = await GameRoundTable.findOneAndUpdate(
+            { _id: gameid },
+            {
+              $set: { newquestion },
+              $push: { selectedquestions: newquestion },
+            },
+            { new: true }
           )
+            .populate("currentquestion")
             .populate("players.player")
             .populate({
               path: "currentcategory",
               populate: { path: "type" },
             })
-            .populate("savedcategory");
+            .populate("savedcategory")
+            .populate("selectedquestions");
 
-          return updatedGameHost;
+          return updatedGame;
         } catch (error) {
           console.error(error);
         }
