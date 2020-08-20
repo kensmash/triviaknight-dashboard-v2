@@ -31,7 +31,21 @@ const resolvers = {
           })
             .populate("createdby")
             .populate("players.player")
-            .populate("currentcategory")
+            .populate("players.categories")
+            .populate({
+              path: "categories",
+              populate: { path: "type" },
+            })
+            .populate({
+              path: "currentcategory",
+              populate: { path: "type" },
+            })
+            .populate("savedcategory")
+            .populate("currentquestion")
+            .populate("selectedcategories")
+            .populate("selectedquestions")
+            .populate("gameroundresults.host")
+            .populate("gameroundresults.players.player")
             .sort({ updatedAt: -1 })
             .limit(12);
           return allroundtablegames;
