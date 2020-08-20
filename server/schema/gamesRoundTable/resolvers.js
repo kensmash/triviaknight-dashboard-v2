@@ -539,8 +539,6 @@ const resolvers = {
             { _id: gameid, "players.player": user.id },
             {
               $set: {
-                currentcategory: newcategory,
-                savedcategory,
                 "players.$.hassavedcategory": "true",
               },
             },
@@ -557,7 +555,11 @@ const resolvers = {
           const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid },
             {
-              $set: { newquestion },
+              $set: {
+                currentcategory: newcategory,
+                savedcategory,
+                currentquestion: newquestion,
+              },
               $push: { selectedquestions: newquestion },
             },
             { new: true }
