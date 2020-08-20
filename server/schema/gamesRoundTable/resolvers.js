@@ -397,7 +397,10 @@ const resolvers = {
               path: "currentcategory",
               populate: { path: "type" },
             })
-            .populate("categories")
+            .populate({
+              path: "categories",
+              populate: { path: "type" },
+            })
             .populate("selectedcategories")
             .populate("currentquestion")
             .populate("selectedquestions");
