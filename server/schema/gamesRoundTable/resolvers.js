@@ -1,5 +1,6 @@
 const GameRoundTable = require("../../models/GameRoundTable");
 const Category = require("../../models/Category");
+const User = require("../../models/User");
 //auth helpers
 const { requiresAuth } = require("../_helpers/helper-permissions");
 //game helpers
@@ -1038,6 +1039,9 @@ const resolvers = {
     winroundtablegame: requiresAuth.createResolver(
       async (parent, { gameid, playerid, gameroundresults }, { pubsub }) => {
         try {
+          //award user gems for the win
+          await User.findOneAndUpdate({ _id: playerid }, { $inc: { gems: 5 } });
+          //update game
           const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid, "players.player": playerid },
             {
@@ -1066,6 +1070,9 @@ const resolvers = {
     tieroundtableplayer: requiresAuth.createResolver(
       async (parent, { gameid, playerid }) => {
         try {
+          //award user gems for the tie
+          await User.findOneAndUpdate({ _id: playerid }, { $inc: { gems: 2 } });
+          //update the game
           const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid, "players.player": playerid },
             {
