@@ -94,6 +94,7 @@ const typeDef = gql`
     rank: String!
     avatar: String!
     avatarBackgroundColor: String!
+    createdAt: String!
     favoritecategories: [Category]
     questionsanswered: Int
     correct: Int

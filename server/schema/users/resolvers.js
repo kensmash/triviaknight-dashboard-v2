@@ -90,6 +90,7 @@ const resolvers = {
         rank: player.rank,
         avatar: player.avatar,
         avatarBackgroundColor: player.avatarBackgroundColor,
+        createdAt: player.createdAt,
         favoritecategories: player.categories,
         questionsanswered: questions.questionsanswered,
         correct: questions.correctanswers,
