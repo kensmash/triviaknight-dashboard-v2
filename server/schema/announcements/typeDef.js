@@ -5,12 +5,16 @@ const typeDef = gql`
     _id: ID
     headline: String
     text: String
+    published: Boolean
     imageurl: String
     createdAt: String
+    updatedAt: String
   }
 
   extend type Query {
-    announcement: [Announcement]
+    announcement: Announcement
+    announcements: [Announcement]
+    announcementspage: [Announcement]
   }
 
   input upsertAnnouncementInput {

@@ -5,6 +5,7 @@ const announcementSchema = new Schema({
   headline: { type: String, required: true, minlength: 1, trim: true },
   text: { type: String, required: true, minlength: 1, trim: true },
   imageurl: { type: String },
+  published: { type: Boolean, default: false },
 });
 
 module.exports = announcementSchema;
