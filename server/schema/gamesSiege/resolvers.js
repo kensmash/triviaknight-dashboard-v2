@@ -1,37 +1,18 @@
 const GameSiege = require("../../models/GameSiege");
-const CategoryType = require("../../models/CategoryType");
-const CategoryGenre = require("../../models/CategoryGenre");
 //auth helpers
 const {
   requiresAuth,
-  requiresAdmin
+  requiresAdmin,
 } = require("../_helpers/helper-permissions");
 //resolver helpers
 const {
   changeSiegeTurn,
-  endSiegeGame
+  endSiegeGame,
 } = require("../_helpers/helper-gamesseige");
-const {
-  siegeCatTypeQuestions,
-  siegeGenreQuestions
-} = require("../_helpers/helper-questions");
+const { siegeQuestions } = require("../_helpers/helper-questions");
 
 const resolvers = {
   Query: {
-    siegetopics: requiresAuth.createResolver(async (parent, { args }) => {
-      try {
-        const types = await CategoryType.find({
-          playable: { $eq: true }
-        });
-        const genres = await CategoryGenre.find({
-          playable: { $eq: true }
-        });
-        return { types, genres };
-      } catch (error) {
-        console.error(error);
-      }
-    }),
-
     siegegamepage: requiresAuth.createResolver(
       async (parent, { offset, limit, players, gameover }) => {
         const queryBuilder = (players, gameover) => {
@@ -53,14 +34,14 @@ const resolvers = {
               .skip(offset)
               .limit(limit)
               .populate("players.player"),
-            GameSiege.countDocuments(queryBuilder(players, gameover))
+            GameSiege.countDocuments(queryBuilder(players, gameover)),
           ]);
           const siegeResults = siegegames[0];
           const siegeCount = siegegames[1];
           return {
             pages: Math.ceil(siegeCount / limit),
             totalrecords: siegeCount,
-            siegegames: siegeResults
+            siegegames: siegeResults,
           };
         } catch (error) {
           console.error(error);
@@ -73,15 +54,11 @@ const resolvers = {
         try {
           const currentsiegegame = await GameSiege.findOne({
             _id: id,
-            "players.player": user.id
+            "players.player": user.id,
           })
             .populate("createdby")
             .populate("players.player")
-
-            .populate({
-              path: "categories",
-              populate: { path: "type" }
-            })
+            .populate("category")
             .populate("questions");
 
           return currentsiegegame;
@@ -89,33 +66,48 @@ const resolvers = {
           console.error(error);
         }
       }
-    )
+    ),
   },
 
   Mutation: {
     createsiegegame: requiresAuth.createResolver(
       async (parent, { input }, { user }) => {
         try {
-          let catsAndQuestions;
-          if (input.topictype === "Category Type") {
-            catsAndQuestions = await siegeCatTypeQuestions(input.cattype);
-          } else {
-            catsAndQuestions = await siegeGenreQuestions(input.genre);
+          //deduct gems for time boost
+          if (input.timer > 30000) {
+            let gems = 0;
+            if (input.timer === 45000) {
+              gems = -5;
+            }
+            if (input.timer === 60000) {
+              gems = -10;
+            }
+            await User.findOneAndUpdate({ _id: user.id }, { $inc: { gems } });
           }
+          //try to avoid previous questions for player and opponent
+          const player = await User.findOne({ _id: user.id });
+          const opponent = await User.findOne({ _id: input.opponentid });
+          const userquestions = player.recentquestions.slice();
+          const opponentquestions = opponent.recentquestions.slice();
+          const previousquestions = userquestions.concat(
+            opponentquestions.filter((item) => userquestions.indexOf(item) < 0)
+          );
+          const questions = await siegeQuestions(
+            input.category,
+            previousquestions
+          );
           const newgame = new GameSiege({
             createdby: user.id,
-            topictype: input.topictype,
-            topic: input.topic,
+            category: input.category,
             players: [
               {
                 player: user.id,
                 joined: true,
-                turn: true
+                turn: true,
               },
-              { player: input.opponentid }
+              { player: input.opponentid },
             ],
-            categories: catsAndQuestions.categories,
-            questions: catsAndQuestions.questions
+            questions,
           });
           const siegeGame = await newgame.save();
 
@@ -162,17 +154,17 @@ const resolvers = {
           let updatedGame = await GameSiege.findOneAndUpdate(
             { _id: gameid, "players.player": user.id },
             {
-              $addToSet: { "players.$.roundresults": { ...roundresults } }
+              $addToSet: { "players.$.roundresults": { ...roundresults } },
             },
             { new: true }
           ).populate("players.player");
 
           if (advance) {
             const player = updatedGame.players.find(
-              player => player.player._id == user.id
+              (player) => player.player._id == user.id
             );
             const opponent = updatedGame.players.find(
-              player => player.player._id != user.id
+              (player) => player.player._id != user.id
             );
 
             //either change turn or end game
@@ -220,7 +212,7 @@ const resolvers = {
         const updatedGame = await GameSiege.findOneAndUpdate(
           { _id: gameid },
           {
-            $set: { expired: true }
+            $set: { expired: true },
           },
           { new: true }
         ).populate("players.player");
@@ -234,17 +226,17 @@ const resolvers = {
       async (parent, { gameid }) => {
         try {
           const deletedSiegeGame = await GameSiege.deleteOne({
-            _id: gameid
+            _id: gameid,
           });
           return deletedSiegeGame;
         } catch (error) {
           console.error(error);
         }
       }
-    )
-  }
+    ),
+  },
 };
 
 module.exports = {
-  resolvers
+  resolvers,
 };

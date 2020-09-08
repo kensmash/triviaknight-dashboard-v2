@@ -12,6 +12,7 @@ const questionReports = require("./questionReports");
 //games
 const gamesSolo = require("./gamesSolo");
 const gamesJoust = require("./gamesJoust");
+const gamesSiege = require("./gamesSiege");
 const gamesQuest = require("./gamesQuest");
 const gamesRoundTable = require("./gamesRoundTable");
 //stats

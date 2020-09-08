@@ -139,6 +139,69 @@ const joustQuestions = async (category, previousquestions) => {
   }
 };
 
+//siege games
+const siegeQuestions = async (category, previousquestions) => {
+  const previousQuestionIds = previousquestions.map((question) =>
+    mongoose.Types.ObjectId(question)
+  );
+
+  try {
+    let firstQuestions = await Question.aggregate([
+      {
+        $match: {
+          published: { $eq: true },
+          category: { $eq: mongoose.Types.ObjectId(category) },
+          _id: { $nin: previousQuestionIds },
+          difficulty: { $eq: "Normal" },
+        },
+      },
+      { $sample: { size: 7 } },
+    ]);
+
+    if (firstQuestions.length < 7) {
+      firstQuestions = await Question.aggregate([
+        {
+          $match: {
+            published: { $eq: true },
+            category: { $eq: mongoose.Types.ObjectId(category) },
+            difficulty: { $eq: "Normal" },
+          },
+        },
+        { $sample: { size: 7 } },
+      ]);
+    }
+
+    let lastQuestions = await Question.aggregate([
+      {
+        $match: {
+          published: { $eq: true },
+          category: { $eq: mongoose.Types.ObjectId(category) },
+          _id: { $nin: previousQuestionIds },
+          difficulty: { $eq: "Hard" },
+        },
+      },
+      { $sample: { size: 13 } },
+    ]);
+
+    if (lastQuestions.length < 13) {
+      lastQuestions = await Question.aggregate([
+        {
+          $match: {
+            published: { $eq: true },
+            category: { $eq: mongoose.Types.ObjectId(category) },
+            difficulty: { $eq: "Hard" },
+          },
+        },
+        { $sample: { size: 13 } },
+      ]);
+    }
+
+    return firstQuestions.concat(lastQuestions);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 //quest games
 const questQuestions = async (topictype, topicid) => {
   if (topictype === "Genre") {
@@ -370,6 +433,7 @@ const differentQuestion = async (catid, currentquestions) => {
 module.exports = {
   soloQuestions,
   joustQuestions,
+  siegeQuestions,
   questQuestions,
   roundTableGameQuestion,
   differentQuestion,

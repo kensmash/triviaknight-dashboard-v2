@@ -3,13 +3,10 @@ const { gql } = require("apollo-server-express");
 const typeDef = gql`
   type GameSiege {
     _id: ID!
-    type: String
-    topictype: String
-    topic: String
     createdby: User
     players: [PlayerSiege]!
     rounds: Int
-    categories: [Category]
+    category: Category
     questions: [Question]
     gameover: Boolean
     accepted: Boolean
@@ -33,11 +30,8 @@ const typeDef = gql`
   }
 
   input createSiegeGameInput {
-    topictype: String!
-    topic: String!
     opponentid: ID!
-    cattype: ID
-    genre: ID
+    category: ID
   }
 
   input SiegeResultsInput {
@@ -50,7 +44,6 @@ const typeDef = gql`
   }
 
   extend type Query {
-    siegetopics: SiegeTopicResponse
     currentsiegegame(id: ID!): GameSiege
     siegegamepage(
       limit: Int!
@@ -66,13 +59,8 @@ const typeDef = gql`
     siegegames: [GameSiege]
   }
 
-  type SiegeTopicResponse {
-    types: [CategoryType]
-    genres: [CategoryGenre]
-  }
-
   type NewSiegeGameResponse {
-    categories: [Category]
+    category: Category
     questions: [Question]
   }
 
@@ -96,5 +84,5 @@ const typeDef = gql`
 `;
 
 module.exports = {
-  typeDef
+  typeDef,
 };
