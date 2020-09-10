@@ -1,6 +1,7 @@
 const User = require("../../models/User");
-const GameJoust = require("../../models/GameJoust");
 const GameSolo = require("../../models/GameSolo");
+const GameJoust = require("../../models/GameJoust");
+const GameSiege = require("../../models/GameSiege");
 const GameQuest = require("../../models/GameQuest");
 //stats helpers
 const {
@@ -273,6 +274,59 @@ const resolvers = {
         }
       }
     ),
+
+    userGames: requiresAuth.createResolver(async (parent, args, { user }) => {
+      try {
+        const currentsologames = await GameSolo.find({
+          "players.player": user.id,
+          gameover: { $eq: false },
+        })
+          .populate("players.player")
+          .populate("categories")
+          .populate("questions")
+          .sort({ updatedAt: -1 });
+
+        const joustgames = await GameJoust.find({
+          "players.player": user.id,
+          timedout: { $eq: false },
+        })
+          .populate("createdby")
+          .populate("players.player")
+          .populate("players.questions")
+          .populate("players.replacedquestions")
+          .populate("category")
+          .sort({ updatedAt: -1 })
+          .limit(12);
+
+        const siegegames = await GameSiege.find({
+          "players.player": user.id,
+          timedout: { $eq: false },
+        })
+          .populate("createdby")
+          .populate("players.player")
+          .populate("players.questions")
+          .populate("players.replacedquestions")
+          .populate("category")
+          .sort({ updatedAt: -1 })
+          .limit(12);
+
+        const recentquestgames = await GameQuest.find({
+          "players.player": user.id,
+        })
+          .populate("players.player")
+          .populate({
+            path: "categories",
+            populate: { path: "type" },
+          })
+          .populate("questions")
+          .sort({ updatedAt: -1 })
+          .limit(10);
+
+        return { currentsologames, joustgames, siegegames, recentquestgames };
+      } catch (error) {
+        console.error(error);
+      }
+    }),
 
     currentsologames: requiresAuth.createResolver(
       async (parent, args, { user }) => {

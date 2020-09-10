@@ -42,6 +42,13 @@ const typeDef = gql`
     users: [User]
   }
 
+  type UserGamesResponse {
+    currentsologames: [GameSolo]
+    joustgames: [GameJoust]
+    siegegames: [GameSiege]
+    recentquestgames: [GameQuest]
+  }
+
   type UserNameSearchResponse {
     items: [User]
     hasMore: Boolean
@@ -113,7 +120,7 @@ const typeDef = gql`
     playerprofile(id: ID!): PlayerProfileReponse!
     gameOpponent(id: ID!): User
     randomOpponent: User
-    userGames: User
+    userGames: UserGamesResponse
     currentsologames: [GameSolo]
     joustgames: [GameJoust]
     recentquestgames: [GameQuest]

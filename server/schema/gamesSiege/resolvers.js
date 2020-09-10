@@ -1,4 +1,5 @@
 const GameSiege = require("../../models/GameSiege");
+const User = require("../../models/User");
 //auth helpers
 const {
   requiresAuth,
@@ -8,7 +9,7 @@ const {
 const {
   changeSiegeTurn,
   endSiegeGame,
-} = require("../_helpers/helper-gamesseige");
+} = require("../_helpers/helper-gamessiege");
 const { siegeQuestions } = require("../_helpers/helper-questions");
 
 const resolvers = {

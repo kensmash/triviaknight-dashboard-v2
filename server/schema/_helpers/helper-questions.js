@@ -78,8 +78,6 @@ const joustQuestions = async (category, previousquestions) => {
     mongoose.Types.ObjectId(question)
   );
 
-  // console.log("previousQuestionIds", previousQuestionIds.length);
-
   try {
     let firstQuestions = await Question.aggregate([
       {

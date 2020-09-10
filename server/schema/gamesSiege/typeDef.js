@@ -32,6 +32,7 @@ const typeDef = gql`
   input createSiegeGameInput {
     opponentid: ID!
     category: ID
+    timer: Int
   }
 
   input SiegeResultsInput {

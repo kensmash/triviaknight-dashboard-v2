@@ -11,7 +11,7 @@ const {
 const resolvers = {
   Query: {
     categoryTypes: (parent, args) => {
-      return CategoryType.find({}).populate("categories").sort({ name: 1 });
+      return CategoryType.find({}).sort({ name: 1 });
     },
 
     categoryTypesPage: requiresAuth.createResolver(
