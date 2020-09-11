@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const User = require("../../models/User");
 const Question = require("../../models/Question");
 const GameJoust = require("../../models/GameJoust");
+const GameSiege = require("../../models/GameSiege");
 const GameQuest = require("../../models/GameQuest");
 const { currentQuestTopic } = require("../_helpers/helper-gamesquest");
 const util = require("util");
@@ -31,6 +32,14 @@ const gameStats = async (userId) => {
       },
       {
         $lookup: {
+          from: "gamessiege",
+          localField: "_id",
+          foreignField: "players.player",
+          as: "siegeGames",
+        },
+      },
+      {
+        $lookup: {
           from: "gamesquest",
           localField: "_id",
           foreignField: "players.player",
@@ -41,7 +50,12 @@ const gameStats = async (userId) => {
       {
         $project: {
           totalGames: {
-            $concatArrays: ["$soloGames", "$joustGames", "$questGames"],
+            $concatArrays: [
+              "$soloGames",
+              "$joustGames",
+              "$siegeGames",
+              "$questGames",
+            ],
           },
         },
       },
@@ -171,6 +185,14 @@ const questionStats = async (userId) => {
       },
       {
         $lookup: {
+          from: "gamessiege",
+          localField: "_id",
+          foreignField: "players.player",
+          as: "siegeGames",
+        },
+      },
+      {
+        $lookup: {
           from: "gamesquest",
           localField: "_id",
           foreignField: "players.player",
@@ -181,7 +203,12 @@ const questionStats = async (userId) => {
       {
         $project: {
           totalGames: {
-            $concatArrays: ["$soloGames", "$joustGames", "$questGames"],
+            $concatArrays: [
+              "$soloGames",
+              "$joustGames",
+              "$siegeGames",
+              "$questGames",
+            ],
           },
         },
       },
@@ -330,6 +357,14 @@ const questionsAnswered = async (userId) => {
       },
       {
         $lookup: {
+          from: "gamessiege",
+          localField: "_id",
+          foreignField: "players.player",
+          as: "siegeGames",
+        },
+      },
+      {
+        $lookup: {
           from: "gamesquest",
           localField: "_id",
           foreignField: "players.player",
@@ -340,7 +375,12 @@ const questionsAnswered = async (userId) => {
       {
         $project: {
           totalGames: {
-            $concatArrays: ["$soloGames", "$joustGames", "$questGames"],
+            $concatArrays: [
+              "$soloGames",
+              "$joustGames",
+              "$siegeGames",
+              "$questGames",
+            ],
           },
         },
       },
@@ -402,6 +442,14 @@ const categoryStats = async (userId) => {
       },
       {
         $lookup: {
+          from: "gamessiege",
+          localField: "_id",
+          foreignField: "players.player",
+          as: "siegeGames",
+        },
+      },
+      {
+        $lookup: {
           from: "gamesquest",
           localField: "_id",
           foreignField: "players.player",
@@ -412,7 +460,12 @@ const categoryStats = async (userId) => {
       {
         $project: {
           totalGames: {
-            $concatArrays: ["$soloGames", "$joustGames", "$questGames"],
+            $concatArrays: [
+              "$soloGames",
+              "$joustGames",
+              "$siegeGames",
+              "$questGames",
+            ],
           },
         },
       },
@@ -576,6 +629,14 @@ const categoryRankings = async (catId) => {
       },
       {
         $lookup: {
+          from: "gamessiege",
+          localField: "_id",
+          foreignField: "players.player",
+          as: "siegeGames",
+        },
+      },
+      {
+        $lookup: {
           from: "gamesquest",
           localField: "_id",
           foreignField: "players.player",
@@ -591,7 +652,12 @@ const categoryRankings = async (catId) => {
           avatar: 1,
           avatarBackgroundColor: 1,
           totalGames: {
-            $concatArrays: ["$soloGames", "$joustGames", "$questGames"],
+            $concatArrays: [
+              "$soloGames",
+              "$joustGames",
+              "$siegeGames",
+              "$questGames",
+            ],
           },
         },
       },
@@ -747,6 +813,14 @@ const userSingleCategoryStat = async (userId, catId) => {
       },
       {
         $lookup: {
+          from: "gamessiege",
+          localField: "_id",
+          foreignField: "players.player",
+          as: "siegeGames",
+        },
+      },
+      {
+        $lookup: {
           from: "gamesquest",
           localField: "_id",
           foreignField: "players.player",
@@ -757,7 +831,12 @@ const userSingleCategoryStat = async (userId, catId) => {
       {
         $project: {
           totalGames: {
-            $concatArrays: ["$soloGames", "$joustGames", "$questGames"],
+            $concatArrays: [
+              "$soloGames",
+              "$joustGames",
+              "$siegeGames",
+              "$questGames",
+            ],
           },
         },
       },
@@ -1122,6 +1201,93 @@ const joustRecordStats = async (userId) => {
   }
 };
 
+//track player win loss record overall in sieges
+const siegeRecordStats = async (userId) => {
+  try {
+    const siegerecordstats = await GameSiege.aggregate([
+      //find all games the user is in
+      {
+        $match: {
+          "players.player": new mongoose.Types.ObjectId(userId),
+          gameover: true,
+          timedout: false,
+          declined: false,
+        },
+      },
+      //get a document for each game player
+      { $unwind: "$players" },
+      //only keep user documents
+      {
+        $match: {
+          "players.player": { $in: [new mongoose.Types.ObjectId(userId)] },
+        },
+      },
+      //group documents
+      {
+        $group: {
+          _id: {
+            player: "$players.player",
+          },
+          totalGames: { $sum: 1 },
+          //we are checking opponent docs, so a win for them is a loss for us
+          wins: {
+            $sum: { $cond: [{ $eq: ["$players.winner", true] }, 1, 0] },
+          },
+          losses: {
+            $sum: {
+              $cond: [
+                {
+                  $and: [
+                    { $eq: ["$players.winner", false] },
+                    { $eq: ["$players.tied", false] },
+                  ],
+                },
+                1,
+                0,
+              ],
+            },
+          },
+          ties: { $sum: { $cond: [{ $eq: ["$players.tied", true] }, 1, 0] } },
+        },
+      },
+      //the final data
+      {
+        $project: {
+          _id: 0,
+          gamesplayed: "$totalGames",
+          wins: "$wins",
+          losses: "$losses",
+          ties: "$ties",
+          winpercent: {
+            $trunc: {
+              $multiply: [{ $divide: ["$wins", "$totalGames"] }, 100],
+            },
+          },
+          tiespercent: {
+            $trunc: {
+              $multiply: [{ $divide: ["$ties", "$totalGames"] }, 100],
+            },
+          },
+        },
+      },
+    ]);
+    if (!siegerecordstats.length) {
+      return {
+        gamesplayed: 0,
+        wins: 0,
+        losses: 0,
+        ties: 0,
+        winpercent: 0,
+        tiespercent: 0,
+      };
+    } else {
+      return siegerecordstats[0];
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 //tracks number of joust games, wins, losses and ties per opponent
 const joustGameStats = async (userId) => {
   try {
@@ -1199,6 +1365,88 @@ const joustGameStats = async (userId) => {
       { $sort: { gamesplayed: -1, wins: -1 } },
     ]);
     return jouststats;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+//tracks number of siege games, wins, losses and ties per opponent
+const siegeGameStats = async (userId) => {
+  try {
+    const siegestats = await GameSiege.aggregate([
+      //find all games the user is in
+      {
+        $match: {
+          "players.player": new mongoose.Types.ObjectId(userId),
+          gameover: true,
+          timedout: false,
+        },
+      },
+      //get a document for each game player
+      { $unwind: "$players" },
+      //only use opponent documents
+      {
+        $match: {
+          "players.player": { $nin: [new mongoose.Types.ObjectId(userId)] },
+        },
+      },
+      //group documents by opponent
+      {
+        $group: {
+          _id: {
+            opponent: "$players.player",
+          },
+          totalGames: { $sum: 1 },
+          //we are checking opponent docs, so a win for them is a loss for us
+          losses: {
+            $sum: { $cond: [{ $eq: ["$players.winner", true] }, 1, 0] },
+          },
+          wins: {
+            $sum: {
+              $cond: [
+                {
+                  $and: [
+                    { $eq: ["$players.winner", false] },
+                    { $eq: ["$players.tied", false] },
+                  ],
+                },
+                1,
+                0,
+              ],
+            },
+          },
+          ties: { $sum: { $cond: [{ $eq: ["$players.tied", true] }, 1, 0] } },
+        },
+      },
+      //get opponent info from reference
+      {
+        $lookup: {
+          from: "users",
+          localField: "_id.opponent",
+          foreignField: "_id",
+          as: "opponent",
+        },
+      },
+      //the final data
+      {
+        $project: {
+          _id: 0,
+          opponentid: { $arrayElemAt: ["$opponent._id", 0] },
+          opponentname: { $arrayElemAt: ["$opponent.name", 0] },
+          opponentrank: { $arrayElemAt: ["$opponent.rank", 0] },
+          opponentavatar: { $arrayElemAt: ["$opponent.avatar", 0] },
+          opponentAvatarBackgroundColor: {
+            $arrayElemAt: ["$opponent.avatarBackgroundColor", 0],
+          },
+          gamesplayed: "$totalGames",
+          wins: "$wins",
+          losses: "$losses",
+          ties: "$ties",
+        },
+      },
+      { $sort: { gamesplayed: -1, wins: -1 } },
+    ]);
+    return siegestats;
   } catch (error) {
     console.error(error);
   }
@@ -1359,7 +1607,9 @@ module.exports = {
   questionStats,
   categoryStats,
   joustGameStats,
+  siegeGameStats,
   joustRecordStats,
+  siegeRecordStats,
   questGameStats,
   questLastWeekWinners,
   questAllTimeWinners,

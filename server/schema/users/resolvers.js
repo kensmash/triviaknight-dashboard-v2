@@ -110,10 +110,12 @@ const resolvers = {
     }),
 
     gameOpponent: requiresAuth.createResolver((parent, { id }, { user }) => {
-      return User.findOne({ _id: id }).populate({
-        path: "categories",
-        populate: { path: "type" },
-      });
+      return User.findOne({ _id: id })
+        .populate("blockedusers")
+        .populate({
+          path: "categories",
+          populate: { path: "type" },
+        });
     }),
 
     randomOpponent: requiresAuth.createResolver(

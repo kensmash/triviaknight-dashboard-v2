@@ -48,6 +48,11 @@ const typeDef = gql`
     incorrectanswers: Int
   }
 
+  type SiegeEndedPaginationResponse {
+    items: [GameSiege]
+    hasMore: Boolean
+  }
+
   extend type Query {
     currentsiegegame(id: ID!): GameSiege
     siegegamepage(
@@ -56,6 +61,11 @@ const typeDef = gql`
       players: [ID]
       gameover: Boolean
     ): SiegeGamePageResponse
+    siegeopponenthistory(
+      opponentid: ID!
+      limit: Int!
+      updatedAt: String
+    ): SiegeEndedPaginationResponse
   }
 
   type SiegeGamePageResponse {

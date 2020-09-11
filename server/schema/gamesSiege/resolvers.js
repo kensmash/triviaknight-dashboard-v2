@@ -71,6 +71,50 @@ const resolvers = {
         }
       }
     ),
+
+    siegeopponenthistory: requiresAuth.createResolver(
+      async (_parent, { opponentid, limit, updatedAt }, { user }) => {
+        const queryBuilder = (user, opponentid, updatedAt) => {
+          const query = {
+            $and: [
+              { "players.player": user.id },
+              { "players.player": opponentid },
+            ],
+            gameover: { $eq: true },
+            timedout: { $eq: false },
+          };
+          if (updatedAt) {
+            query.updatedAt = { $lt: new Date(Number(updatedAt)) };
+          }
+
+          return query;
+        };
+        try {
+          let hasMore = false;
+          let endedgames = await GameSiege.find(
+            queryBuilder(user, opponentid, updatedAt)
+          )
+            .sort({ updatedAt: -1 })
+            .limit(limit + 1)
+            .populate("players.player")
+            .populate({
+              path: "category",
+              populate: { path: "type" },
+            });
+          if (endedgames.length === limit + 1) {
+            //if there are more items than the limit, trim the last item from the array and set hasMore to true
+            endedgames.pop();
+            hasMore = true;
+          }
+          return {
+            items: endedgames,
+            hasMore,
+          };
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    ),
   },
 
   Mutation: {
