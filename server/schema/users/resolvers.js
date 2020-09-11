@@ -3,6 +3,7 @@ const GameSolo = require("../../models/GameSolo");
 const GameJoust = require("../../models/GameJoust");
 const GameSiege = require("../../models/GameSiege");
 const GameQuest = require("../../models/GameQuest");
+const { withFilter } = require("graphql-subscriptions");
 //stats helpers
 const {
   questionsAnswered,
@@ -24,6 +25,8 @@ const {
   updateEmail,
   updateName,
 } = require("../_helpers/helper-auth");
+//subscription
+const USERGAMES_UPDATE = "USERGAMES_UPDATE";
 
 const resolvers = {
   Query: {
@@ -781,6 +784,17 @@ const resolvers = {
         }
       }
     ),
+  },
+
+  Subscription: {
+    usergamesupdate: {
+      subscribe: withFilter(
+        (_, __, { pubsub }) => pubsub.asyncIterator(USERGAMES_UPDATE),
+        (payload, variables) => {
+          return payload.usergamesupdate.playerid === variables.playerid;
+        }
+      ),
+    },
   },
 };
 

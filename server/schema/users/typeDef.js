@@ -147,6 +147,11 @@ const typeDef = gql`
     expoPushToken: String
   }
 
+  type UserGameSubscriptionResponse {
+    playerid: ID!
+    updated: Boolean!
+  }
+
   extend type Mutation {
     signup(userinput: SignupInput!): AuthPayload!
     login(
@@ -182,6 +187,10 @@ const typeDef = gql`
     updatevibrationpreference(preference: Boolean!): User
     updategamepushpreference(preference: Boolean!): User
     updateweeklypushpreference(preference: Boolean!): User
+  }
+
+  extend type Subscription {
+    usergamesupdate(playerid: ID!): UserGameSubscriptionResponse
   }
 
   type Error {

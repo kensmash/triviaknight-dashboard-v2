@@ -151,7 +151,10 @@ const endSiegeGame = async (gameid, player, opponent, expo) => {
         $set: { gameover: true, "players.$.resultsseen": true },
       },
       { new: true }
-    ).populate("players.player");
+    )
+      .populate("players.player")
+      .populate("players.questions")
+      .populate("players.replacedquestions");
 
     //push notifications
     let messages = [];

@@ -13,7 +13,7 @@ const {
 } = require("../_helpers/helper-gamessiege");
 const { siegeQuestions } = require("../_helpers/helper-questions");
 //subscriptions
-const SIEGE_UPDATE = "SIEGE_UPDATE";
+const USERGAMES_UPDATE = "USERGAMES_UPDATE";
 
 const resolvers = {
   Query: {
@@ -220,8 +220,8 @@ const resolvers = {
                 opponent,
                 expo
               );
-              pubsub.publish(SIEGE_UPDATE, {
-                siegegamesupdate: {
+              pubsub.publish(USERGAMES_UPDATE, {
+                usergamesupdate: {
                   playerid: opponent.player._id,
                   updated: true,
                 },
@@ -234,8 +234,8 @@ const resolvers = {
                 opponent,
                 expo
               );
-              pubsub.publish(SIEGE_UPDATE, {
-                siegegamesupdate: {
+              pubsub.publish(USERGAMES_UPDATE, {
+                usergamesupdate: {
                   playerid: opponent.player._id,
                   updated: true,
                 },
@@ -291,17 +291,6 @@ const resolvers = {
         }
       }
     ),
-  },
-
-  Subscription: {
-    siegegamesupdate: {
-      subscribe: withFilter(
-        (_, __, { pubsub }) => pubsub.asyncIterator(SIEGE_UPDATE),
-        (payload, variables) => {
-          return payload.siegegamesupdate.playerid === variables.playerid;
-        }
-      ),
-    },
   },
 };
 

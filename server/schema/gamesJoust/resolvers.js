@@ -17,7 +17,7 @@ const {
   differentQuestion,
 } = require("../_helpers/helper-questions");
 //subscriptions
-const JOUST_UPDATE = "JOUST_UPDATE";
+const USERGAMES_UPDATE = "USERGAMES_UPDATE";
 
 const resolvers = {
   Query: {
@@ -327,8 +327,8 @@ const resolvers = {
                 opponent,
                 expo
               );
-              pubsub.publish(JOUST_UPDATE, {
-                joustgamesupdate: {
+              pubsub.publish(USERGAMES_UPDATE, {
+                usergamesupdate: {
                   playerid: opponent.player._id,
                   updated: true,
                 },
@@ -341,8 +341,8 @@ const resolvers = {
                 opponent,
                 expo
               );
-              pubsub.publish(JOUST_UPDATE, {
-                joustgamesupdate: {
+              pubsub.publish(USERGAMES_UPDATE, {
+                usergamesupdate: {
                   playerid: opponent.player._id,
                   updated: true,
                 },
