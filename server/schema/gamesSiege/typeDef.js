@@ -3,6 +3,7 @@ const { gql } = require("apollo-server-express");
 const typeDef = gql`
   type GameSiege {
     _id: ID!
+    type: String
     createdby: User
     players: [PlayerSiege]!
     rounds: Int

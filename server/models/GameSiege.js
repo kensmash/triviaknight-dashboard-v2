@@ -4,6 +4,7 @@ const PlayerSiegeSchema = require("./PlayerSiege");
 
 const gameSiegeSchema = new Schema(
   {
+    type: { type: String, default: "Siege" },
     createdby: { type: Schema.Types.ObjectId, ref: "user", required: true },
     players: [PlayerSiegeSchema],
     rounds: { type: Number, default: 20 },
