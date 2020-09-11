@@ -23,7 +23,8 @@ const changeSiegeTurn = async (gameid, player, opponent, expo) => {
       { new: true }
     )
       .populate("players.player")
-      .populate("questions");
+      .populate("players.questions")
+      .populate("players.replacedquestions");
 
     const opponentInfo = await User.findOne({
       _id: opponent.player._id,

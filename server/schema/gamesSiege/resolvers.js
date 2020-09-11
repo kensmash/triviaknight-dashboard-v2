@@ -113,8 +113,18 @@ const resolvers = {
             questions,
           });
           const siegeGame = await newgame.save();
-
-          return siegeGame;
+          const returnedGame = await GameSiege.findOne({
+            _id: siegeGame._id,
+          })
+            .populate("createdby")
+            .populate("players.player")
+            .populate({
+              path: "category",
+              populate: { path: "type" },
+            })
+            .populate("players.questions")
+            .populate("players.replacedquestions");
+          return returnedGame;
         } catch (error) {
           console.error(error);
         }
@@ -160,7 +170,10 @@ const resolvers = {
               $addToSet: { "players.$.roundresults": { ...roundresults } },
             },
             { new: true }
-          ).populate("players.player");
+          )
+            .populate("players.player")
+            .populate("players.questions")
+            .populate("players.replacedquestions");
 
           if (advance) {
             const player = updatedGame.players.find(
@@ -189,6 +202,7 @@ const resolvers = {
               );
             }
           }
+
           return updatedGame;
         } catch (error) {
           console.error(error);
