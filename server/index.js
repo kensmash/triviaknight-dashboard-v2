@@ -19,6 +19,7 @@ const schema = require("./schema/schema");
 require("./jobs/jobs-categories");
 require("./jobs/jobs-quest");
 require("./jobs/jobs-joustgames");
+require("./jobs/jobs-siegegames");
 require("./jobs/jobs-roundtablegames");
 require("./jobs/jobs-pushnotifications");
 
