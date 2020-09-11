@@ -194,15 +194,25 @@ const resolvers = {
       }
     ),
 
-    joustleaders: requiresAuth.createResolver(async (parent, { args }) => {
-      return joustLeaderAllTimeStats();
-    }),
-
     joustleaderssevendays: requiresAuth.createResolver(
       async (parent, { args }) => {
         return joustLeaderThisWeekStats();
       }
     ),
+
+    siegeleaderssevendays: requiresAuth.createResolver(
+      async (parent, { args }) => {
+        return siegeLeaderThisWeekStats();
+      }
+    ),
+
+    joustleaders: requiresAuth.createResolver(async (parent, { args }) => {
+      return joustLeaderAllTimeStats();
+    }),
+
+    siegeleaders: requiresAuth.createResolver(async (parent, { args }) => {
+      return siegeLeaderAllTimeStats();
+    }),
 
     allusers: requiresAuth.createResolver((parent, { args }) => {
       return User.find({}).populate("categories");

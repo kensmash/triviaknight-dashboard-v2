@@ -155,7 +155,7 @@ const siegeLeaderThisWeekStats = async () => {
       {
         $project: {
           _id: 0,
-          joustsevendayid: { $arrayElemAt: ["$player._id", 0] },
+          id: { $arrayElemAt: ["$player._id", 0] },
           name: { $arrayElemAt: ["$player.name", 0] },
           preferences: {
             $arrayElemAt: ["$player.preferences", 0],
@@ -322,7 +322,7 @@ const siegeLeaderAllTimeStats = async () => {
       {
         $project: {
           _id: 0,
-          joustid: { $arrayElemAt: ["$player._id", 0] },
+          id: { $arrayElemAt: ["$player._id", 0] },
           preferences: {
             $arrayElemAt: ["$player.preferences", 0],
           },

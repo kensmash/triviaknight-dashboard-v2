@@ -81,7 +81,28 @@ const typeDef = gql`
     ties: Int
   }
 
+  type SiegeGameStats {
+    opponentid: ID
+    opponentname: String
+    opponentrank: String
+    opponentavatar: String
+    opponentAvatarBackgroundColor: String
+    gamesplayed: Int
+    wins: Int
+    losses: Int
+    ties: Int
+  }
+
   type JoustRecordStats {
+    gamesplayed: Int
+    wins: Int
+    losses: Int
+    ties: Int
+    winpercent: Int
+    tiespercent: Int
+  }
+
+  type SiegeRecordStats {
     gamesplayed: Int
     wins: Int
     losses: Int
@@ -128,6 +149,8 @@ const typeDef = gql`
     categoryrankings(catid: ID!): [CategoryRankings]
     joustgamestats: [JoustGameStats]
     joustrecordstats: JoustRecordStats
+    siegegamestats: [SiegeGameStats]
+    siegerecordstats: SiegeRecordStats
     questgamestats: [QuestGameStats]
     questlastweekwinners: [QuestPrevWeekWinners]
     questalltimewinners: [QuestAllTimeWinners]
