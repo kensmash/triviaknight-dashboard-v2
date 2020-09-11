@@ -132,11 +132,13 @@ const typeDef = gql`
     joustwins: Int
     joustlosses: Int
     joustties: Int
+    winpercent: Int
+    tiespercent: Int
     siegewins: Int
     siegelosses: Int
     siegeties: Int
-    winpercent: Int
-    tiespercent: Int
+    siegewinpercent: Int
+    siegetiespercent: Int
   }
 
   extend type Query {

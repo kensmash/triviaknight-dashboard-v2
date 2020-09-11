@@ -107,11 +107,13 @@ const resolvers = {
         joustwins: jouststats.wins,
         joustlosses: jouststats.losses,
         joustties: jouststats.ties,
+        winpercent: jouststats.winpercent,
+        tiespercent: jouststats.tiespercent,
         siegewins: siegestats.wins,
         siegelosses: siegestats.losses,
         siegeties: siegestats.ties,
-        winpercent: jouststats.winpercent,
-        tiespercent: jouststats.tiespercent,
+        siegewinpercent: siegestats.winpercent,
+        siegetiespercent: siegestats.tiespercent,
       };
       return profileresponse;
     }),
