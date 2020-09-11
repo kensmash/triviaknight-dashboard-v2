@@ -304,8 +304,7 @@ const resolvers = {
         })
           .populate("createdby")
           .populate("players.player")
-          .populate("players.questions")
-          .populate("players.replacedquestions")
+          .populate("questions")
           .populate("category")
           .sort({ updatedAt: -1 })
           .limit(12);
