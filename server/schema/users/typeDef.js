@@ -132,6 +132,9 @@ const typeDef = gql`
     joustwins: Int
     joustlosses: Int
     joustties: Int
+    siegewins: Int
+    siegelosses: Int
+    siegeties: Int
     winpercent: Int
     tiespercent: Int
   }

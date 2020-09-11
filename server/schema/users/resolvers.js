@@ -9,10 +9,13 @@ const {
   questionsAnswered,
   questionStats,
   joustRecordStats,
+  siegeRecordStats,
 } = require("../_helpers/helper-stats");
 const {
   joustLeaderThisWeekStats,
   joustLeaderAllTimeStats,
+  siegeLeaderThisWeekStats,
+  siegeLeaderAllTimeStats,
 } = require("../_helpers/helper-leaders");
 const { requiresAuth } = require("../_helpers/helper-permissions");
 const {
@@ -88,6 +91,7 @@ const resolvers = {
       });
       const questions = await questionStats(id);
       const jouststats = await joustRecordStats(id);
+      const siegestats = await siegeRecordStats(id);
       const profileresponse = {
         id: player._id,
         name: player.name,
@@ -103,6 +107,9 @@ const resolvers = {
         joustwins: jouststats.wins,
         joustlosses: jouststats.losses,
         joustties: jouststats.ties,
+        siegewins: siegestats.wins,
+        siegelosses: siegestats.losses,
+        siegeties: siegestats.ties,
         winpercent: jouststats.winpercent,
         tiespercent: jouststats.tiespercent,
       };
