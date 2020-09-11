@@ -63,6 +63,17 @@ const typeDef = gql`
     joustgames: [GameJoust]
   }
 
+  type JoustSevenDayLeaderBoardResponse {
+    joustsevendayid: ID!
+    name: String!
+    rank: String!
+    avatar: String!
+    avatarBackgroundColor: String!
+    gamesplayed: Int!
+    wins: Int!
+    ties: Int
+  }
+
   type JoustLeaderBoardResponse {
     joustid: ID!
     name: String!
@@ -74,8 +85,19 @@ const typeDef = gql`
     ties: Int
   }
 
-  type JoustSevenDayLeaderBoardResponse {
-    joustsevendayid: ID!
+  type SiegeSevenDayLeaderBoardResponse {
+    id: ID!
+    name: String!
+    rank: String!
+    avatar: String!
+    avatarBackgroundColor: String!
+    gamesplayed: Int!
+    wins: Int!
+    ties: Int
+  }
+
+  type SiegeLeaderBoardResponse {
+    id: ID!
     name: String!
     rank: String!
     avatar: String!
@@ -124,8 +146,10 @@ const typeDef = gql`
     currentsologames: [GameSolo]
     joustgames: [GameJoust]
     recentquestgames: [GameQuest]
-    joustleaders: [JoustLeaderBoardResponse]
     joustleaderssevendays: [JoustSevenDayLeaderBoardResponse]
+    joustleaders: [JoustLeaderBoardResponse]
+    siegeleaderssevendays: [SiegeSevenDayLeaderBoardResponse]
+    siegeleaders: [SiegeLeaderBoardResponse]
     questleaderssevendays: [QuestSevenDayLeaderBoardResponse]
     allusers: [User]!
     questionsanswered: Int!
