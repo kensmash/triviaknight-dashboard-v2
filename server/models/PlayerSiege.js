@@ -12,7 +12,20 @@ const PlayerSiegeSchema = new Schema(
     winner: { type: Boolean, default: false },
     timedout: { type: Boolean, default: false },
     resultsseen: { type: Boolean, default: false },
-    roundresults: [RoundResultsSchema]
+    roundresults: [RoundResultsSchema],
+    timer: { type: Number, default: 30000 },
+    questions: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "question",
+      },
+    ],
+    replacedquestions: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "question",
+      },
+    ],
   },
   { _id: false }
 );

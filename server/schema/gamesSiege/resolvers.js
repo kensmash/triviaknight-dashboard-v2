@@ -60,7 +60,7 @@ const resolvers = {
             .populate("createdby")
             .populate("players.player")
             .populate("category")
-            .populate("questions");
+            .populate("player.questions");
 
           return currentsiegegame;
         } catch (error) {
@@ -105,8 +105,10 @@ const resolvers = {
                 player: user.id,
                 joined: true,
                 turn: true,
+                timer: input.timer,
+                questions,
               },
-              { player: input.opponentid },
+              { player: input.opponentid, questions },
             ],
             questions,
           });

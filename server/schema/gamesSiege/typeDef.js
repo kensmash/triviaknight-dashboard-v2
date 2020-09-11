@@ -28,6 +28,9 @@ const typeDef = gql`
     timedout: Boolean
     resultsseen: Boolean
     roundresults: [RoundResults]
+    timer: Int
+    questions: [Question]
+    replacedquestions: [Question]
   }
 
   input createSiegeGameInput {
