@@ -9,6 +9,8 @@ const {
   userSingleCategoryStat,
   joustGameStats,
   joustRecordStats,
+  siegeGameStats,
+  siegeRecordStats,
   questGameStats,
   questLastWeekWinners,
   questAllTimeWinners,
@@ -44,9 +46,21 @@ const resolvers = {
       }
     ),
 
+    siegegamestats: requiresAuth.createResolver(
+      (parent, { args }, { user }) => {
+        return siegeGameStats(user.id);
+      }
+    ),
+
     joustrecordstats: requiresAuth.createResolver(
       (parent, { args }, { user }) => {
         return joustRecordStats(user.id);
+      }
+    ),
+
+    siegerecordstats: requiresAuth.createResolver(
+      (parent, { args }, { user }) => {
+        return siegeRecordStats(user.id);
       }
     ),
 
