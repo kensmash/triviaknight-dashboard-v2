@@ -73,9 +73,14 @@ const typeDef = gql`
     msg: String!
   }
 
+  type SiegeGameSubscriptionResponse {
+    playerid: ID!
+    updated: Boolean!
+  }
+
   extend type Mutation {
     createsiegegame(input: createSiegeGameInput!): GameSiege
-    joinsiegegame(gameid: ID!): GameSiege
+    joinsiegegame(gameid: ID!, timer: Int!): GameSiege
     declinesiegegame(gameid: ID!): GameSiege
     entersiegeanswerandadvance(
       gameid: ID!
@@ -85,6 +90,10 @@ const typeDef = gql`
     siegeresultsseen(gameid: ID!): GameSiege
     expiresiegegame(gameid: ID!): GameSiege
     deletesiegegame(gameid: ID!): GameSiege
+  }
+
+  extend type Subscription {
+    siegegamesupdate(playerid: ID!): SiegeGameSubscriptionResponse
   }
 `;
 

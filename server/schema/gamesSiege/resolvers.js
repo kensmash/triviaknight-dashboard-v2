@@ -1,5 +1,6 @@
 const GameSiege = require("../../models/GameSiege");
 const User = require("../../models/User");
+const { withFilter } = require("graphql-subscriptions");
 //auth helpers
 const {
   requiresAuth,
@@ -11,6 +12,8 @@ const {
   endSiegeGame,
 } = require("../_helpers/helper-gamessiege");
 const { siegeQuestions } = require("../_helpers/helper-questions");
+//subscriptions
+const SIEGE_UPDATE = "SIEGE_UPDATE";
 
 const resolvers = {
   Query: {
@@ -132,12 +135,33 @@ const resolvers = {
     ),
 
     joinsiegegame: requiresAuth.createResolver(
-      async (parent, { gameid }, { user }) => {
+      async (parent, { gameid, timer }, { user }) => {
         try {
+          //deduct gems for time boost
+          if (timer > 30000) {
+            let gems = 0;
+            if (timer === 45000) {
+              gems = -5;
+            }
+            if (timer === 60000) {
+              gems = -10;
+            }
+            await User.findOneAndUpdate({ _id: user.id }, { $inc: { gems } });
+          }
           const updatedGame = await GameSiege.findOneAndUpdate(
             { _id: gameid, "players.player": user.id },
-            { $set: { "players.$.joined": true, accepted: true } }
-          );
+            {
+              $set: {
+                "players.$.joined": true,
+                "players.$.timer": timer,
+                accepted: true,
+              },
+            },
+            { new: true }
+          )
+            .populate("players.player")
+            .populate("players.questions")
+            .populate("players.replacedquestions");
           return updatedGame;
         } catch (error) {
           console.error(error);
@@ -161,7 +185,11 @@ const resolvers = {
     ),
 
     entersiegeanswerandadvance: requiresAuth.createResolver(
-      async (parent, { gameid, roundresults, advance }, { user, expo }) => {
+      async (
+        parent,
+        { gameid, roundresults, advance },
+        { user, expo, pubsub }
+      ) => {
         try {
           //first add round results
           let updatedGame = await GameSiege.findOneAndUpdate(
@@ -192,6 +220,12 @@ const resolvers = {
                 opponent,
                 expo
               );
+              pubsub.publish(SIEGE_UPDATE, {
+                siegegamesupdate: {
+                  playerid: opponent.player._id,
+                  updated: true,
+                },
+              });
             } else {
               //change turns
               updatedGame = await changeSiegeTurn(
@@ -200,6 +234,12 @@ const resolvers = {
                 opponent,
                 expo
               );
+              pubsub.publish(SIEGE_UPDATE, {
+                siegegamesupdate: {
+                  playerid: opponent.player._id,
+                  updated: true,
+                },
+              });
             }
           }
 
@@ -251,6 +291,17 @@ const resolvers = {
         }
       }
     ),
+  },
+
+  Subscription: {
+    siegegamesupdate: {
+      subscribe: withFilter(
+        (_, __, { pubsub }) => pubsub.asyncIterator(SIEGE_UPDATE),
+        (payload, variables) => {
+          return payload.siegegamesupdate.playerid === variables.playerid;
+        }
+      ),
+    },
   },
 };
 
