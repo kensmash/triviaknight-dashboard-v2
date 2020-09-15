@@ -299,8 +299,9 @@ const resolvers = {
         try {
           const updatedGame = await GameSiege.findOneAndUpdate(
             { _id: gameid, "players.player": user.id },
-            { $set: { "players.$.resultsseen": true } }
-          );
+            { $set: { "players.$.resultsseen": true } },
+            { new: true }
+          ).populate("players.player");
           return updatedGame;
         } catch (error) {
           console.error(error);

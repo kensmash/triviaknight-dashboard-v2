@@ -10,6 +10,7 @@ const typeDef = gql`
     access: String
     hasCompletedSignUpFlow: Boolean
     hasSeenPushNotificationOptions: Boolean
+    hasSeenAnnouncements: Boolean
     questionsAnswered: Int
     isAdmin: Boolean
     rank: String
@@ -23,6 +24,7 @@ const typeDef = gql`
     questgames: [GameQuest]
     expoPushTokens: [String]
     gems: Int
+    streak: Int
     preferences: UserPreferences
   }
 

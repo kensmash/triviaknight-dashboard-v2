@@ -39,7 +39,9 @@ const userSchema = new Schema(
     categories: [{ type: Schema.Types.ObjectId, ref: "category" }],
     expoPushTokens: [{ type: String }],
     questhighscores: [PlayerQuestHighScoresSchema],
+    streak: { type: Number, default: 0 },
     gems: { type: Number, default: 20 },
+    hasSeenAnnouncements: { type: Boolean, default: false },
     preferences: UserPreferencesSchema,
   },
   { timestamps: true }
