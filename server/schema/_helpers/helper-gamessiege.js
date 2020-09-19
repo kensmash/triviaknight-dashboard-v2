@@ -38,7 +38,7 @@ const changeSiegeTurn = async (gameid, player, opponent, expo) => {
       let messages = [];
       let pushType = "SiegeChallenge";
       let pushTitle = `Siege Game vs. ${player.player.name}`;
-      let pushMessage = `${player.player.name} has challenged you to a Joust!`;
+      let pushMessage = `${player.player.name} has challenged you to a Siege!`;
 
       for (let pushToken of pushTokens) {
         // Check that all your push tokens appear to be valid Expo push tokens
