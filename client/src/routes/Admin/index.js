@@ -5,6 +5,7 @@ import Layout from "../../components/Admin/Layout/Layout";
 import Dashboard from "./Dashboard/Dashboard";
 //announcements
 import Announcements from "./Announcements/Announcements";
+import EditAnnouncement from "./EditAnnouncement/EditAnnouncement";
 //categories
 import Categories from "./Categories/Categories";
 import EditCategory from "./EditCategory/EditCategory";
@@ -41,6 +42,12 @@ const Admin = ({ match }) => {
             exact
             path={match.url + "/announcements"}
             component={Announcements}
+          />
+          <Route
+            exact
+            path={match.url + "/announcements/:_id"}
+            name="Edit Announcement"
+            component={EditAnnouncement}
           />
           <Route
             exact

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
 import { Table, Button, Icon, Grid, Pagination } from "semantic-ui-react";
 import DeleteAnnouncementModal from "./DeleteAnnouncementModal";
 //graphql
@@ -45,7 +46,7 @@ const AnnouncementsList = (props) => {
       <Table celled>
         <Table.Header>
           <Table.Row>
-            <Table.HeaderCell>Title</Table.HeaderCell>
+            <Table.HeaderCell>Headline</Table.HeaderCell>
             <Table.HeaderCell>Text</Table.HeaderCell>
             <Table.HeaderCell>Published</Table.HeaderCell>
             <Table.HeaderCell>Actions</Table.HeaderCell>
@@ -61,30 +62,26 @@ const AnnouncementsList = (props) => {
           <>
             <Table.Body>
               {announcementsPage.announcements.length ? (
-                announcementsPage.announcements.map((type) => (
-                  <Table.Row key={type._id}>
-                    <Table.Cell>{type.name}</Table.Cell>
-                    <Table.Cell>{type.playable ? "Yes" : "No"}</Table.Cell>
-
-                    <Table.Cell>{type.questactive ? "Yes" : "No"}</Table.Cell>
+                announcementsPage.announcements.map((ann) => (
+                  <Table.Row key={ann._id}>
                     <Table.Cell>
-                      {type.nextquestactive ? "Yes" : "No"}
+                      <Link to={`${match.url}/${ann._id}`}>{ann.headline}</Link>
                     </Table.Cell>
-                    <Table.Cell>{type.hasgenres ? "Yes" : "No"}</Table.Cell>
+                    <Table.Cell>{ann.text}</Table.Cell>
+                    <Table.Cell>{ann.published ? "Yes" : "No"}</Table.Cell>
                     <Table.Cell collapsing>
                       <div>
                         <Button
                           icon
                           size="mini"
                           onClick={() =>
-                            history.push(`${match.url}/${type._id}`)
+                            history.push(`${match.url}/${ann._id}`)
                           }
                         >
                           <Icon name="edit" />
                         </Button>
                         <DeleteAnnouncementModal
-                          categorytypename={type.name}
-                          categorytypeid={type._id}
+                          announcementid={ann._id}
                           variables={variables}
                         />
                       </div>

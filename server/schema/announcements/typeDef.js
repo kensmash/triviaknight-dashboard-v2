@@ -15,6 +15,7 @@ const typeDef = gql`
     id: ID
     headline: String!
     text: String!
+    published: Boolean!
     imageurl: String
   }
 

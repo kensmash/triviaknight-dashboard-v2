@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid, Card, Header, Form } from "semantic-ui-react";
+import { Grid, Card, Header } from "semantic-ui-react";
 import AnnouncementForm from "../../../components/Admin/AnnouncementForm/AnnouncementForm";
 import AnnouncementsList from "../../../components/Admin/AnnouncementsList/AnnouncementsList";
 
@@ -13,9 +13,7 @@ const Announcements = ({ history, match }) => (
             <Card.Header>New Announcement</Card.Header>
           </Card.Content>
           <Card.Content>
-            <Form>
-              <AnnouncementForm />
-            </Form>
+            <AnnouncementForm />
           </Card.Content>
           <Card.Content extra>Make yo announcement</Card.Content>
         </Card>

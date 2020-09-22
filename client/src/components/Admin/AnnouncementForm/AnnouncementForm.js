@@ -11,21 +11,22 @@ import QUERY_ANNOUNCEMENTSPAGE from "../../../apollo/queries/announcementsPage";
 
 const AnnouncementForm = (props) => {
   const initialState = {
-    title: "",
+    headline: "",
     text: "",
     published: false,
   };
 
-  const [submittedAnnouncementTitle, setSubmittedAnnouncementTitle] = useState(
-    ""
-  );
+  const [
+    submittedAnnouncementHeadline,
+    setSubmittedAnnouncementHeadline,
+  ] = useState("");
 
   const [fields, setFields] = useState(initialState);
 
   const [fieldErrors, setFieldErrors] = useState({
-    title: "",
+    headline: "",
     text: "",
-    published: "",
+    published: false,
   });
 
   const [upsertAnnouncement] = useMutation(MUTATION_UPSERTANNOUNCEMENT);
@@ -34,7 +35,7 @@ const AnnouncementForm = (props) => {
     if (props.pageType === "edit") {
       const { announcement } = props;
       setFields({
-        title: announcement.title,
+        headline: announcement.headline,
         text: announcement.text,
         published: announcement.published,
       });
@@ -54,11 +55,11 @@ const AnnouncementForm = (props) => {
     }
   };
 
-  const formValidateHandler = (title, text, published) => {
+  const formValidateHandler = (headline, text) => {
     const errors = {};
 
-    if (title.length < 3)
-      errors.title = "Please enter a title of at least three characters.";
+    if (headline.length < 3)
+      errors.title = "Please enter a headline of at least three characters.";
 
     if (text.length < 10)
       errors.text = "Please enter body text of at least ten characters.";
@@ -68,11 +69,7 @@ const AnnouncementForm = (props) => {
 
   const formSubmitHandler = async (event) => {
     event.preventDefault();
-    const errors = formValidateHandler(
-      fields.title,
-      fields.text,
-      fields.published
-    );
+    const errors = formValidateHandler(fields.headline, fields.text);
     if (Object.keys(errors).length)
       return setFieldErrors(...fieldErrors, ...errors);
     UpsertAnnouncementHandler();
@@ -84,7 +81,7 @@ const AnnouncementForm = (props) => {
       variables: {
         input: {
           id: props.pageType === "edit" ? props.announcement._id : null,
-          title: fields.title,
+          headline: fields.headline,
           text: fields.text,
           published: fields.published,
         },
@@ -99,8 +96,8 @@ const AnnouncementForm = (props) => {
         },
       ],
     });
-    setSubmittedAnnouncementTitle(
-      graphqlResponse.data.upsertannouncement.title
+    setSubmittedAnnouncementHeadline(
+      graphqlResponse.data.upsertannouncement.headline
     );
   };
 
@@ -112,16 +109,31 @@ const AnnouncementForm = (props) => {
     <Form>
       {props.pageType === "edit" ? <h3>Edit Announcement</h3> : null}
       <Form.Field required>
-        <label>Title</label>
+        <label>Headline</label>
         <input
-          placeholder="Enter Announcement title..."
-          id="name"
-          value={fields.name}
+          placeholder="Enter Announcement headline..."
+          id="headline"
+          value={fields.headline}
           onChange={(event) => inputChangedHandler(event)}
         />
         <FormErrorMessage
-          reveal={fieldErrors.name !== ""}
-          errormessage={fieldErrors.name}
+          reveal={fieldErrors.headline !== ""}
+          errormessage={fieldErrors.headline}
+        />
+      </Form.Field>
+
+      <Form.Field>
+        <Form.TextArea
+          required
+          id="text"
+          label="Text"
+          placeholder="Enter body text..."
+          value={fields.text}
+          onChange={(event) => inputChangedHandler(event)}
+        />
+        <FormErrorMessage
+          reveal={fieldErrors.text !== ""}
+          errormessage={fieldErrors.text}
         />
       </Form.Field>
 
@@ -134,7 +146,7 @@ const AnnouncementForm = (props) => {
       </Form.Field>
 
       <FormSuccessMessage
-        reveal={submittedAnnouncementTitle !== ""}
+        reveal={submittedAnnouncementHeadline !== ""}
         header={
           props.pageType === "edit"
             ? "Announcement Updated"
@@ -145,12 +157,12 @@ const AnnouncementForm = (props) => {
             ? "You've successfully updated"
             : "You've successfully added") +
           " the announcement " +
-          submittedAnnouncementTitle +
+          submittedAnnouncementHeadline +
           "."
         }
       />
 
-      {submittedAnnouncementTitle !== "" ? (
+      {submittedAnnouncementHeadline !== "" ? (
         props.pageType === "edit" ? (
           <Button primary onClick={props.history.goBack}>
             Go Back
@@ -180,7 +192,7 @@ const MUTATION_UPSERTANNOUNCEMENT = gql`
   mutation upsertAnnouncement($input: upsertAnnouncementInput) {
     upsertannouncement(input: $input) {
       _id
-      title
+      headline
       text
       published
     }
