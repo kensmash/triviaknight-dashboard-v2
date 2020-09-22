@@ -18,10 +18,10 @@ const Dashboard = ({ match, history }) => (
       <QuestionsWidget history={history} />
       <CategoriesWidget history={history} />
     </Card.Group>
-    <Card.Group stackable itemsPerRow={4}>
+    <Card.Group stackable itemsPerRow={5}>
       <QuestTopicWidget history={history} />
       <QuestionReportsWidget history={history} />
-
+      <QuestionReportsWidget history={history} />
       <PushTicketsWidget history={history} />
       <PushReceiptsWidget history={history} />
     </Card.Group>

@@ -25,9 +25,8 @@ const resolvers = {
         partycategory: { $eq: false },
       })
         .sort({ name: 1 })
-        .populate("type")
-        .populate("genres")
-        .populate("followers");
+        .populate("type");
+
       const groups = await CategoryGroup.find({})
         .sort({ name: 1 })
         .populate({
