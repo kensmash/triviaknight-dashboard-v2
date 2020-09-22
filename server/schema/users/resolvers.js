@@ -710,6 +710,21 @@ const resolvers = {
       }
     ),
 
+    updateannouncementsseen: requiresAuth.createResolver(
+      async (parent, { args }, { user }) => {
+        try {
+          const editedUser = await User.findOneAndUpdate(
+            { _id: user.id },
+            { $set: { hasSeenAnnouncements: true } },
+            { new: true }
+          );
+          return editedUser;
+        } catch (err) {
+          return err;
+        }
+      }
+    ),
+
     updaterank: requiresAuth.createResolver(
       async (parent, { rank }, { user }) => {
         try {

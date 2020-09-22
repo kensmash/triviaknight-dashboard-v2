@@ -209,6 +209,7 @@ const typeDef = gql`
     changegems(add: Boolean!, amount: Int!): User
     updatesignupflow: User
     completesignupflow: User
+    updateannouncementsseen: User
     pushnotificationoptionseen(acceptsnotifications: Boolean!): User
     changeemail(email: String!): User
     updaterank(rank: String!): User
