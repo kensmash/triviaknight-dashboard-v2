@@ -19,7 +19,10 @@ export default gql`
         _id
         createdAt
         updatedAt
-        topic
+        category {
+          _id
+          name
+        }
         gameover
         players {
           player {

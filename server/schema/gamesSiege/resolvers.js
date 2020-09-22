@@ -37,6 +37,7 @@ const resolvers = {
               .sort({ createdAt: -1 })
               .skip(offset)
               .limit(limit)
+              .populate("category")
               .populate("players.player"),
             GameSiege.countDocuments(queryBuilder(players, gameover)),
           ]);

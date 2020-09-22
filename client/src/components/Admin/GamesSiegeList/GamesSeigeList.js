@@ -13,26 +13,26 @@ const GamesSiegeList = () => {
 
   const variables = {
     offset: limit * parseInt(currentActivePage, 10) - limit,
-    limit
+    limit,
   };
 
   const { loading, data: { siegegamepage } = {}, fetchMore } = useQuery(
     QUERY_SIEGEGAMEPAGE,
     {
       variables,
-      fetchPolicy: "cache-and-network"
+      fetchPolicy: "cache-and-network",
     }
   );
 
   useEffect(() => {
     fetchMore({
       variables: {
-        offset: limit * parseInt(currentActivePage, 10) - limit
+        offset: limit * parseInt(currentActivePage, 10) - limit,
       },
       updateQuery: (prev, { fetchMoreResult }) => {
         if (!fetchMoreResult) return prev;
         return fetchMoreResult;
-      }
+      },
     });
   }, [currentActivePage, limit, fetchMore]);
 
@@ -43,7 +43,7 @@ const GamesSiegeList = () => {
           <Table.Row>
             <Table.HeaderCell>Created On</Table.HeaderCell>
             <Table.HeaderCell>Players</Table.HeaderCell>
-            <Table.HeaderCell>Topic</Table.HeaderCell>
+            <Table.HeaderCell>Category</Table.HeaderCell>
             <Table.HeaderCell>Last Played</Table.HeaderCell>
             <Table.HeaderCell>Status</Table.HeaderCell>
             <Table.HeaderCell>Game ID</Table.HeaderCell>
@@ -60,7 +60,7 @@ const GamesSiegeList = () => {
           <>
             <Table.Body>
               {siegegamepage.siegegames.length ? (
-                siegegamepage.siegegames.map(game => (
+                siegegamepage.siegegames.map((game) => (
                   <Table.Row key={game._id}>
                     <Table.Cell collapsing>
                       {format(
@@ -70,10 +70,10 @@ const GamesSiegeList = () => {
                     </Table.Cell>
                     <Table.Cell>
                       {game.players
-                        .map(player => player.player.name)
+                        .map((player) => player.player.name)
                         .join(", ")}
                     </Table.Cell>
-                    <Table.Cell>{game.topic}</Table.Cell>
+                    <Table.Cell>{game.category.name}</Table.Cell>
                     <Table.Cell>
                       {format(
                         new Date(Number(game.updatedAt)),
@@ -141,7 +141,7 @@ const GamesSiegeList = () => {
 
 GamesSiegeList.propTypes = {
   history: PropTypes.object.isRequired,
-  match: PropTypes.object.isRequired
+  match: PropTypes.object.isRequired,
 };
 
 export default GamesSiegeList;

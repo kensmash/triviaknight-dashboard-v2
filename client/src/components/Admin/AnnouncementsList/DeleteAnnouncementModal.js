@@ -6,7 +6,7 @@ import { gql } from "apollo-boost";
 import { useMutation } from "@apollo/react-hooks";
 import QUERY_ANNOUNCEMENTSPAGE from "../../../apollo/queries/announcementsPage";
 
-const DeleteCategoryGenreModal = (props) => {
+const DeleteAnnouncementModal = (props) => {
   const [modalOpen, setModalOpen] = useState(false);
 
   const [deleteAnnouncement] = useMutation(MUTATION_DELETEANNOUNCEMENT, {
@@ -41,7 +41,7 @@ const DeleteCategoryGenreModal = (props) => {
         </Modal.Description>
       </Modal.Content>
       <Modal.Actions>
-        <Button negative onClick={deleteCategoryGenre}>
+        <Button negative onClick={deleteAnnouncement}>
           Delete Announcement
         </Button>
         <Button onClick={handleClose}>Cancel</Button>

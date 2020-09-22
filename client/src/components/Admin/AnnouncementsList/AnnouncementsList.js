@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { Table, Button, Icon, Grid, Pagination } from "semantic-ui-react";
-import DeleteCategoryTypeModal from "./DeleteCategoryTypeModal";
+import DeleteAnnouncementModal from "./DeleteAnnouncementModal";
 //graphql
 import { useQuery } from "@apollo/react-hooks";
 import QUERY_ANNOUNCEMENTSPAGE from "../../../apollo/queries/announcementsPage";
 
-const CategoryTypesList = (props) => {
+const AnnouncementsList = (props) => {
   const [activePage, setActivePage] = useState(1);
   const [limit] = useState(15);
 
@@ -15,7 +15,7 @@ const CategoryTypesList = (props) => {
     limit,
   };
 
-  const { loading, data: { announcements } = {}, fetchMore } = useQuery(
+  const { loading, data: { announcementsPage } = {}, fetchMore } = useQuery(
     QUERY_ANNOUNCEMENTSPAGE,
     {
       variables,
@@ -45,11 +45,9 @@ const CategoryTypesList = (props) => {
       <Table celled>
         <Table.Header>
           <Table.Row>
-            <Table.HeaderCell>Name</Table.HeaderCell>
-            <Table.HeaderCell>Playable</Table.HeaderCell>
-            <Table.HeaderCell>Quest Active</Table.HeaderCell>
-            <Table.HeaderCell>Next Quest Active</Table.HeaderCell>
-            <Table.HeaderCell>Has Genres</Table.HeaderCell>
+            <Table.HeaderCell>Title</Table.HeaderCell>
+            <Table.HeaderCell>Text</Table.HeaderCell>
+            <Table.HeaderCell>Published</Table.HeaderCell>
             <Table.HeaderCell>Actions</Table.HeaderCell>
           </Table.Row>
         </Table.Header>
@@ -62,8 +60,8 @@ const CategoryTypesList = (props) => {
         ) : (
           <>
             <Table.Body>
-              {categoryTypesPage.categorytypes.length ? (
-                categoryTypesPage.categorytypes.map((type) => (
+              {announcementsPage.announcements.length ? (
+                announcementsPage.announcements.map((type) => (
                   <Table.Row key={type._id}>
                     <Table.Cell>{type.name}</Table.Cell>
                     <Table.Cell>{type.playable ? "Yes" : "No"}</Table.Cell>
@@ -84,7 +82,7 @@ const CategoryTypesList = (props) => {
                         >
                           <Icon name="edit" />
                         </Button>
-                        <DeleteCategoryTypeModal
+                        <DeleteAnnouncementModal
                           categorytypename={type.name}
                           categorytypeid={type._id}
                           variables={variables}
@@ -103,22 +101,22 @@ const CategoryTypesList = (props) => {
             </Table.Body>
             <Table.Footer>
               <Table.Row>
-                <Table.HeaderCell colSpan="8">
+                <Table.HeaderCell colSpan="4">
                   <Grid columns="equal">
                     <Grid.Column width={2}>
                       <div className="tableItemNumbers">
                         <p>
-                          {categoryTypesPage.totalrecords} item
-                          {categoryTypesPage.totalrecords !== 1 ? "s" : ""}
+                          {announcementsPage.totalrecords} item
+                          {announcementsPage.totalrecords !== 1 ? "s" : ""}
                         </p>
                       </div>
                     </Grid.Column>
 
                     <Grid.Column className="tablePaginationColumn">
-                      {categoryTypesPage.pages >= 2 ? (
+                      {announcementsPage.pages >= 2 ? (
                         <Pagination
                           activePage={activePage}
-                          totalPages={categoryTypesPage.pages}
+                          totalPages={announcementsPage.pages}
                           onPageChange={(e, { activePage }) =>
                             fetchMoreHandler({ activePage })
                           }
@@ -136,9 +134,9 @@ const CategoryTypesList = (props) => {
   );
 };
 
-CategoryTypesList.propTypes = {
+AnnouncementsList.propTypes = {
   history: PropTypes.object.isRequired,
   match: PropTypes.object.isRequired,
 };
 
-export default CategoryTypesList;
+export default AnnouncementsList;

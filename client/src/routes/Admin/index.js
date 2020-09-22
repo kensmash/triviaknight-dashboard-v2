@@ -1,9 +1,10 @@
 import React from "react";
 import { Switch, Route } from "react-router-dom";
 import Layout from "../../components/Admin/Layout/Layout";
-
 //Dashboard
 import Dashboard from "./Dashboard/Dashboard";
+//announcements
+import Announcements from "./Announcements/Announcements";
 //categories
 import Categories from "./Categories/Categories";
 import EditCategory from "./EditCategory/EditCategory";
@@ -36,6 +37,11 @@ const Admin = ({ match }) => {
       <Layout>
         <Switch>
           <Route exact path={match.url + "/"} component={Dashboard} />
+          <Route
+            exact
+            path={match.url + "/announcements"}
+            component={Announcements}
+          />
           <Route
             exact
             path={match.url + "/categories"}

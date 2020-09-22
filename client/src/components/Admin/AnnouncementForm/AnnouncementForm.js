@@ -6,42 +6,37 @@ import FormErrorMessage from "../../FormMessage/FormErrorMessage";
 import FormSuccessMessage from "../../FormMessage/FormSuccessMessage";
 //graphql
 import { gql } from "apollo-boost";
-import { useQuery, useMutation } from "@apollo/react-hooks";
-import QUERY_CATEGORYGENRES from "../../../apollo/queries/categoryGenres";
-import QUERY_CATEGORYGENRESPAGE from "../../../apollo/queries/categoryGenresPage";
-import QUERY_CLIENTCATEGORYGENRESSEARCH from "../../../apollo/queries/client-categoryGenreSearchCriteria";
+import { useMutation } from "@apollo/react-hooks";
+import QUERY_ANNOUNCEMENTSPAGE from "../../../apollo/queries/announcementsPage";
 
 const AnnouncementForm = (props) => {
-  const { data: { categoryGenreSearchCriteria } = {} } = useQuery(
-    QUERY_CLIENTCATEGORYGENRESSEARCH
-  );
-
-  const { data: { categoryGenres } = {} } = useQuery(QUERY_CATEGORYGENRES);
-
   const initialState = {
-    titletext: "",
-    bodytext: [],
+    title: "",
+    text: "",
+    published: false,
   };
+
+  const [submittedAnnouncementTitle, setSubmittedAnnouncementTitle] = useState(
+    ""
+  );
 
   const [fields, setFields] = useState(initialState);
 
   const [fieldErrors, setFieldErrors] = useState({
-    name: "",
-    categorytypes: "",
+    title: "",
+    text: "",
+    published: "",
   });
 
-  const [upsertCategoryGenre] = useMutation(MUTATION_UPSERTCATEGORYGENRE);
+  const [upsertAnnouncement] = useMutation(MUTATION_UPSERTANNOUNCEMENT);
 
   useEffect(() => {
     if (props.pageType === "edit") {
-      const { categorygenre } = props;
+      const { announcement } = props;
       setFields({
-        name: categorygenre.name,
-        categorytypes: categorygenre.categorytypes
-          ? categorygenre.categorytypes.map((type) => type._id)
-          : [],
-        playable: categorygenre.playable,
-        nextquestactive: categorygenre.nextquestactive,
+        title: announcement.title,
+        text: announcement.text,
+        published: announcement.published,
       });
     }
   }, [props]);
@@ -51,82 +46,61 @@ const AnnouncementForm = (props) => {
     setFieldErrors({ ...fieldErrors, [event.target.id]: "" });
   };
 
-  const catTypeSelectHandler = (_event, data) => {
-    setFields({ ...fields, categorytypes: data.value });
-    setFieldErrors({ ...fieldErrors, categorytypes: "" });
-  };
-
-  const playableCheckboxHandler = (_event, data) => {
+  const publishedCheckboxHandler = (_event, data) => {
     if (data.checked) {
-      setFields({ ...fields, playable: true });
+      setFields({ ...fields, published: true });
     } else {
-      setFields({ ...fields, playable: false });
+      setFields({ ...fields, published: false });
     }
   };
 
-  const pressLuckCheckboxHandler = (_event, data) => {
-    if (data.checked) {
-      setFields({ ...fields, nextquestactive: true });
-    } else {
-      setFields({ ...fields, nextquestactive: false });
-    }
-  };
-
-  const formValidateHandler = (name, categorytypes) => {
+  const formValidateHandler = (title, text, published) => {
     const errors = {};
-    if (!categorytypes.length)
-      errors.categorytypes = "Please select at least one Category type.";
-    if (name.length < 3)
-      errors.name = "Please enter a name of at least three characters.";
-    //check if genre already exists
-    if (
-      props.pageType !== "edit" &&
-      categoryGenres.some((genre) => genre.name === name)
-    )
-      errors.name = "That genre already exists!";
+
+    if (title.length < 3)
+      errors.title = "Please enter a title of at least three characters.";
+
+    if (text.length < 10)
+      errors.text = "Please enter body text of at least ten characters.";
+
     return errors;
   };
 
   const formSubmitHandler = async (event) => {
     event.preventDefault();
-    const errors = formValidateHandler(fields.name, fields.categorytypes);
+    const errors = formValidateHandler(
+      fields.title,
+      fields.text,
+      fields.published
+    );
     if (Object.keys(errors).length)
       return setFieldErrors(...fieldErrors, ...errors);
-    UpsertCategoryGenreHandler();
+    UpsertAnnouncementHandler();
   };
 
-  const UpsertCategoryGenreHandler = async () => {
+  const UpsertAnnouncementHandler = async () => {
     //add category
-    const graphqlResponse = await upsertCategoryGenre({
+    const graphqlResponse = await upsertAnnouncement({
       variables: {
         input: {
-          id: props.pageType === "edit" ? props.categorygenre._id : null,
-          name: fields.name,
-          categorytypes: fields.categorytypes,
-          playable: fields.playable,
-          nextquestactive: fields.nextquestactive,
+          id: props.pageType === "edit" ? props.announcement._id : null,
+          title: fields.title,
+          text: fields.text,
+          published: fields.published,
         },
       },
       refetchQueries: [
         {
-          query: QUERY_CATEGORYGENRESPAGE,
+          query: QUERY_ANNOUNCEMENTSPAGE,
           variables: {
-            offset:
-              categoryGenreSearchCriteria.limit *
-                parseInt(categoryGenreSearchCriteria.activePage, 10) -
-              categoryGenreSearchCriteria.limit,
-            limit: categoryGenreSearchCriteria.limit,
-            name: categoryGenreSearchCriteria.name,
-            categorytypes: categoryGenreSearchCriteria.types.length
-              ? categoryGenreSearchCriteria.types.map((item) => item.value)
-              : [],
+            offset: 15 * parseInt(1, 10) - 15,
+            limit: 15,
           },
         },
-        { query: QUERY_CATEGORYGENRES },
       ],
     });
-    setSubmittedCategoryGenreName(
-      graphqlResponse.data.upsertcategorygenre.name
+    setSubmittedAnnouncementTitle(
+      graphqlResponse.data.upsertannouncement.title
     );
   };
 
@@ -136,11 +110,11 @@ const AnnouncementForm = (props) => {
 
   return (
     <Form>
-      {props.pageType === "edit" ? <h3>Edit Category Type</h3> : null}
+      {props.pageType === "edit" ? <h3>Edit Announcement</h3> : null}
       <Form.Field required>
-        <label>Category Genre Name</label>
+        <label>Title</label>
         <input
-          placeholder="Enter Category Genre name..."
+          placeholder="Enter Announcement title..."
           id="name"
           value={fields.name}
           onChange={(event) => inputChangedHandler(event)}
@@ -154,29 +128,29 @@ const AnnouncementForm = (props) => {
       <Form.Field>
         <Checkbox
           label="Published"
-          checked={fields.playable}
-          onChange={(event, data) => playableCheckboxHandler(event, data)}
+          checked={fields.published}
+          onChange={(event, data) => publishedCheckboxHandler(event, data)}
         />
       </Form.Field>
 
       <FormSuccessMessage
-        reveal={submittedCategoryGenreName !== ""}
+        reveal={submittedAnnouncementTitle !== ""}
         header={
           props.pageType === "edit"
-            ? "Category Genre Updated"
-            : "Category Genre Added"
+            ? "Announcement Updated"
+            : "Announcement Added"
         }
         content={
           (props.pageType === "edit"
             ? "You've successfully updated"
             : "You've successfully added") +
-          " the category genre " +
-          submittedCategoryGenreName +
+          " the announcement " +
+          submittedAnnouncementTitle +
           "."
         }
       />
 
-      {submittedCategoryGenreName !== "" ? (
+      {submittedAnnouncementTitle !== "" ? (
         props.pageType === "edit" ? (
           <Button primary onClick={props.history.goBack}>
             Go Back
@@ -206,13 +180,16 @@ const MUTATION_UPSERTANNOUNCEMENT = gql`
   mutation upsertAnnouncement($input: upsertAnnouncementInput) {
     upsertannouncement(input: $input) {
       _id
+      title
+      text
+      published
     }
   }
 `;
 
 AnnouncementForm.propTypes = {
   pageType: PropTypes.string,
-  categorygenre: PropTypes.object,
+  announcement: PropTypes.object,
   history: PropTypes.object,
 };
 

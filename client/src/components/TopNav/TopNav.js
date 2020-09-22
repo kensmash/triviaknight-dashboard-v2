@@ -79,6 +79,9 @@ const TopNav = (props) => {
                   <Dropdown.Item as={Link} to={"/admin/joustgames"}>
                     Joust Games
                   </Dropdown.Item>
+                  <Dropdown.Item as={Link} to={"/admin/siegegames"}>
+                    Siege Games
+                  </Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
 
