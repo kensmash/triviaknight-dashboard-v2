@@ -30,9 +30,9 @@ const typeDef = gql`
   }
 
   extend type Query {
-    announcement: Announcement
+    announcement(id: ID!): Announcement
+    announcementsPage(limit: Int!, offset: Int!): AnnouncementPageResponse
     announcements: [Announcement]
-    announcementsPage: [AnnouncementPageResponse]
     announcementsWidget: AnnouncementWidgetResponse
   }
 

@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Query } from "react-apollo";
 import gql from "graphql-tag";
-import { Card } from "semantic-ui-react";
+import { Card, Button } from "semantic-ui-react";
 
 const QuestTopicWidget = (props) => (
   <Query query={nextQuestTopicQuery} fetchPolicy="network-only">
@@ -20,13 +20,16 @@ const QuestTopicWidget = (props) => (
                     : " none chosen yet"
                 }`}
           />
-          <Card.Content
-            description={`${
-              data.nextquesttopic.type
-                ? data.nextquesttopic.type
-                : "If no topic is chosen before Sunday at midnight, the server will select one automatically from categories."
-            }`}
-          />
+          <Card.Content extra>
+            <Button
+              basic
+              fluid
+              color="blue"
+              onClick={() => props.history.push("admin/categories")}
+            >
+              See Categories
+            </Button>
+          </Card.Content>
         </Card>
       );
     }}

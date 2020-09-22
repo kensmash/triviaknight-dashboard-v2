@@ -8,4 +8,8 @@ const announcementSchema = new Schema({
   published: { type: Boolean, default: false },
 });
 
-module.exports = announcementSchema;
+//Create the model class
+const Announcement = mongoose.model("announcement", announcementSchema);
+
+//Export the model
+module.exports = Announcement;

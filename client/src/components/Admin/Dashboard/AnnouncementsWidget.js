@@ -15,18 +15,12 @@ const AnnouncementsWidget = (props) => (
           <Card.Content>
             <Statistic horizontal>
               <Statistic.Value>
-                {data.questionreportswidget.totalannouncements}
+                {data.announcementsWidget.totalannouncements}
               </Statistic.Value>
               <Statistic.Label>
                 Announcement
-                {data.announcementswidget.totalannouncements !== 1 ? "s" : ""}
+                {data.announcementsWidget.totalannouncements !== 1 ? "s" : ""}
               </Statistic.Label>
-              <Card.Description>
-                {data.announcementswidget.unpublishedannouncements} unpublished
-                {data.announcementswidget.unpublishedannouncements === 1
-                  ? " announcement"
-                  : " announcements"}
-              </Card.Description>
             </Statistic>
           </Card.Content>
           <Card.Content extra>
@@ -34,7 +28,7 @@ const AnnouncementsWidget = (props) => (
               basic
               fluid
               color="blue"
-              onClick={() => props.history.push("admin/questions/reports")}
+              onClick={() => props.history.push("admin/announcements")}
             >
               See Announcements
             </Button>

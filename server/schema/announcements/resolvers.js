@@ -9,7 +9,9 @@ const {
 const resolvers = {
   Query: {
     announcements: requiresAuth.createResolver((parent, args) => {
-      return Announcement.find({}).sort({ updatedAt: 1 });
+      return Announcement.find({ published: true })
+        .sort({ updatedAt: 1 })
+        .limit(8);
     }),
 
     announcementsPage: requiresAdmin.createResolver(
@@ -23,8 +25,7 @@ const resolvers = {
             Announcement.find(queryBuilder())
               .sort({ name: 1 })
               .skip(offset)
-              .limit(limit)
-              .populate("categories"),
+              .limit(limit),
             Announcement.countDocuments(queryBuilder()),
           ]);
           const announcementResults = announcements[0];
