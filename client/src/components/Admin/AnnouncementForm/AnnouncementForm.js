@@ -154,9 +154,8 @@ const AnnouncementForm = (props) => {
         }
         content={
           (props.pageType === "edit"
-            ? "You've successfully updated"
-            : "You've successfully added") +
-          " the announcement " +
+            ? "You've successfully updated "
+            : "You've successfully added ") +
           submittedAnnouncementHeadline +
           "."
         }
