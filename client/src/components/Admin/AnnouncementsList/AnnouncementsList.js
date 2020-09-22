@@ -48,6 +48,7 @@ const AnnouncementsList = (props) => {
           <Table.Row>
             <Table.HeaderCell>Headline</Table.HeaderCell>
             <Table.HeaderCell>Text</Table.HeaderCell>
+            <Table.HeaderCell>Last Updated</Table.HeaderCell>
             <Table.HeaderCell>Published</Table.HeaderCell>
             <Table.HeaderCell>Actions</Table.HeaderCell>
           </Table.Row>
@@ -68,6 +69,12 @@ const AnnouncementsList = (props) => {
                       <Link to={`${match.url}/${ann._id}`}>{ann.headline}</Link>
                     </Table.Cell>
                     <Table.Cell>{ann.text}</Table.Cell>
+                    <Table.Cell>
+                      {format(
+                        new Date(Number(ann.updatedAt)),
+                        "EEEE, LLLL do, yyyy"
+                      )}
+                    </Table.Cell>
                     <Table.Cell>{ann.published ? "Yes" : "No"}</Table.Cell>
                     <Table.Cell collapsing>
                       <div>
@@ -98,7 +105,7 @@ const AnnouncementsList = (props) => {
             </Table.Body>
             <Table.Footer>
               <Table.Row>
-                <Table.HeaderCell colSpan="4">
+                <Table.HeaderCell colSpan="5">
                   <Grid columns="equal">
                     <Grid.Column width={2}>
                       <div className="tableItemNumbers">
