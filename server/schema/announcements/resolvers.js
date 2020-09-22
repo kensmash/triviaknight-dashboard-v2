@@ -43,6 +43,25 @@ const resolvers = {
     announcement: requiresAdmin.createResolver((parent, { id }) => {
       return Announcement.findOne({ _id: id });
     }),
+
+    announcementsWidget: async (parent, args) => {
+      try {
+        const widget = await Promise.all([
+          Announcement.estimatedDocumentCount(),
+          Announcement.countDocuments({ published: { $eq: false } }),
+        ]);
+
+        const totalannouncements = widget[0];
+        const unpublishedannouncements = widget[1];
+
+        return {
+          totalannouncements,
+          unpublishedannouncements,
+        };
+      } catch (error) {
+        console.error(error);
+      }
+    },
   },
 
   Mutation: {

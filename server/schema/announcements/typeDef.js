@@ -11,17 +11,29 @@ const typeDef = gql`
     updatedAt: String
   }
 
-  extend type Query {
-    announcement: Announcement
-    announcements: [Announcement]
-    announcementspage: [Announcement]
-  }
-
   input upsertAnnouncementInput {
     id: ID
     headline: String!
     text: String!
     imageurl: String
+  }
+
+  type AnnouncementWidgetResponse {
+    totalannouncements: Int!
+    unpublishedannouncements: Int!
+  }
+
+  type AnnouncementPageResponse {
+    pages: Int!
+    totalrecords: Int!
+    announcements: [Announcement]
+  }
+
+  extend type Query {
+    announcement: Announcement
+    announcements: [Announcement]
+    announcementsPage: [AnnouncementPageResponse]
+    announcementsWidget: AnnouncementWidgetResponse
   }
 
   extend type Mutation {

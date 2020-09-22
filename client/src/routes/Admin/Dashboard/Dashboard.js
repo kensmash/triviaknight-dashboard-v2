@@ -10,6 +10,7 @@ import QuestionReportsWidget from "../../../components/Admin/Dashboard/QuestionR
 import QuestTopicWidget from "../../../components/Admin/Dashboard/QuestTopicWidget";
 import PushTicketsWidget from "../../../components/Admin/Dashboard/PushTicketsWidget";
 import PushReceiptsWidget from "../../../components/Admin/Dashboard/PushReceiptsWidget";
+import AnnouncementsWidget from "../../../components/Admin/Dashboard/AnnouncementsWidget";
 
 const Dashboard = ({ match, history }) => (
   <Fragment>
@@ -20,7 +21,7 @@ const Dashboard = ({ match, history }) => (
     </Card.Group>
     <Card.Group stackable itemsPerRow={5}>
       <QuestTopicWidget history={history} />
-      <QuestionReportsWidget history={history} />
+      <AnnouncementsWidget history={history} />
       <QuestionReportsWidget history={history} />
       <PushTicketsWidget history={history} />
       <PushReceiptsWidget history={history} />

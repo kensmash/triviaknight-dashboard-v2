@@ -21,6 +21,12 @@ const AnnouncementsWidget = (props) => (
                 Announcement
                 {data.announcementswidget.totalannouncements !== 1 ? "s" : ""}
               </Statistic.Label>
+              <Card.Description>
+                {data.announcementswidget.unpublishedannouncements} unpublished
+                {data.announcementswidget.unpublishedannouncements === 1
+                  ? " announcement"
+                  : " announcements"}
+              </Card.Description>
             </Statistic>
           </Card.Content>
           <Card.Content extra>
@@ -41,8 +47,9 @@ const AnnouncementsWidget = (props) => (
 
 const announcementsWidgetQuery = gql`
   query announcementsWidget {
-    announcementswidget {
+    announcementsWidget {
       totalannouncements
+      unpublishedannouncements
     }
   }
 `;

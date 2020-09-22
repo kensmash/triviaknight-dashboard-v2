@@ -1,6 +1,8 @@
 const { gql } = require("apollo-server-express");
 //schema
 const users = require("./users");
+//announcements
+const announcements = require("./announcements");
 //categories
 const categoryTypes = require("./categoryTypes");
 const categoryGenres = require("./categoryGenres");
@@ -29,6 +31,7 @@ const typeDef = gql`
 module.exports = {
   typeDefs: [
     typeDef,
+    announcements.typeDef,
     users.typeDef,
     categoryTypes.typeDef,
     categoryGenres.typeDef,
@@ -45,6 +48,7 @@ module.exports = {
     expoPushNotifications.typeDef,
   ],
   resolvers: [
+    announcements.resolvers,
     users.resolvers,
     categoryTypes.resolvers,
     categoryGenres.resolvers,
