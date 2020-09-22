@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Announcement = require("../../models/Announcement");
+const User = require("../../models/User");
 //auth helpers
 const {
   requiresAuth,
@@ -76,6 +77,15 @@ const resolvers = {
             input,
             { upsert: true, new: true }
           );
+
+          if (input.published) {
+            await User.updateMany(
+              {},
+              {
+                $set: { hasSeenAnnouncements: false },
+              }
+            );
+          }
 
           return upsertedAnnouncement;
         } catch (error) {
