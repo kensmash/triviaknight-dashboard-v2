@@ -262,12 +262,7 @@ const CategoryForm = (props) => {
           value={fields.iconname}
           onChange={(event) => inputChangedHandler(event)}
         />
-        <Label
-          pointing
-          as="a"
-          href="https://oblador.github.io/react-native-vector-icons/"
-          target="_blank"
-        >
+        <Label pointing as="a" href="https://icons.expo.fyi" target="_blank">
           Enter an icon name from react native vector icons.
         </Label>
       </Form.Field>

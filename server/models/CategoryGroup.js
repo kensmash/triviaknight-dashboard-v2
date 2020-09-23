@@ -4,10 +4,11 @@ const { Schema } = mongoose;
 const categoryGroupSchema = new Schema(
   {
     name: { type: String, required: true, minlength: 3, trim: true },
+    iconname: { type: String, trim: true },
     displaytext: { type: String, required: true, minlength: 3, trim: true },
     headercolor: { type: String },
     active: { type: Boolean, default: false },
-    categories: [{ type: Schema.Types.ObjectId, ref: "category" }]
+    categories: [{ type: Schema.Types.ObjectId, ref: "category" }],
   },
   { timestamps: true }
 );

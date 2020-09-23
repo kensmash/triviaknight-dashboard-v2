@@ -4,6 +4,7 @@ const typeDef = gql`
   type CategoryGroup {
     _id: ID!
     name: String!
+    iconname: String
     displaytext: String!
     active: Boolean
     categories: [Category]
@@ -22,6 +23,7 @@ const typeDef = gql`
     displaytext: String!
     categories: [ID]
     active: Boolean
+    iconname: String
   }
 
   extend type Query {
@@ -37,5 +39,5 @@ const typeDef = gql`
 `;
 
 module.exports = {
-  typeDef
+  typeDef,
 };

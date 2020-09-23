@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { Form, Button, Checkbox } from "semantic-ui-react";
+import { Label, Form, Button, Checkbox } from "semantic-ui-react";
 //components
 import CategoriesSelect from "../CategoriesSelect/CategoriesSelect";
 import FormErrorMessage from "../../FormMessage/FormErrorMessage";
@@ -12,7 +12,7 @@ import { useQuery, useMutation } from "@apollo/react-hooks";
 import QUERY_CATEGORYGROUPS from "../../../apollo/queries/categoryGroups";
 import QUERY_CATEGORYGROUPSPAGE from "../../../apollo/queries/categoryGroupsPage";
 
-const CategoryGroupForm = props => {
+const CategoryGroupForm = (props) => {
   const [submittedCategoryGroupName, setSubmittedCategoryGroupName] = useState(
     ""
   );
@@ -23,7 +23,8 @@ const CategoryGroupForm = props => {
     name: "",
     displaytext: "",
     categories: [],
-    active: false
+    active: false,
+    iconname: "",
   };
 
   const [fields, setFields] = useState(initialState);
@@ -31,7 +32,7 @@ const CategoryGroupForm = props => {
   const [fieldErrors, setFieldErrors] = useState({
     name: "",
     displaytext: "",
-    categories: ""
+    categories: "",
   });
 
   const [upsertCategoryGroup] = useMutation(MUTATION_UPSERTCATEGORYGROUP);
@@ -44,14 +45,15 @@ const CategoryGroupForm = props => {
         name: categorygroup.name,
         displaytext: categorygroup.displaytext,
         categories: categorygroup.categories
-          ? categorygroup.categories.map(cat => cat._id)
+          ? categorygroup.categories.map((cat) => cat._id)
           : [],
-        active: categorygroup.active
+        active: categorygroup.active,
+        iconname: categorygroup.iconname ? categorygroup.iconname : "",
       });
     }
   }, [props]);
 
-  const inputChangedHandler = event => {
+  const inputChangedHandler = (event) => {
     setFields({ ...fields, [event.target.id]: event.target.value });
     setFieldErrors({ ...fieldErrors, [event.target.id]: "" });
   };
@@ -80,13 +82,13 @@ const CategoryGroupForm = props => {
     //check if genre already exists
     if (
       props.pageType !== "edit" &&
-      categoryGroups.some(group => group.name === name)
+      categoryGroups.some((group) => group.name === name)
     )
       errors.name = "That group already exists!";
     return errors;
   };
 
-  const formSubmitHandler = async event => {
+  const formSubmitHandler = async (event) => {
     event.preventDefault();
     const errors = formValidateHandler(
       fields.name,
@@ -100,7 +102,7 @@ const CategoryGroupForm = props => {
   };
 
   const UpsertCategoryGroupHandler = async () => {
-    const { name, displaytext, categories, active } = fields;
+    const { name, displaytext, categories, active, iconname } = fields;
     //add category
     const graphqlResponse = await upsertCategoryGroup({
       variables: {
@@ -109,19 +111,20 @@ const CategoryGroupForm = props => {
           name,
           displaytext,
           categories,
-          active
-        }
+          active,
+          iconname,
+        },
       },
       refetchQueries: [
         {
           query: QUERY_CATEGORYGROUPSPAGE,
           variables: {
             offset: 15 * parseInt(1, 10) - 15,
-            limit: 15
-          }
+            limit: 15,
+          },
         },
-        { query: QUERY_CATEGORYGROUPS }
-      ]
+        { query: QUERY_CATEGORYGROUPS },
+      ],
     });
     setSubmittedCategoryGroupName(
       graphqlResponse.data.upsertcategorygroup.name
@@ -141,26 +144,41 @@ const CategoryGroupForm = props => {
           placeholder="Enter Category Group name..."
           id="name"
           value={fields.name}
-          onChange={event => inputChangedHandler(event)}
+          onChange={(event) => inputChangedHandler(event)}
         />
         <FormErrorMessage
           reveal={fieldErrors.name !== ""}
           errormessage={fieldErrors.name}
         />
       </Form.Field>
+
+      <Form.Field>
+        <label>Icon Name</label>
+        <input
+          id="iconname"
+          placeholder="Enter icon name..."
+          value={fields.iconname}
+          onChange={(event) => inputChangedHandler(event)}
+        />
+        <Label pointing as="a" href="https://icons.expo.fyi" target="_blank">
+          Enter an icon name from react native vector icons.
+        </Label>
+      </Form.Field>
+
       <Form.Field required>
         <label>Category Group Display Text</label>
         <input
           placeholder="App Home Screen Text"
           id="displaytext"
           value={fields.displaytext}
-          onChange={event => inputChangedHandler(event)}
+          onChange={(event) => inputChangedHandler(event)}
         />
         <FormErrorMessage
           reveal={fieldErrors.name !== ""}
           errormessage={fieldErrors.name}
         />
       </Form.Field>
+
       <Form.Field required>
         <label>Categories</label>
         <CategoriesSelect
@@ -237,7 +255,7 @@ const MUTATION_UPSERTCATEGORYGROUP = gql`
 CategoryGroupForm.propTypes = {
   pageType: PropTypes.string,
   categorygenre: PropTypes.object,
-  history: PropTypes.object
+  history: PropTypes.object,
 };
 
 export default CategoryGroupForm;

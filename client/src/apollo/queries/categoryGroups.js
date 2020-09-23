@@ -5,6 +5,7 @@ export default gql`
     categoryGroups {
       _id
       name
+      iconname
       displaytext
       active
       categories {

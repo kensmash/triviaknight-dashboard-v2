@@ -8,6 +8,7 @@ export default gql`
       categorygroups {
         _id
         name
+        iconname
         displaytext
         active
         categories {

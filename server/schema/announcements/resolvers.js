@@ -11,7 +11,7 @@ const resolvers = {
   Query: {
     announcements: requiresAuth.createResolver((parent, args) => {
       return Announcement.find({ published: true })
-        .sort({ updatedAt: 1 })
+        .sort({ updatedAt: -1 })
         .limit(8);
     }),
 
