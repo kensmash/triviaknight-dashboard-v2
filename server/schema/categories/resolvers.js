@@ -27,7 +27,7 @@ const resolvers = {
         .sort({ name: 1 })
         .populate("type")
         .populate("followers");
-      //REMOVE POPULATE FOLLOWERS LATER
+      //TODO: REMOVE POPULATE FOLLOWERS LATER, AFTER APP UPDATE
       const groups = await CategoryGroup.find({})
         .sort({ name: 1 })
         .populate({

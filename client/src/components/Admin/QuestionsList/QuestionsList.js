@@ -236,7 +236,6 @@ const QuestionsList = (props) => {
             <Table.HeaderCell>Category</Table.HeaderCell>
             <Table.HeaderCell>Difficulty</Table.HeaderCell>
             <Table.HeaderCell>Type</Table.HeaderCell>
-            <Table.HeaderCell>Actions</Table.HeaderCell>
           </Table.Row>
         </Table.Header>
 
@@ -267,23 +266,6 @@ const QuestionsList = (props) => {
                     </Table.Cell>
                     <Table.Cell>{ques.difficulty}</Table.Cell>
                     <Table.Cell>{ques.type}</Table.Cell>
-                    <Table.Cell collapsing>
-                      <div>
-                        <Button
-                          icon
-                          size="mini"
-                          onClick={() =>
-                            history.push(`${match.url}/${ques._id}`)
-                          }
-                        >
-                          <Icon name="edit" />
-                        </Button>
-                        <DeleteQuestionModal
-                          questionid={ques._id}
-                          variables={variables}
-                        />
-                      </div>
-                    </Table.Cell>
                   </Table.Row>
                 ))
               ) : (
@@ -296,7 +278,7 @@ const QuestionsList = (props) => {
             </Table.Body>
             <Table.Footer>
               <Table.Row>
-                <Table.HeaderCell colSpan="6">
+                <Table.HeaderCell colSpan="5">
                   <Grid columns="equal">
                     <Grid.Column width={2}>
                       <div className="tableItemNumbers">
