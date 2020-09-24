@@ -3,6 +3,8 @@ const Category = require("../../models/Category");
 const CategoryGenre = require("../../models/CategoryGenre");
 const CategoryType = require("../../models/CategoryType");
 const CategoryGroup = require("../../models/CategoryGroup");
+//cat helper
+const { catListReponse } = require("../_helpers/helper-categories");
 //auth helpers
 const {
   requiresAuth,
@@ -26,6 +28,7 @@ const resolvers = {
       })
         .sort({ name: 1 })
         .populate("type")
+        .populate("genres")
         .populate("followers");
       //TODO: REMOVE POPULATE FOLLOWERS LATER, AFTER APP UPDATE
       const groups = await CategoryGroup.find({})

@@ -24,6 +24,19 @@ const typeDef = gql`
     nextquestactive: Boolean
   }
 
+  type CategoryListResponse {
+    _id: ID!
+    name: String!
+    type: CategoryType!
+    published: Boolean!
+    genres: [CategoryGenre]
+    showasnew: Boolean!
+    showasupdated: Boolean!
+    nextquestactive: Boolean!
+    normalquestions: Int!
+    hardquestions: Int!
+  }
+
   type CategoryPageResponse {
     pages: Int!
     totalrecords: Int!
