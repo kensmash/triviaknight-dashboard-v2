@@ -5,6 +5,7 @@ const typeDef = gql`
     _id: ID!
     createdAt: String
     updatedAt: String
+    lastActiveAt: String
     name: String
     email: String
     access: String
@@ -49,6 +50,7 @@ const typeDef = gql`
     joustgames: [GameJoust]
     siegegames: [GameSiege]
     recentquestgames: [GameQuest]
+    roundtablegames: [GameRoundTable]
   }
 
   type UserNameSearchResponse {

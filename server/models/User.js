@@ -21,6 +21,7 @@ const userSchema = new Schema(
     avatar: String,
     avatarBackgroundColor: String,
     isAdmin: { type: Boolean, default: false },
+    lastActiveAt: Date,
     overEighteen: { type: Boolean, default: false },
     hasCompletedSignUpFlow: { type: Boolean, default: false },
     hasSeenPushNotificationOptions: { type: Boolean, default: false },

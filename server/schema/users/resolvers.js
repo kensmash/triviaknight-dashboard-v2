@@ -3,6 +3,7 @@ const GameSolo = require("../../models/GameSolo");
 const GameJoust = require("../../models/GameJoust");
 const GameSiege = require("../../models/GameSiege");
 const GameQuest = require("../../models/GameQuest");
+const GameRoundTable = require("../../models/GameRoundTable");
 const { withFilter } = require("graphql-subscriptions");
 //stats helpers
 const {
@@ -346,7 +347,36 @@ const resolvers = {
           .sort({ updatedAt: -1 })
           .limit(10);
 
-        return { currentsologames, joustgames, siegegames, recentquestgames };
+        const roundtablegames = await GameRoundTable.find({
+          "players.player": user.id,
+        })
+          .populate("createdby")
+          .populate("players.player")
+          .populate("players.categories")
+          .populate({
+            path: "categories",
+            populate: { path: "type" },
+          })
+          .populate({
+            path: "currentcategory",
+            populate: { path: "type" },
+          })
+          .populate("savedcategory")
+          .populate("currentquestion")
+          .populate("selectedcategories")
+          .populate("selectedquestions")
+          .populate("gameroundresults.host")
+          .populate("gameroundresults.players.player")
+          .sort({ updatedAt: -1 })
+          .limit(12);
+
+        return {
+          currentsologames,
+          joustgames,
+          siegegames,
+          recentquestgames,
+          roundtablegames,
+        };
       } catch (error) {
         console.error(error);
       }

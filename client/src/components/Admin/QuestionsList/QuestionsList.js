@@ -17,7 +17,6 @@ import CategorySelect from "./helpers/CategorySelect";
 import DifficultySelect from "./helpers/DifficultySelect";
 import TypeSelect from "./helpers/TypeSelect";
 import StatusSelect from "./helpers/StatusSelect";
-import DeleteQuestionModal from "./DeleteQuestionModal";
 //graphql
 import { gql } from "apollo-boost";
 import { useQuery, useMutation } from "@apollo/react-hooks";
@@ -135,7 +134,7 @@ const QuestionsList = (props) => {
     });
   };
 
-  const { match, history } = props;
+  const { match } = props;
 
   return (
     <>

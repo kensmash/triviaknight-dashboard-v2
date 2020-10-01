@@ -25,12 +25,12 @@ const deleteCancelledRoundTableGames = schedule.scheduleJob(
 //expire roundtable games that are haven't been played in 10 days
 const expireRoundTableGames = schedule.scheduleJob("0 0 * * *", () => {
   console.log("roundtable game expire function called");
-  var tenDaysAgo = new Date();
-  tenDaysAgo.setDate(tenDaysAgo.getDate() - 10);
+  var threeDaysAgo = new Date();
+  threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
   GameRoundTable.updateMany(
     {
       updatedAt: {
-        $lte: tenDaysAgo,
+        $lte: threeDaysAgo,
       },
       gameover: false,
       expired: false,
