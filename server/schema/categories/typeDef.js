@@ -87,6 +87,7 @@ const typeDef = gql`
     categories: [Category]
     categorieswidget: CategoryWidgetResponse
     categoriesandgroups: CategoriesAndGroupsResponse
+    partycategoriesandgroups: CategoriesAndGroupsResponse
     categorysearch(name: String!): [Category]
     category(id: ID!): Category
     categoriespage(input: categoryPageInput): CategoryPageResponse

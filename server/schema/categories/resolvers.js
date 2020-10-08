@@ -40,6 +40,24 @@ const resolvers = {
       return { categories, groups };
     },
 
+    partycategoriesandgroups: async (parent, args) => {
+      const categories = await Category.find({
+        published: { $eq: true },
+      })
+        .sort({ name: 1 })
+        .populate("type")
+        .populate("genres");
+
+      //TODO: REMOVE POPULATE FOLLOWERS LATER, AFTER APP UPDATE
+      const groups = await CategoryGroup.find({})
+        .sort({ name: 1 })
+        .populate({
+          path: "categories",
+          populate: { path: "type" },
+        });
+      return { categories, groups };
+    },
+
     categoriespage: requiresAuth.createResolver(async (parent, { input }) => {
       const queryBuilder = (input) => {
         const query = {};
