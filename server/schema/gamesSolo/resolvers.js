@@ -82,7 +82,16 @@ const resolvers = {
             if (timer === 60000) {
               gems = -10;
             }
-            await User.findOneAndUpdate({ _id: user.id }, { $inc: { gems } });
+            await User.findOneAndUpdate(
+              { _id: user.id },
+              { $inc: { gems } },
+              { $set: { lastActiveAt: Date.now() } }
+            );
+          } else {
+            await User.findOneAndUpdate(
+              { _id: user.id },
+              { $set: { lastActiveAt: Date.now() } }
+            );
           }
           const catsAndQuestions = await soloQuestions(typeid);
 

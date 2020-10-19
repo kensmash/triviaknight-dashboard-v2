@@ -146,7 +146,7 @@ const resolvers = {
               roles: { $nin: ["reviewer"] },
               access: { $eq: "paid" },
               blockedusers: { $nin: [daUser._id] },
-              updatedAt: {
+              lastActiveAt: {
                 $gte: fortyFiveDaysAgo,
               },
             },

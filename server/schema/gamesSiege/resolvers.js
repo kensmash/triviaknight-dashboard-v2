@@ -1,6 +1,5 @@
 const GameSiege = require("../../models/GameSiege");
 const User = require("../../models/User");
-const { withFilter } = require("graphql-subscriptions");
 //auth helpers
 const {
   requiresAuth,
@@ -131,7 +130,16 @@ const resolvers = {
             if (input.timer === 60000) {
               gems = -10;
             }
-            await User.findOneAndUpdate({ _id: user.id }, { $inc: { gems } });
+            await User.findOneAndUpdate(
+              { _id: user.id },
+              { $inc: { gems } },
+              { $set: { lastActiveAt: Date.now() } }
+            );
+          } else {
+            await User.findOneAndUpdate(
+              { _id: user.id },
+              { $set: { lastActiveAt: Date.now() } }
+            );
           }
           //try to avoid previous questions for player and opponent
           const player = await User.findOne({ _id: user.id });
@@ -191,7 +199,16 @@ const resolvers = {
             if (timer === 60000) {
               gems = -10;
             }
-            await User.findOneAndUpdate({ _id: user.id }, { $inc: { gems } });
+            await User.findOneAndUpdate(
+              { _id: user.id },
+              { $inc: { gems } },
+              { $set: { lastActiveAt: Date.now() } }
+            );
+          } else {
+            await User.findOneAndUpdate(
+              { _id: user.id },
+              { $set: { lastActiveAt: Date.now() } }
+            );
           }
           const updatedGame = await GameSiege.findOneAndUpdate(
             { _id: gameid, "players.player": user.id },
@@ -265,6 +282,10 @@ const resolvers = {
                 opponent,
                 expo
               );
+              await User.findOneAndUpdate(
+                { _id: user.id },
+                { $set: { lastActiveAt: Date.now() } }
+              );
               pubsub.publish(USERGAMES_UPDATE, {
                 usergamesupdate: {
                   playerid: opponent.player._id,
@@ -278,6 +299,10 @@ const resolvers = {
                 player,
                 opponent,
                 expo
+              );
+              await User.findOneAndUpdate(
+                { _id: user.id },
+                { $set: { lastActiveAt: Date.now() } }
               );
               pubsub.publish(USERGAMES_UPDATE, {
                 usergamesupdate: {
@@ -303,6 +328,10 @@ const resolvers = {
             { $set: { "players.$.resultsseen": true } },
             { new: true }
           ).populate("players.player");
+          User.findOneAndUpdate(
+            { _id: user.id },
+            { $set: { lastActiveAt: Date.now() } }
+          );
           return updatedGame;
         } catch (error) {
           console.error(error);

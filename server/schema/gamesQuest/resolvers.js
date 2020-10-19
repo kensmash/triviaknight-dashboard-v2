@@ -97,7 +97,16 @@ const resolvers = {
           if (input.timer === 60000) {
             gems = -10;
           }
-          await User.findOneAndUpdate({ _id: user.id }, { $inc: { gems } });
+          await User.findOneAndUpdate(
+            { _id: user.id },
+            { $inc: { gems } },
+            { $set: { lastActiveAt: Date.now() } }
+          );
+        } else {
+          await User.findOneAndUpdate(
+            { _id: user.id },
+            { $set: { lastActiveAt: Date.now() } }
+          );
         }
         try {
           let catsAndQuestions;
@@ -193,7 +202,11 @@ const resolvers = {
             if (roundresults.difficulty === "Hard") {
               gems = 3;
             }
-            await User.findOneAndUpdate({ _id: user.id }, { $inc: { gems } });
+            await User.findOneAndUpdate(
+              { _id: user.id },
+              { $inc: { gems } },
+              { $set: { lastActiveAt: Date.now() } }
+            );
           }
 
           //add round results
