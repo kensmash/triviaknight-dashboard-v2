@@ -109,11 +109,14 @@ const endSiegeGame = async (gameid, player, opponent, expo) => {
       .reduce((a, b) => a + b, 0);
 
     let winningplayer = "";
+    let losingplayer = "";
     if (playerScore !== opponentScore) {
       if (playerScore > opponentScore) {
         winningplayer = player.player._id;
+        losingplayer = opponent.player._id;
       } else {
         winningplayer = opponent.player._id;
+        losingplayer = player.player._id;
       }
     }
 
@@ -132,7 +135,11 @@ const endSiegeGame = async (gameid, player, opponent, expo) => {
       try {
         await User.findOneAndUpdate(
           { _id: winningplayer },
-          { $inc: { gems: 5 } }
+          { $inc: { gems: 5, streak: 1 } }
+        );
+        await User.findOneAndUpdate(
+          { _id: losingplayer },
+          { $set: { streak: 0 } }
         );
         await GameSiege.findOneAndUpdate(
           { _id: gameid, "players.player": winningplayer },

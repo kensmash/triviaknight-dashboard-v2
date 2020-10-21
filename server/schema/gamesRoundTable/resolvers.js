@@ -7,7 +7,7 @@ const { requiresAuth } = require("../_helpers/helper-permissions");
 const { roundTableGameQuestion } = require("../_helpers/helper-questions");
 //subscription
 const { withFilter } = require("graphql-subscriptions");
-const USERGAME_ADDED = "USERGAME_ADDED";
+const USERGAMES_UPDATE = "USERGAMES_UPDATE";
 const ROUNDTABLEPLAYER_JOINED = "ROUNDTABLEPLAYER_JOINED";
 const CATEGORY_ADDED = "CATEGORY_ADDED";
 const ROUNDTABLEPLAYER_SELECTEDCATEGORIES =
@@ -162,9 +162,6 @@ const resolvers = {
 
     inviteplayers: requiresAuth.createResolver(
       async (parent, { gameid, players }, { pubsub }) => {
-        const playerids = players.map((player) => {
-          return player.player;
-        });
         try {
           const updatedGame = await GameRoundTable.findOneAndUpdate(
             { _id: gameid },
@@ -174,9 +171,15 @@ const resolvers = {
             { new: true }
           ).populate("players.player");
 
-          pubsub.publish(USERGAME_ADDED, {
-            usergameadded: { playerids: playerids, gameadded: true },
-          });
+          players.forEach((player) =>
+            pubsub.publish(USERGAMES_UPDATE, {
+              usergamesupdate: {
+                playerid: player.player,
+                updated: true,
+              },
+            })
+          );
+
           return updatedGame;
         } catch (error) {
           console.error(error);
